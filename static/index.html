@@ -9,7 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 </head>
 <body>
   <div class="app-container">
@@ -34,6 +36,15 @@
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
           Chat Assistant
+        </button>
+        <button id="tab-map" class="nav-tab" data-tab="map-view">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+          Interactive Map
+          <span class="nav-pill-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">OpenFreeMap</span>
         </button>
         <button id="tab-verify" class="nav-tab" data-tab="verify-view">
           <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
@@ -280,6 +291,151 @@
           </div>
           <div id="results-container" class="results-container">
             <div class="empty-state">Select a layer and click "Query Layer" to inspect live ArcGIS records.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. INTERACTIVE GRID MAP VIEW (OpenFreeMap + MapLibre GL) -->
+      <section id="map-view" class="view-panel">
+        <div class="map-layout">
+          <!-- Left Control Panel & Inspector -->
+          <aside class="map-sidebar">
+            <div class="map-sidebar-header">
+              <div class="map-title-row">
+                <span class="map-badge">OpenFreeMap Vector Tiles</span>
+                <span class="map-badge-green">EPSG:4326</span>
+              </div>
+              <h2 class="map-panel-title">Feeder & Substation Overlay</h2>
+              <p class="map-panel-sub">Interactive spatial map rendering primary distribution circuits, ICA hosting capacity, and high-voltage substations.</p>
+            </div>
+
+            <!-- Feeder Selector Card -->
+            <div class="map-card">
+              <label for="select-map-feeder" class="map-label">Select Active Feeder Circuit</label>
+              <div class="map-select-wrapper">
+                <select id="select-map-feeder" class="map-select">
+                  <option value="162611703" selected>MANTECA 1703 (17 kV) - Stockton</option>
+                  <option value="162611704">MANTECA 1704 (17 kV) - Stockton</option>
+                  <option value="162611705">MANTECA 1705 (17 kV) - Stockton</option>
+                  <option value="162611706">MANTECA 1706 (17 kV) - Stockton</option>
+                  <option value="162611707">MANTECA 1707 (17 kV) - Stockton</option>
+                  <option value="022390402">SAN FRANCISCO 022390402 (12 kV)</option>
+                  <option value="042021110">NAPA 1110 (12 kV) - North Bay</option>
+                  <option value="062031105">WOODLAND 1105 (12 kV) - Sacramento</option>
+                  <option value="152442108">PLEASANT GROVE 2108 (21 kV) - Sierra</option>
+                  <option value="152582105">DEL MAR 2105 (21 kV) - Sierra</option>
+                </select>
+              </div>
+
+              <!-- Or custom Feeder ID / Search -->
+              <div class="map-search-row">
+                <input type="text" id="input-custom-feeder" class="map-input" placeholder="Or enter Feeder ID (e.g. 162611703)...">
+                <button id="btn-load-custom-feeder" class="btn-primary btn-sm">Load</button>
+              </div>
+            </div>
+
+            <!-- OpenFreeMap Style Switcher -->
+            <div class="map-card">
+              <label class="map-label">OpenFreeMap Style</label>
+              <div class="map-style-buttons">
+                <button class="style-btn active" data-style="dark">Dark</button>
+                <button class="style-btn" data-style="positron">Positron</button>
+                <button class="style-btn" data-style="liberty">Liberty</button>
+                <button class="style-btn" data-style="bright">Bright</button>
+              </div>
+            </div>
+
+            <!-- Layer Visibility Toggles -->
+            <div class="map-card">
+              <label class="map-label">Grid Layers</label>
+              <div class="layer-toggle-group">
+                <label class="toggle-item">
+                  <input type="checkbox" id="toggle-layer-feeder" checked>
+                  <span class="toggle-indicator cyan"></span>
+                  <span class="toggle-name">⚡ Feeder Line Sections (Layer 3)</span>
+                </label>
+                <label class="toggle-item">
+                  <input type="checkbox" id="toggle-layer-substations" checked>
+                  <span class="toggle-indicator purple"></span>
+                  <span class="toggle-name">🏢 Substations (Layer 0)</span>
+                </label>
+                <label class="toggle-item">
+                  <input type="checkbox" id="toggle-layer-fire">
+                  <span class="toggle-indicator amber"></span>
+                  <span class="toggle-name">🔥 High Fire Districts (Layer 18)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Selected Feature Inspector Card -->
+            <div class="map-card feature-inspector-card" id="feature-inspector-card">
+              <div class="inspector-header-row">
+                <span class="feature-tag" id="inspector-tag">Line Section</span>
+                <span class="feature-status-badge" id="inspector-status-badge">Click map to inspect</span>
+              </div>
+              <div id="inspector-details" class="inspector-details-body">
+                <p class="inspector-placeholder">Click any feeder line section or substation marker on the map to inspect real-time hosting capacity, voltage, and criteria.</p>
+              </div>
+              <button id="btn-ask-about-feature" class="btn-ghost btn-sm btn-full" style="display: none; margin-top: 10px;">
+                💬 Ask Assistant About This Section
+              </button>
+            </div>
+
+            <!-- Quick Action: Fit to Feeder -->
+            <div class="map-actions-row">
+              <button id="btn-fit-feeder" class="btn-ghost btn-sm">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="22" y1="12" x2="18" y2="12"></line>
+                  <line x1="6" y1="12" x2="2" y2="12"></line>
+                  <line x1="12" y1="6" x2="12" y2="2"></line>
+                  <line x1="12" y1="22" x2="12" y2="18"></line>
+                </svg>
+                Center on Feeder
+              </button>
+              <button id="btn-load-all-subs" class="btn-ghost btn-sm">
+                🏢 Load 100+ Substations
+              </button>
+            </div>
+          </aside>
+
+          <!-- Main Map Canvas & Overlays -->
+          <div class="map-canvas-container">
+            <!-- HUD Metrics Bar -->
+            <div class="map-hud" id="map-hud">
+              <div class="hud-item">
+                <span class="hud-label">Active Circuit</span>
+                <span class="hud-value cyan" id="hud-feeder-name">MANTECA 1703</span>
+              </div>
+              <div class="hud-item">
+                <span class="hud-label">Substation</span>
+                <span class="hud-value" id="hud-substation-name">MANTECA (17 kV)</span>
+              </div>
+              <div class="hud-item">
+                <span class="hud-label">Line Sections</span>
+                <span class="hud-value" id="hud-sections-count">500</span>
+              </div>
+              <div class="hud-item">
+                <span class="hud-label">Screen L Feasibility</span>
+                <span class="hud-value green" id="hud-screen-l">498 Passed / 2 Unlikely</span>
+              </div>
+              <div class="hud-item">
+                <span class="hud-label">Max Solar Cap</span>
+                <span class="hud-value" id="hud-max-gen">2,149 kW</span>
+              </div>
+            </div>
+
+            <!-- Map Container -->
+            <div id="openfreemap-container" class="openfreemap-map"></div>
+
+            <!-- Map Legend -->
+            <div class="map-legend">
+              <span class="legend-title">Grid Legend</span>
+              <div class="legend-item"><span class="legend-dot green"></span> Screen L: Likely to Pass</div>
+              <div class="legend-item"><span class="legend-dot red"></span> Screen L: Unlikely to Pass / 0 kW</div>
+              <div class="legend-item"><span class="legend-dot purple"></span> Electric Substation Facility</div>
+              <div class="legend-item"><span class="legend-dot amber"></span> High Fire Threat District</div>
+            </div>
           </div>
         </div>
       </section>

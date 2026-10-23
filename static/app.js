@@ -185,6 +185,7 @@ async function init() {
   setupModelRotation();
   setupVerificationBench();
   setupLayerExplorer();
+  setupInteractiveMap();
   await checkHealth();
   await loadSessions();
 }
@@ -199,6 +200,19 @@ function setupNavigation() {
 
       tab.classList.add('active');
       document.getElementById(targetId)?.classList.add('active');
+
+      if (targetId === 'map-view' && gridMap) {
+        setTimeout(() => {
+          gridMap.resize();
+          if (currentFeederData?.bbox) {
+            gridMap.fitBounds(currentFeederData.bbox, {
+              padding: { top: 70, bottom: 70, left: 390, right: 70 },
+              maxZoom: 15,
+              duration: 600
+            });
+          }
+        }, 100);
+      }
     });
   });
 }
@@ -380,6 +394,25 @@ function appendMessage(role, content, shouldScroll = true) {
   const bubble = document.createElement('div');
   bubble.className = 'message-bubble';
   bubble.innerHTML = role === 'user' ? `<p>${content}</p>` : renderMarkdown(content);
+
+  // If assistant message mentions a feeder or substation, add quick interactive map button
+  if (role === 'assistant') {
+    let matchedFeeder = null;
+    if (content.includes('162611703') || content.includes('1703')) matchedFeeder = '162611703';
+    else if (content.includes('162611704') || content.includes('1704')) matchedFeeder = '162611704';
+    else if (content.includes('162611707') || content.includes('1707')) matchedFeeder = '162611707';
+    else if (content.includes('022390402') || content.includes('22390402')) matchedFeeder = '022390402';
+    else if (content.includes('152442108') || content.includes('2108')) matchedFeeder = '152442108';
+    else if (content.toLowerCase().includes('manteca')) matchedFeeder = '162611703';
+
+    if (matchedFeeder) {
+      const mapBtn = document.createElement('button');
+      mapBtn.className = 'map-view-btn';
+      mapBtn.innerHTML = `🗺️ View Feeder ${matchedFeeder} on OpenFreeMap`;
+      mapBtn.onclick = () => window.viewFeederOnMap(matchedFeeder);
+      bubble.appendChild(mapBtn);
+    }
+  }
 
   body.appendChild(bubble);
   row.appendChild(avatar);
@@ -669,5 +702,555 @@ function setupLayerExplorer() {
   });
 }
 
+// ==========================================================================
+// 7. OpenFreeMap & MapLibre GL Integration
+// ==========================================================================
+
+const OPENFREEMAP_STYLES = {
+  dark: 'https://tiles.openfreemap.org/styles/dark',
+  positron: 'https://tiles.openfreemap.org/styles/positron',
+  liberty: 'https://tiles.openfreemap.org/styles/liberty',
+  bright: 'https://tiles.openfreemap.org/styles/bright'
+};
+
+let gridMap = null;
+let currentStyle = 'dark';
+let activeFeederId = '162611703'; // Default Manteca 1703
+let currentFeederData = null;
+let selectedFeatureProps = null;
+
+function setupInteractiveMap() {
+  const container = document.getElementById('openfreemap-container');
+  if (!container || typeof maplibregl === 'undefined') {
+    console.warn('MapLibre GL or map container not found.');
+    return;
+  }
+
+  // Initialize MapLibre GL map with OpenFreeMap Dark style centered on Central California
+  gridMap = new maplibregl.Map({
+    container: 'openfreemap-container',
+    style: OPENFREEMAP_STYLES[currentStyle],
+    center: [-121.218, 37.798], // Manteca coordinates
+    zoom: 12.5,
+    pitch: 30, // Subtle 3D perspective
+    bearing: 0,
+    attributionControl: false
+  });
+
+  // Add navigation & fullscreen controls
+  gridMap.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+  gridMap.addControl(new maplibregl.FullscreenControl(), 'top-right');
+  gridMap.addControl(new maplibregl.AttributionControl({
+    customAttribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> | PG&E DRP'
+  }), 'bottom-left');
+
+  // Once base map style is loaded, setup grid layers & load default feeder
+  gridMap.on('load', () => {
+    initMapLayers();
+    loadFeederOnMap(activeFeederId);
+  });
+
+  // Handle style switcher buttons
+  document.querySelectorAll('.style-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const styleKey = btn.getAttribute('data-style');
+      if (styleKey && OPENFREEMAP_STYLES[styleKey] && styleKey !== currentStyle) {
+        document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentStyle = styleKey;
+        
+        // Re-set style and restore layers once styled
+        gridMap.setStyle(OPENFREEMAP_STYLES[currentStyle]);
+        gridMap.once('styledata', () => {
+          setTimeout(() => {
+            initMapLayers();
+            if (currentFeederData) {
+              renderFeederGeoJSON(currentFeederData, false);
+            }
+          }, 150);
+        });
+      }
+    });
+  });
+
+  // Handle Feeder selector dropdown
+  const selectFeeder = document.getElementById('select-map-feeder');
+  selectFeeder?.addEventListener('change', (e) => {
+    const id = e.target.value;
+    if (id) loadFeederOnMap(id);
+  });
+
+  // Handle Custom Feeder input & button
+  const inputCustom = document.getElementById('input-custom-feeder');
+  const btnLoadCustom = document.getElementById('btn-load-custom-feeder');
+  btnLoadCustom?.addEventListener('click', () => {
+    const val = inputCustom?.value.trim();
+    if (val) loadFeederOnMap(val);
+  });
+  inputCustom?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const val = inputCustom.value.trim();
+      if (val) loadFeederOnMap(val);
+    }
+  });
+
+  // Handle Layer Visibility Toggles
+  document.getElementById('toggle-layer-feeder')?.addEventListener('change', (e) => {
+    const vis = e.target.checked ? 'visible' : 'none';
+    ['feeder-lines-glow', 'feeder-lines', 'feeder-lines-hitbox'].forEach(lyr => {
+      if (gridMap.getLayer(lyr)) gridMap.setLayoutProperty(lyr, 'visibility', vis);
+    });
+  });
+
+  document.getElementById('toggle-layer-substations')?.addEventListener('change', (e) => {
+    const vis = e.target.checked ? 'visible' : 'none';
+    if (gridMap.getLayer('feeder-substation-point')) gridMap.setLayoutProperty('feeder-substation-point', 'visibility', vis);
+    if (gridMap.getLayer('feeder-substation-halo')) gridMap.setLayoutProperty('feeder-substation-halo', 'visibility', vis);
+    if (gridMap.getLayer('all-substations-point')) gridMap.setLayoutProperty('all-substations-point', 'visibility', vis);
+  });
+
+  document.getElementById('toggle-layer-fire')?.addEventListener('change', (e) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      loadFireDistrictsOnMap();
+    } else {
+      if (gridMap.getLayer('fire-districts-fill')) gridMap.setLayoutProperty('fire-districts-fill', 'visibility', 'none');
+      if (gridMap.getLayer('fire-districts-outline')) gridMap.setLayoutProperty('fire-districts-outline', 'visibility', 'none');
+    }
+  });
+
+  // Fit to Feeder Button
+  document.getElementById('btn-fit-feeder')?.addEventListener('click', () => {
+    if (currentFeederData?.bbox) {
+      gridMap.fitBounds(currentFeederData.bbox, {
+        padding: { top: 70, bottom: 70, left: 390, right: 70 },
+        maxZoom: 15,
+        duration: 1200
+      });
+    }
+  });
+
+  // Load All Substations Button
+  document.getElementById('btn-load-all-subs')?.addEventListener('click', loadAllSubstationsOnMap);
+
+  // Ask Assistant About Selected Feature Button
+  const btnAskAbout = document.getElementById('btn-ask-about-feature');
+  btnAskAbout?.addEventListener('click', () => {
+    if (!selectedFeatureProps) return;
+    const section = selectedFeatureProps.CSV_LineSection || 'this section';
+    const feeder = selectedFeatureProps.FeederName || activeFeederId;
+    const prompt = `What is the ICA hosting capacity and interconnection feasibility for line section ${section} on feeder ${feeder}?`;
+    
+    // Switch to Chat tab
+    document.getElementById('tab-chat')?.click();
+    elements.chatInput.value = prompt;
+    elements.chatInput.focus();
+  });
+}
+
+function initMapLayers() {
+  if (!gridMap) return;
+
+  // 1. Feeder Lines GeoJSON Source
+  if (!gridMap.getSource('feeder-lines-source')) {
+    gridMap.addSource('feeder-lines-source', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
+    });
+  }
+
+  // 2. Neon Glow underlay line
+  if (!gridMap.getLayer('feeder-lines-glow')) {
+    gridMap.addLayer({
+      id: 'feeder-lines-glow',
+      type: 'line',
+      source: 'feeder-lines-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: {
+        'line-color': [
+          'case',
+          ['in', 'likely', ['downcase', ['to-string', ['get', 'ScreenL']]]],
+          '#10b981',
+          '#ef4444'
+        ],
+        'line-width': 7,
+        'line-opacity': 0.35,
+        'line-blur': 3
+      }
+    });
+  }
+
+  // 3. Crisp Foreground Line
+  if (!gridMap.getLayer('feeder-lines')) {
+    gridMap.addLayer({
+      id: 'feeder-lines',
+      type: 'line',
+      source: 'feeder-lines-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: {
+        'line-color': [
+          'case',
+          ['in', 'likely', ['downcase', ['to-string', ['get', 'ScreenL']]]],
+          '#34d399', // bright emerald
+          '#f87171'  // bright coral red
+        ],
+        'line-width': 3.5,
+        'line-opacity': 0.95
+      }
+    });
+  }
+
+  // 4. Generous Invisible Hitbox for effortless clicking
+  if (!gridMap.getLayer('feeder-lines-hitbox')) {
+    gridMap.addLayer({
+      id: 'feeder-lines-hitbox',
+      type: 'line',
+      source: 'feeder-lines-source',
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: {
+        'line-width': 22,
+        'line-opacity': 0
+      }
+    });
+  }
+
+  // 5. Feeder Parent Substation Source & Layers
+  if (!gridMap.getSource('feeder-substation-source')) {
+    gridMap.addSource('feeder-substation-source', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
+    });
+  }
+
+  if (!gridMap.getLayer('feeder-substation-halo')) {
+    gridMap.addLayer({
+      id: 'feeder-substation-halo',
+      type: 'circle',
+      source: 'feeder-substation-source',
+      paint: {
+        'circle-radius': 20,
+        'circle-color': '#06b6d4',
+        'circle-opacity': 0.3,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#38bdf8'
+      }
+    });
+  }
+
+  if (!gridMap.getLayer('feeder-substation-point')) {
+    gridMap.addLayer({
+      id: 'feeder-substation-point',
+      type: 'circle',
+      source: 'feeder-substation-source',
+      paint: {
+        'circle-radius': 9,
+        'circle-color': '#0284c7',
+        'circle-stroke-width': 2.5,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+  }
+
+  // Interactive Cursor & Tooltips for Feeder Lines & Hitbox
+  const popup = new maplibregl.Popup({
+    closeButton: true,
+    closeOnClick: false,
+    offset: 12
+  });
+
+  const handleLineHover = () => { gridMap.getCanvas().style.cursor = 'pointer'; };
+  const handleLineLeave = () => { gridMap.getCanvas().style.cursor = ''; };
+
+  const handleLineClick = (e) => {
+    if (!e.features || !e.features.length) return;
+    const feat = e.features[0];
+    const p = feat.properties;
+    selectedFeatureProps = p;
+
+    const isPass = (p.ScreenL || '').toLowerCase().includes('likely to pass') && !(p.ScreenL || '').toLowerCase().includes('unlikely');
+    const badgeHtml = isPass
+      ? '<span style="color: #34d399; font-weight: 700;">🟢 Likely to pass</span>'
+      : '<span style="color: #f87171; font-weight: 700;">🔴 Unlikely to pass</span>';
+
+    popup
+      .setLngLat(e.lngLat)
+      .setHTML(`
+        <div style="font-size: 13px; line-height: 1.5;">
+          <div style="font-weight: 700; color: #38bdf8; margin-bottom: 4px;">Line Section: ${p.CSV_LineSection || 'N/A'}</div>
+          <div><strong>Feeder:</strong> ${p.FeederName || p.FeederId || 'N/A'}</div>
+          <div><strong>Solar PV Capacity:</strong> ${p.GenericPVCapacity_kW ? Number(p.GenericPVCapacity_kW).toLocaleString() + ' kW' : 'N/A'}</div>
+          <div><strong>Gen Capacity:</strong> ${p.GenCapacity_kW ? Number(p.GenCapacity_kW).toLocaleString() + ' kW' : 'N/A'}</div>
+          <div><strong>Load Headroom:</strong> ${p.LoadCapacity_kW ? Number(p.LoadCapacity_kW).toLocaleString() + ' kW' : 'N/A'}</div>
+          <div><strong>Screen L Status:</strong> ${badgeHtml}</div>
+          <div><strong>Limiting Criteria:</strong> ${p.limiting_criteria || 'None'}</div>
+          <div><strong>Voltage:</strong> ${p.voltage_kv || '12'} kV</div>
+        </div>
+      `)
+      .addTo(gridMap);
+
+    updateInspectorCard('Line Section', p, isPass);
+  };
+
+  ['feeder-lines', 'feeder-lines-hitbox'].forEach(lyr => {
+    gridMap.on('mouseenter', lyr, handleLineHover);
+    gridMap.on('mouseleave', lyr, handleLineLeave);
+    gridMap.on('click', lyr, handleLineClick);
+  });
+
+  // Interactive Substation Click
+  gridMap.on('click', 'feeder-substation-point', (e) => {
+    if (!e.features || !e.features.length) return;
+    const p = e.features[0].properties;
+    selectedFeatureProps = p;
+
+    popup
+      .setLngLat(e.lngLat)
+      .setHTML(`
+        <div style="font-size: 13px; line-height: 1.5;">
+          <div style="font-weight: 700; color: #c084fc; font-size: 14px; margin-bottom: 4px;">🏢 Substation: ${p.SubstationName || 'N/A'}</div>
+          <div><strong>Substation ID:</strong> ${p.SubstationID || 'N/A'}</div>
+          <div><strong>Nominal Voltage:</strong> ${p.Voltage_kV || 'N/A'} kV</div>
+          <div><strong>Existing DG:</strong> ${p.Existing_DG ? Number(p.Existing_DG).toLocaleString() + ' kW' : '0 kW'}</div>
+          <div><strong>Queued DG:</strong> ${p.Queued_DG ? Number(p.Queued_DG).toLocaleString() + ' kW' : '0 kW'}</div>
+          <div><strong>Banks:</strong> ${p.NUMBANKS || 'N/A'}</div>
+          <div><strong>Division:</strong> ${p.Division || 'N/A'}</div>
+        </div>
+      `)
+      .addTo(gridMap);
+
+    updateInspectorCard('Substation', p, true);
+  });
+}
+
+function updateInspectorCard(type, props, isPass) {
+  const tag = document.getElementById('inspector-tag');
+  const badge = document.getElementById('inspector-status-badge');
+  const details = document.getElementById('inspector-details');
+  const btnAsk = document.getElementById('btn-ask-about-feature');
+
+  if (tag) tag.textContent = type;
+  if (badge) {
+    badge.textContent = isPass ? 'Likely to pass' : 'Review Required';
+    badge.className = 'feature-status-badge ' + (isPass ? 'pass' : 'unlikely');
+  }
+
+  if (details) {
+    if (type === 'Line Section') {
+      details.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div><strong style="color: var(--text-primary);">Section ID:</strong> ${props.CSV_LineSection || 'N/A'}</div>
+          <div><strong style="color: var(--text-primary);">Solar PV Cap:</strong> <span style="color: var(--cyan-glow); font-family: var(--font-mono);">${props.GenericPVCapacity_kW ? Number(props.GenericPVCapacity_kW).toLocaleString() + ' kW' : '0 kW'}</span></div>
+          <div><strong style="color: var(--text-primary);">Generation Cap:</strong> <span style="color: #34d399; font-family: var(--font-mono);">${props.GenCapacity_kW ? Number(props.GenCapacity_kW).toLocaleString() + ' kW' : '0 kW'}</span></div>
+          <div><strong style="color: var(--text-primary);">Load Capacity:</strong> ${props.LoadCapacity_kW ? Number(props.LoadCapacity_kW).toLocaleString() + ' kW' : '0 kW'}</div>
+          <div><strong style="color: var(--text-primary);">Limiting Criteria:</strong> ${props.limiting_criteria || 'None'}</div>
+          <div><strong style="color: var(--text-primary);">Voltage:</strong> ${props.voltage_kv || '12'} kV (${props.phase_cnt || 3}-Phase)</div>
+        </div>
+      `;
+    } else {
+      details.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div><strong style="color: var(--text-primary);">Substation:</strong> ${props.SubstationName || 'N/A'}</div>
+          <div><strong style="color: var(--text-primary);">Voltage:</strong> ${props.Voltage_kV || 'N/A'} kV</div>
+          <div><strong style="color: var(--text-primary);">Installed DG:</strong> ${props.Existing_DG ? Number(props.Existing_DG).toLocaleString() + ' kW' : '0 kW'}</div>
+          <div><strong style="color: var(--text-primary);">Queued DG:</strong> ${props.Queued_DG ? Number(props.Queued_DG).toLocaleString() + ' kW' : '0 kW'}</div>
+          <div><strong style="color: var(--text-primary);">Division:</strong> ${props.Division || 'N/A'}</div>
+        </div>
+      `;
+    }
+  }
+
+  if (btnAsk) btnAsk.style.display = 'block';
+}
+
+async function loadFeederOnMap(feederId) {
+  if (!feederId) return;
+  activeFeederId = feederId;
+
+  const hudFeeder = document.getElementById('hud-feeder-name');
+  const hudSub = document.getElementById('hud-substation-name');
+  const hudSections = document.getElementById('hud-sections-count');
+  const hudScreen = document.getElementById('hud-screen-l');
+  const hudGen = document.getElementById('hud-max-gen');
+
+  if (hudFeeder) hudFeeder.textContent = 'Loading...';
+
+  try {
+    const res = await fetch(`/api/map/feeder/${encodeURIComponent(feederId)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    currentFeederData = data;
+
+    renderFeederGeoJSON(data, true);
+
+    // Update HUD Metrics
+    const fMeta = data.feeder_meta || {};
+    const subName = fMeta.Substation || (data.substation_feature?.properties?.SubstationName) || 'Substation';
+    const volt = fMeta.Nominal_Voltage ? `${fMeta.Nominal_Voltage} kV` : '12 kV';
+
+    if (hudFeeder) hudFeeder.textContent = fMeta.Feeder_Name || `Feeder ${feederId}`;
+    if (hudSub) hudSub.textContent = `${subName} (${volt})`;
+    if (hudSections) hudSections.textContent = data.summary?.total_sections || data.count || 0;
+    if (hudScreen) {
+      hudScreen.textContent = `${data.summary?.screen_l_pass || 0} Passed / ${data.summary?.screen_l_unlikely || 0} Unlikely`;
+    }
+    if (hudGen) {
+      hudGen.textContent = (data.summary?.max_gen_capacity_kw ? Number(data.summary.max_gen_capacity_kw).toLocaleString() : '0') + ' kW';
+    }
+
+    // Auto-populate inspector card with a representative line section
+    if (data.features && data.features.length > 0) {
+      const sample = data.features[0].properties;
+      const isPass = (sample.ScreenL || '').toLowerCase().includes('likely to pass') && !(sample.ScreenL || '').toLowerCase().includes('unlikely');
+      updateInspectorCard('Line Section (Sample)', sample, isPass);
+      selectedFeatureProps = sample;
+    }
+
+  } catch (err) {
+    console.error('Failed to load feeder GeoJSON:', err);
+    if (hudFeeder) hudFeeder.textContent = `Error loading ${feederId}`;
+  }
+}
+
+function renderFeederGeoJSON(data, animateCamera = true) {
+  if (!gridMap) return;
+
+  const linesSource = gridMap.getSource('feeder-lines-source');
+  if (linesSource) {
+    linesSource.setData({
+      type: 'FeatureCollection',
+      features: data.features || []
+    });
+  }
+
+  const subSource = gridMap.getSource('feeder-substation-source');
+  if (subSource) {
+    subSource.setData({
+      type: 'FeatureCollection',
+      features: data.substation_feature ? [data.substation_feature] : []
+    });
+  }
+
+  // Camera FlyTo Bounding Box
+  if (animateCamera && data.bbox && data.bbox[0] <= data.bbox[2]) {
+    gridMap.fitBounds(data.bbox, {
+      padding: { top: 70, bottom: 70, left: 390, right: 70 },
+      maxZoom: 15,
+      duration: 1600
+    });
+  }
+}
+
+async function loadAllSubstationsOnMap() {
+  if (!gridMap) return;
+  try {
+    const res = await fetch('/api/map/substations');
+    const data = await res.json();
+
+    if (!gridMap.getSource('all-substations-source')) {
+      gridMap.addSource('all-substations-source', {
+        type: 'geojson',
+        data: data
+      });
+
+      gridMap.addLayer({
+        id: 'all-substations-point',
+        type: 'circle',
+        source: 'all-substations-source',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#a855f7',
+          'circle-stroke-width': 1.5,
+          'circle-stroke-color': '#ffffff'
+        }
+      });
+
+      gridMap.on('click', 'all-substations-point', (e) => {
+        if (!e.features || !e.features.length) return;
+        const p = e.features[0].properties;
+        new maplibregl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(`
+            <div style="font-size: 13px;">
+              <strong style="color: #c084fc;">🏢 ${p.SubstationName}</strong>
+              <div>Voltage: ${p.Voltage_kV} kV</div>
+              <div>Installed DG: ${p.Existing_DG ? Number(p.Existing_DG).toLocaleString() : 0} kW</div>
+              <div>Queued DG: ${p.Queued_DG ? Number(p.Queued_DG).toLocaleString() : 0} kW</div>
+            </div>
+          `)
+          .addTo(gridMap);
+      });
+    } else {
+      gridMap.getSource('all-substations-source').setData(data);
+      gridMap.setLayoutProperty('all-substations-point', 'visibility', 'visible');
+    }
+  } catch (err) {
+    console.error('Failed to load all substations:', err);
+  }
+}
+
+async function loadFireDistrictsOnMap() {
+  if (!gridMap) return;
+  try {
+    const res = await fetch('/api/map/fire-districts');
+    const data = await res.json();
+
+    if (!gridMap.getSource('fire-districts-source')) {
+      gridMap.addSource('fire-districts-source', {
+        type: 'geojson',
+        data: data
+      });
+
+      gridMap.addLayer({
+        id: 'fire-districts-fill',
+        type: 'fill',
+        source: 'fire-districts-source',
+        paint: {
+          'fill-color': [
+            'case',
+            ['==', ['get', 'cpuc_tier'], 3],
+            '#ef4444', // Tier 3 extreme
+            '#f59e0b'  // Tier 2 elevated
+          ],
+          'fill-opacity': 0.2
+        }
+      });
+
+      gridMap.addLayer({
+        id: 'fire-districts-outline',
+        type: 'line',
+        source: 'fire-districts-source',
+        paint: {
+          'line-color': '#f59e0b',
+          'line-width': 1.5,
+          'line-dasharray': [2, 2]
+        }
+      });
+    } else {
+      gridMap.getSource('fire-districts-source').setData(data);
+      gridMap.setLayoutProperty('fire-districts-fill', 'visibility', 'visible');
+      gridMap.setLayoutProperty('fire-districts-outline', 'visibility', 'visible');
+    }
+  } catch (err) {
+    console.error('Failed to load fire districts:', err);
+  }
+}
+
+// Global hook to view any feeder on map from anywhere
+window.viewFeederOnMap = function(feederId) {
+  document.getElementById('tab-map')?.click();
+  const select = document.getElementById('select-map-feeder');
+  if (select) {
+    let exists = Array.from(select.options).some(o => o.value === String(feederId));
+    if (exists) {
+      select.value = String(feederId);
+    } else {
+      const input = document.getElementById('input-custom-feeder');
+      if (input) input.value = String(feederId);
+    }
+  }
+  loadFeederOnMap(feederId);
+};
+
 // Start
 window.addEventListener('DOMContentLoaded', init);
+

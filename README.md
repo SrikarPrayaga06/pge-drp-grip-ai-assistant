@@ -28,6 +28,17 @@ Compare substations by operating voltage (kV), bank capacity, installed distribu
 Live end-to-end regression suite validating all 6 core electric distribution domains directly against PG&E FeatureServer endpoints:
 ![Verification Bench Passing](docs/images/ui_verification_bench.png)
 
+### 4. Interactive OpenFreeMap Feeder & Substation Overlay
+Full-screen interactive spatial grid map powered by [OpenFreeMap](https://openfreemap.org/) open-source vector tiles and MapLibre GL JS:
+- **Feeder Line Sections (Layer 3)**: Overlaid with neon paths color-coded by Rule 21 Screen L feasibility (Green = Likely to Pass, Red = Unlikely to Pass / 0 kW headroom).
+- **Substations (Layer 0)**: Glowing pulse markers positioned at transmission-to-distribution step-down facilities.
+- **Interactive Inspector**: Click any feeder line segment or substation to view solar PV capacity (kW), load headroom (kW), and limiting criteria, with a 1-click button to query the AI assistant.
+- **Dynamic Vector Tile Styles**: Instant switching between Dark, Positron, Liberty, and Bright styles.
+- **In-Chat Navigation**: Click `🗺️ View Feeder on OpenFreeMap` on any chat response to immediately center and fly to that feeder.
+
+![OpenFreeMap Feeder Overlay](docs/images/ui_openfreemap_feeder.png)
+![OpenFreeMap Overview & Inspector](docs/images/ui_openfreemap_overview.png)
+
 ---
 
 ## ⚡ Core Architecture
@@ -149,6 +160,7 @@ cp .env.example .env
 ```
 Visit **`http://127.0.0.1:8000`** in your browser to access:
 - **💬 Chat Assistant**: Interactive grid planning assistant with session persistence.
+- **🗺️ Interactive Map**: OpenFreeMap vector tiles with feeder line section overlays, substation markers, and real-time ICA inspection.
 - **🧪 Verification Bench**: 1-Click live testing suite for all 6 core grid domains.
 - **📊 Layer Explorer**: Ad-hoc SQL querying across all 21 layers.
 

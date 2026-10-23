@@ -291,6 +291,229 @@ async def verify_one(check_id: str):
         raise HTTPException(status_code=404, detail=f"Check '{check_id}' not found.")
     return await run_single_check(match)
 
+# =====================================================================
+# OpenFreeMap / MapLibre GIS Endpoints
+# =====================================================================
+
+@app.get("/api/map/feeders-list")
+async def get_map_feeders_list():
+    """Return curated feeders with names, voltages, and parent substations for the map selector."""
+    client = arcgis_service
+    try:
+        data = await asyncio.to_thread(
+            client.query,
+            layer=2,
+            where="Existing_DG > 1000",
+            out_fields="FeederID,Feeder_Name,Substation,Nominal_Voltage,Existing_DG,Queued_DG,Total_DG,Division",
+            limit=40,
+            order_by="Existing_DG DESC",
+        )
+        feeders = []
+        for f in data.get("features", []):
+            attr = f.get("attributes", {})
+            feeders.append({
+                "feeder_id": str(attr.get("FeederID")),
+                "name": attr.get("Feeder_Name") or f"Feeder {attr.get('FeederID')}",
+                "substation": attr.get("Substation"),
+                "voltage": str(attr.get("Nominal_Voltage")),
+                "existing_dg_kw": attr.get("Existing_DG", 0),
+                "queued_dg_kw": attr.get("Queued_DG", 0),
+                "total_dg_kw": attr.get("Total_DG", 0),
+                "division": attr.get("Division"),
+            })
+        return {"feeders": feeders}
+    except Exception as e:
+        return {"feeders": [], "error": str(e)}
+
+
+@app.get("/api/map/feeder/{feeder_id}")
+async def get_feeder_geojson(feeder_id: str):
+    """Return GeoJSON FeatureCollection of feeder line sections (Layer 3) + parent substation (Layer 0)."""
+    clean_id = feeder_id.strip()
+    client = arcgis_service
+
+    # 1. Query LineDetail (Layer 3) with WGS84 geometry
+    line_data = await asyncio.to_thread(
+        client.query,
+        layer=3,
+        where=f"FeederId = '{clean_id}' OR FeederId LIKE '%{clean_id}%'",
+        out_fields="FeederId,FeederName,CSV_LineSection,LoadCapacity_kW,GenCapacity_kW,GenericPVCapacity_kW,ScreenL,limiting_criteria,limiting_month_hour,voltage_kv,phase_cnt",
+        limit=500,
+        return_geometry=True,
+        out_sr=4326,
+    )
+
+    features = []
+    min_lon, min_lat = 180.0, 90.0
+    max_lon, max_lat = -180.0, -90.0
+
+    for f in line_data.get("features", []):
+        geom = f.get("geometry", {})
+        paths = geom.get("paths", [])
+        if not paths:
+            continue
+
+        for path in paths:
+            for pt in path:
+                lon, lat = pt[0], pt[1]
+                if lon < min_lon: min_lon = lon
+                if lon > max_lon: max_lon = lon
+                if lat < min_lat: min_lat = lat
+                if lat > max_lat: max_lat = lat
+
+        features.append({
+            "type": "Feature",
+            "geometry": {
+                "type": "MultiLineString" if len(paths) > 1 else "LineString",
+                "coordinates": paths if len(paths) > 1 else paths[0],
+            },
+            "properties": f.get("attributes", {}),
+        })
+
+    # 2. Feeder metadata from FeederDetail (Layer 2)
+    feeder_meta = {}
+    try:
+        f_res = await asyncio.to_thread(
+            client.query,
+            layer=2,
+            where=f"FeederID = '{clean_id}' OR FeederID LIKE '%{clean_id}%'",
+            out_fields="FeederID,Feeder_Name,Substation,Nominal_Voltage,ResCust,ComCust,IndCust,Total_DG,Existing_DG,Queued_DG,Division",
+            limit=1,
+        )
+        if f_res.get("features"):
+            feeder_meta = f_res["features"][0].get("attributes", {})
+    except Exception:
+        pass
+
+    # 3. Substation feature from EDSubstations (Layer 0)
+    substation_feature = None
+    sub_name = feeder_meta.get("Substation")
+    if sub_name:
+        try:
+            sub_res = await asyncio.to_thread(
+                client.query,
+                layer=0,
+                where=f"UPPER(SubstationName) LIKE UPPER('%{sub_name}%')",
+                out_fields="SubstationName,SubstationID,Voltage_kV,Existing_DG,Queued_DG,NUMBANKS,Division",
+                limit=1,
+                return_geometry=True,
+                out_sr=4326,
+            )
+            if sub_res.get("features"):
+                sf = sub_res["features"][0]
+                pt = sf.get("geometry", {})
+                if "x" in pt and "y" in pt:
+                    substation_feature = {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [pt["x"], pt["y"]],
+                        },
+                        "properties": sf.get("attributes", {}),
+                    }
+                    if pt["x"] < min_lon: min_lon = pt["x"]
+                    if pt["x"] > max_lon: max_lon = pt["x"]
+                    if pt["y"] < min_lat: min_lat = pt["y"]
+                    if pt["y"] > max_lat: max_lat = pt["y"]
+        except Exception:
+            pass
+
+    bbox = [min_lon, min_lat, max_lon, max_lat] if min_lon <= max_lon else None
+
+    # Compute summary stats (distinguish 'Unlikely to pass' from 'Likely to pass')
+    screen_l_unlikely_count = sum(1 for f in features if "unlikely" in str(f["properties"].get("ScreenL", "")).lower())
+    screen_l_pass_count = sum(1 for f in features if "likely" in str(f["properties"].get("ScreenL", "")).lower() and "unlikely" not in str(f["properties"].get("ScreenL", "")).lower())
+    max_gen_kw = max((f["properties"].get("GenCapacity_kW") or 0 for f in features), default=0)
+    max_load_kw = max((f["properties"].get("LoadCapacity_kW") or 0 for f in features), default=0)
+
+    return {
+        "type": "FeatureCollection",
+        "feeder_id": clean_id,
+        "feeder_meta": feeder_meta,
+        "substation_feature": substation_feature,
+        "bbox": bbox,
+        "count": len(features),
+        "summary": {
+            "total_sections": len(features),
+            "screen_l_pass": screen_l_pass_count,
+            "screen_l_unlikely": screen_l_unlikely_count,
+            "max_gen_capacity_kw": max_gen_kw,
+            "max_load_capacity_kw": max_load_kw,
+        },
+        "features": features,
+    }
+
+
+@app.get("/api/map/substations")
+async def get_map_substations():
+    """Return GeoJSON FeatureCollection of major substations from Layer 0 (EDSubstations)."""
+    client = arcgis_service
+    try:
+        data = await asyncio.to_thread(
+            client.query,
+            layer=0,
+            where="1=1",
+            out_fields="OBJECTID,SubstationName,SubstationID,Division,Voltage_kV,NUMBANKS,Existing_DG,Queued_DG,Total_DG",
+            limit=120,
+            return_geometry=True,
+            out_sr=4326,
+            order_by="Existing_DG DESC",
+        )
+        features = []
+        for f in data.get("features", []):
+            pt = f.get("geometry", {})
+            if "x" in pt and "y" in pt:
+                features.append({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [pt["x"], pt["y"]],
+                    },
+                    "properties": f.get("attributes", {}),
+                })
+        return {
+            "type": "FeatureCollection",
+            "count": len(features),
+            "features": features,
+        }
+    except Exception as e:
+        return {"type": "FeatureCollection", "count": 0, "features": [], "error": str(e)}
+
+
+@app.get("/api/map/fire-districts")
+async def get_map_fire_districts():
+    """Return GeoJSON FeatureCollection of CPUC High Fire Threat Districts (Layer 18)."""
+    client = arcgis_service
+    try:
+        data = await asyncio.to_thread(
+            client.query,
+            layer=18,
+            where="cpuc_tier IN (2, 3)",
+            out_fields="OBJECTID,hftd,cpuc_tier,cpuc_fire_map,data_source",
+            limit=25,
+            return_geometry=True,
+            out_sr=4326,
+        )
+        features = []
+        for f in data.get("features", []):
+            rings = f.get("geometry", {}).get("rings", [])
+            if rings:
+                features.append({
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Polygon" if len(rings) == 1 else "MultiPolygon",
+                        "coordinates": rings if len(rings) == 1 else [rings],
+                    },
+                    "properties": f.get("attributes", {}),
+                })
+        return {
+            "type": "FeatureCollection",
+            "count": len(features),
+            "features": features,
+        }
+    except Exception as e:
+        return {"type": "FeatureCollection", "count": 0, "features": [], "error": str(e)}
+
 
 # Mount static directory for frontend
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
