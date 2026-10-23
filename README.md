@@ -185,6 +185,8 @@ Add to your `mcp_config.json`:
 }
 ```
 
+> 📖 **Deep Dive**: For full tool input/output schemas, Zod validation specs, coordinate reprojection mechanics, and sample payloads for all 10 tools, read the [Detailed MCP Tools Walkthrough](docs/mcp_tools_walkthrough.md).
+
 ---
 
 ## 📄 License
