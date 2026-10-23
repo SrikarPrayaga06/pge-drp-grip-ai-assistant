@@ -122,7 +122,7 @@ When quota exhaustion is detected, the engine instantly rotates to the next avai
 
 ### 1. Clone & Set Up Environment
 ```bash
-git clone https://github.com/srikar-prayaga_hpeprod/pge-drp-grip-ai-assistant.git
+git clone https://github.com/SrikarPrayaga06/pge-drp-grip-ai-assistant.git
 cd pge-drp-grip-ai-assistant
 
 # Create Python virtual environment
