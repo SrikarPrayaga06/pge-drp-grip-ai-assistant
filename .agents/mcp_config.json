@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "arcgis-drp-grip": {
+      "command": "node",
+      "args": [
+        "/Users/sprayaga/Desktop/chatbot-arcgis/src/index.js"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

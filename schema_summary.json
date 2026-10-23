@@ -1,0 +1,5332 @@
+[
+  {
+    "id": 0,
+    "name": "EDSubstations",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 776,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 13,
+    "fields": [
+      {
+        "name": "Voltage_kV",
+        "type": "esriFieldTypeString",
+        "alias": "Voltage_kV"
+      },
+      {
+        "name": "NUMBANKS",
+        "type": "esriFieldTypeInteger",
+        "alias": "NUMBANKS"
+      },
+      {
+        "name": "REDACTED",
+        "type": "esriFieldTypeString",
+        "alias": "REDACTED"
+      },
+      {
+        "name": "UNGROUNDEDBANKS",
+        "type": "esriFieldTypeString",
+        "alias": "UNGROUNDEDBANKS"
+      },
+      {
+        "name": "Existing_DG",
+        "type": "esriFieldTypeInteger",
+        "alias": "Existing_DG"
+      },
+      {
+        "name": "Queued_DG",
+        "type": "esriFieldTypeInteger",
+        "alias": "Queued_DG"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "SubstationName",
+        "type": "esriFieldTypeString",
+        "alias": "SubstationName"
+      },
+      {
+        "name": "SubstationID",
+        "type": "esriFieldTypeString",
+        "alias": "SubstationID"
+      },
+      {
+        "name": "Division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "Total_DG",
+        "type": "esriFieldTypeInteger",
+        "alias": "Total_DG"
+      },
+      {
+        "name": "Publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last_Update_On_Map"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "Voltage_kV": "12",
+      "NUMBANKS": 2,
+      "REDACTED": "NO",
+      "UNGROUNDEDBANKS": null,
+      "Existing_DG": 16482,
+      "Queued_DG": 19107,
+      "OBJECTID": 1,
+      "SubstationName": "DAIRYLAND",
+      "SubstationID": "25242",
+      "Division": "Yosemite",
+      "Total_DG": 35589,
+      "Publish": 1,
+      "Last_Update_On_Map": 1790866671000
+    }
+  },
+  {
+    "id": 1,
+    "name": "ETSubstations",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 0,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 6,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "substation_name",
+        "type": "esriFieldTypeString",
+        "alias": "substation_name"
+      },
+      {
+        "name": "substation_id",
+        "type": "esriFieldTypeString",
+        "alias": "substation_id"
+      },
+      {
+        "name": "voltage_kv",
+        "type": "esriFieldTypeString",
+        "alias": "voltage_kv"
+      },
+      {
+        "name": "globalid",
+        "type": "esriFieldTypeString",
+        "alias": "globalid"
+      },
+      {
+        "name": "Shape1",
+        "type": "esriFieldTypeString",
+        "alias": "Shape"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": null
+  },
+  {
+    "id": 2,
+    "name": "FeederDetail ",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 3259,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 20,
+    "fields": [
+      {
+        "name": "Trigger_Date",
+        "type": "esriFieldTypeDate",
+        "alias": "Trigger Date"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "Substation",
+        "type": "esriFieldTypeString",
+        "alias": "Substation Name"
+      },
+      {
+        "name": "FeederID",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder ID"
+      },
+      {
+        "name": "Feeder_Name",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder Name"
+      },
+      {
+        "name": "Nominal_Voltage",
+        "type": "esriFieldTypeString",
+        "alias": "Nominal Voltage (kV)"
+      },
+      {
+        "name": "Load_Profile_Redaction",
+        "type": "esriFieldTypeString",
+        "alias": "Redacted Data"
+      },
+      {
+        "name": "ResCust",
+        "type": "esriFieldTypeInteger",
+        "alias": "Residential Customer Count"
+      },
+      {
+        "name": "ComCust",
+        "type": "esriFieldTypeInteger",
+        "alias": "Commercial Customer Count"
+      },
+      {
+        "name": "IndCust",
+        "type": "esriFieldTypeInteger",
+        "alias": "Industrial Customer Count"
+      },
+      {
+        "name": "AgrCust",
+        "type": "esriFieldTypeInteger",
+        "alias": "Agricultural Customer Count"
+      },
+      {
+        "name": "OthCust",
+        "type": "esriFieldTypeInteger",
+        "alias": "Other Customers"
+      },
+      {
+        "name": "Existing_DG",
+        "type": "esriFieldTypeInteger",
+        "alias": "Existing Distributed Generation (kW)"
+      },
+      {
+        "name": "Queued_DG",
+        "type": "esriFieldTypeInteger",
+        "alias": "Queued Distributed Generation (kW)"
+      },
+      {
+        "name": "Total_DG",
+        "type": "esriFieldTypeInteger",
+        "alias": "Total Distributed Generation (kW)"
+      },
+      {
+        "name": "Division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "VOLTNUM",
+        "type": "esriFieldTypeInteger",
+        "alias": "VOLTNUM"
+      },
+      {
+        "name": "Publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last_Update_On_Map"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "Trigger_Date": null,
+      "OBJECTID": 1,
+      "Substation": null,
+      "FeederID": "022390402",
+      "Feeder_Name": "0402",
+      "Nominal_Voltage": null,
+      "Load_Profile_Redaction": "NO",
+      "ResCust": 1775,
+      "ComCust": 69,
+      "IndCust": 14,
+      "AgrCust": 0,
+      "OthCust": 5,
+      "Existing_DG": 220,
+      "Queued_DG": 20,
+      "Total_DG": 240,
+      "Division": null,
+      "VOLTNUM": null,
+      "Publish": 1,
+      "Last_Update_On_Map": 1790788047000,
+      "Shape__Length": 9052.816302622012
+    }
+  },
+  {
+    "id": 3,
+    "name": "LineDetail",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 2086800,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 29,
+    "fields": [
+      {
+        "name": "FeederId",
+        "type": "esriFieldTypeString",
+        "alias": "FeederId"
+      },
+      {
+        "name": "FeederName",
+        "type": "esriFieldTypeString",
+        "alias": "FeederName"
+      },
+      {
+        "name": "CSV_LineSection",
+        "type": "esriFieldTypeString",
+        "alias": "CSV_LineSection"
+      },
+      {
+        "name": "LoadCapacity_kW",
+        "type": "esriFieldTypeInteger",
+        "alias": "LoadCapacity_kW"
+      },
+      {
+        "name": "voltage_kv",
+        "type": "esriFieldTypeDouble",
+        "alias": "voltage_kv"
+      },
+      {
+        "name": "phase_cnt",
+        "type": "esriFieldTypeInteger",
+        "alias": "phase_cnt"
+      },
+      {
+        "name": "limiting_month_hour",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_month_hour"
+      },
+      {
+        "name": "limiting_criteria",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_criteria"
+      },
+      {
+        "name": "ICA_Analysis_Date",
+        "type": "esriFieldTypeString",
+        "alias": "ICA_Analysis_Date"
+      },
+      {
+        "name": "GenCapacity_kW",
+        "type": "esriFieldTypeInteger",
+        "alias": "GenCapacity_kW"
+      },
+      {
+        "name": "GenericPVCapacity_kW",
+        "type": "esriFieldTypeInteger",
+        "alias": "GenericPVCapacity_kW"
+      },
+      {
+        "name": "GenCapacity_no_OpFlex_kW",
+        "type": "esriFieldTypeInteger",
+        "alias": "GenCapacity_no_OpFlex_kW"
+      },
+      {
+        "name": "GenericCapacity_no_OpFlex_kW",
+        "type": "esriFieldTypeInteger",
+        "alias": "GenericCapacity_no_OpFlex_kW"
+      },
+      {
+        "name": "limiting_criteria_of",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_criteria_of"
+      },
+      {
+        "name": "limiting_month_hour_of",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_month_hour_of"
+      },
+      {
+        "name": "limiting_criteria_noof",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_criteria_noof"
+      },
+      {
+        "name": "limiting_month_hour_noof",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_month_hour_noof"
+      },
+      {
+        "name": "limiting_criteria_pvof",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_criteria_pvof"
+      },
+      {
+        "name": "limiting_month_hour_pvof",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_month_hour_pvof"
+      },
+      {
+        "name": "limiting_criteria_pvnoof",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_criteria_pvnoof"
+      },
+      {
+        "name": "limiting_month_hour_pvnoof",
+        "type": "esriFieldTypeString",
+        "alias": "limiting_month_hour_pvnoof"
+      },
+      {
+        "name": "ScreenL",
+        "type": "esriFieldTypeString",
+        "alias": "ScreenL"
+      },
+      {
+        "name": "Publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "globalid",
+        "type": "esriFieldTypeString",
+        "alias": "globalid"
+      },
+      {
+        "name": "lica_analysis_date",
+        "type": "esriFieldTypeString",
+        "alias": "lica_analysis_date"
+      },
+      {
+        "name": "Division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last_Update_On_Map"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "FeederId": "182492103",
+      "FeederName": "HOLLISTER 2103",
+      "CSV_LineSection": "3986824",
+      "LoadCapacity_kW": 1030,
+      "voltage_kv": 21,
+      "phase_cnt": 3,
+      "limiting_month_hour": null,
+      "limiting_criteria": null,
+      "ICA_Analysis_Date": "Jan 2026",
+      "GenCapacity_kW": 0,
+      "GenericPVCapacity_kW": 0,
+      "GenCapacity_no_OpFlex_kW": 0,
+      "GenericCapacity_no_OpFlex_kW": 0,
+      "limiting_criteria_of": "Safety,Voltage",
+      "limiting_month_hour_of": "1_12, 1_13, 1_14, 2_11, 2_12, 2_13, 2_14, 2_15, 2_16, 3_0, 3_1, 3_10, 3_11, 3_12, 3_13, 3_14, 3_15, 3_16, 3_17, 3_18, 3_19, 3_2, 3_20, 3_21, 3_22, 3_23, 3_3, 3_4, 3_5, 3_6, 3_7, 3_8, 3_9, 4_10, 4_11, 4_12, 4_13, 4_14, 4_15, 4_16, 4_17, 5_10, 5_11, 5_12, 5_13, 5_14, 5_15, 5_16, 5_17, 6_10, 6_11, 6_12, 6_13, 6_14, 6_15, 6_16, 7_10, 7_11, 7_12, 7_13, 7_14, 7_15, 8_11, 8_12, 8_13, 10_11, 10_12, 10_13, 10_14, 11_10, 11_11, 11_12, 11_13, 11_14, 12_11, 12_12, 12_13, 12_14",
+      "limiting_criteria_noof": "Safety,Voltage",
+      "limiting_month_hour_noof": "1_12, 1_13, 1_14, 2_11, 2_12, 2_13, 2_14, 2_15, 2_16, 3_0, 3_1, 3_10, 3_11, 3_12, 3_13, 3_14, 3_15, 3_16, 3_17, 3_18, 3_19, 3_2, 3_20, 3_21, 3_22, 3_23, 3_3, 3_4, 3_5, 3_6, 3_7, 3_8, 3_9, 4_10, 4_11, 4_12, 4_13, 4_14, 4_15, 4_16, 4_17, 5_10, 5_11, 5_12, 5_13, 5_14, 5_15, 5_16, 5_17, 6_10, 6_11, 6_12, 6_13, 6_14, 6_15, 6_16, 7_10, 7_11, 7_12, 7_13, 7_14, 7_15, 8_11, 8_12, 8_13, 10_11, 10_12, 10_13, 10_14, 11_10, 11_11, 11_12, 11_13, 11_14, 12_11, 12_12, 12_13, 12_14",
+      "limiting_criteria_pvof": "Safety,Voltage",
+      "limiting_month_hour_pvof": "1_12, 1_13, 1_14, 2_11, 2_12, 2_13, 2_14, 2_15, 2_16, 3_0, 3_1, 3_10, 3_11, 3_12, 3_13, 3_14, 3_15, 3_16, 3_17, 3_18, 3_19, 3_2, 3_20, 3_21, 3_22, 3_23, 3_3, 3_4, 3_5, 3_6, 3_7, 3_8, 3_9, 4_10, 4_11, 4_12, 4_13, 4_14, 4_15, 4_16, 4_17, 5_10, 5_11, 5_12, 5_13, 5_14, 5_15, 5_16, 5_17, 6_10, 6_11, 6_12, 6_13, 6_14, 6_15, 6_16, 7_10, 7_11, 7_12, 7_13, 7_14, 7_15, 8_11, 8_12, 8_13, 10_11, 10_12, 10_13, 10_14, 11_10, 11_11, 11_12, 11_13, 11_14, 12_11, 12_12, 12_13, 12_14",
+      "limiting_criteria_pvnoof": "Safety,Voltage",
+      "limiting_month_hour_pvnoof": "1_12, 1_13, 1_14, 2_11, 2_12, 2_13, 2_14, 2_15, 2_16, 3_0, 3_1, 3_10, 3_11, 3_12, 3_13, 3_14, 3_15, 3_16, 3_17, 3_18, 3_19, 3_2, 3_20, 3_21, 3_22, 3_23, 3_3, 3_4, 3_5, 3_6, 3_7, 3_8, 3_9, 4_10, 4_11, 4_12, 4_13, 4_14, 4_15, 4_16, 4_17, 5_10, 5_11, 5_12, 5_13, 5_14, 5_15, 5_16, 5_17, 6_10, 6_11, 6_12, 6_13, 6_14, 6_15, 6_16, 7_10, 7_11, 7_12, 7_13, 7_14, 7_15, 8_11, 8_12, 8_13, 10_11, 10_12, 10_13, 10_14, 11_10, 11_11, 11_12, 11_13, 11_14, 12_11, 12_12, 12_13, 12_14",
+      "ScreenL": "Likely to pass",
+      "Publish": 1,
+      "OBJECTID": 1,
+      "globalid": "{F8FD975F-F224-4757-8DC4-FA2D06CFF87D}",
+      "lica_analysis_date": "Apr 2025",
+      "Division": null,
+      "Last_Update_On_Map": 1785601447000,
+      "Shape__Length": 23.368590447259596
+    }
+  },
+  {
+    "id": 4,
+    "name": "ICA Not Available",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 734746,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 9,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "feeder_id",
+        "type": "esriFieldTypeString",
+        "alias": "feeder_id"
+      },
+      {
+        "name": "numberofphases",
+        "type": "esriFieldTypeInteger",
+        "alias": "numberofphases"
+      },
+      {
+        "name": "globalid",
+        "type": "esriFieldTypeGlobalID",
+        "alias": "globalid"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "division"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeDate",
+        "alias": "last_update_on_map"
+      },
+      {
+        "name": "show",
+        "type": "esriFieldTypeInteger",
+        "alias": "show"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "feeder_id": "082921118",
+      "numberofphases": 3,
+      "globalid": "c530d13f-7f78-4a26-b609-d5190c7d79a1",
+      "division": "De Anza",
+      "publish": 1,
+      "last_update_on_map": 1748822400000,
+      "show": 1,
+      "Shape__Length": 4.898798588176161
+    }
+  },
+  {
+    "id": 5,
+    "name": "TransmissionLines",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 2439,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 7,
+    "fields": [
+      {
+        "name": "SAP_FUNC_LOC_NO",
+        "type": "esriFieldTypeString",
+        "alias": "SAP_FUNC_LOC_NO"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "TLINE_NAME",
+        "type": "esriFieldTypeString",
+        "alias": "TLINE_NAME"
+      },
+      {
+        "name": "RATEDKV",
+        "type": "esriFieldTypeInteger",
+        "alias": "RATEDKV"
+      },
+      {
+        "name": "Publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last_Update_On_Map"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "SAP_FUNC_LOC_NO": "ETL.4021",
+      "OBJECTID": 1,
+      "TLINE_NAME": "ELLIS TAP",
+      "RATEDKV": 115,
+      "Publish": 1,
+      "Last_Update_On_Map": 1748849175000,
+      "Shape__Length": 335.0829728410903
+    }
+  },
+  {
+    "id": 6,
+    "name": "Networked Secondary Buffer",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolygon",
+    "count": 2,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 6,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "Label",
+        "type": "esriFieldTypeString",
+        "alias": " Area"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last Update On Map"
+      },
+      {
+        "name": "Publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "Shape__Area",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Area"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "Label": "NetworkedSecondaryBuffer",
+      "Last_Update_On_Map": 1748854045000,
+      "Publish": 1,
+      "Shape__Area": 12448676.07782495,
+      "Shape__Length": 18304.225948814546
+    }
+  },
+  {
+    "id": 8,
+    "name": "SubstationProjects",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 157,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 11,
+    "fields": [
+      {
+        "name": "PROJECT_NAME",
+        "type": "esriFieldTypeString",
+        "alias": "PROJECT NAME"
+      },
+      {
+        "name": "RATING",
+        "type": "esriFieldTypeString",
+        "alias": "RATING"
+      },
+      {
+        "name": "PGE",
+        "type": "esriFieldTypeString",
+        "alias": "PGE"
+      },
+      {
+        "name": "CAISO",
+        "type": "esriFieldTypeString",
+        "alias": "CAISO"
+      },
+      {
+        "name": "CPUC",
+        "type": "esriFieldTypeString",
+        "alias": "CPUC"
+      },
+      {
+        "name": "Approval",
+        "type": "esriFieldTypeString",
+        "alias": "Approval"
+      },
+      {
+        "name": "CONSTRUCTION_STATUS",
+        "type": "esriFieldTypeString",
+        "alias": "CONSTRUCTION STATUS"
+      },
+      {
+        "name": "Projected_In_Service_Date",
+        "type": "esriFieldTypeString",
+        "alias": "Expected In Service Date"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last Update On Map"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "PROJECT_NAME": "Gates: 500 kV Dynamic Voltage Support",
+      "RATING": "500",
+      "PGE": "2022",
+      "CAISO": "2019",
+      "CPUC": "N/A ",
+      "Approval": "PGE/CAISO",
+      "CONSTRUCTION_STATUS": "Construction",
+      "Projected_In_Service_Date": "Jan-2025",
+      "publish": 1,
+      "OBJECTID": 1,
+      "Last_Update_On_Map": 1744717940000
+    }
+  },
+  {
+    "id": 9,
+    "name": "TLINE Projects",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 99,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 12,
+    "fields": [
+      {
+        "name": "PROJECT_NAME",
+        "type": "esriFieldTypeString",
+        "alias": "PROJECT NAME"
+      },
+      {
+        "name": "RATING",
+        "type": "esriFieldTypeString",
+        "alias": "RATING"
+      },
+      {
+        "name": "PGE",
+        "type": "esriFieldTypeString",
+        "alias": "PGE"
+      },
+      {
+        "name": "CAISO",
+        "type": "esriFieldTypeString",
+        "alias": "CAISO"
+      },
+      {
+        "name": "CPUC",
+        "type": "esriFieldTypeString",
+        "alias": "CPUC"
+      },
+      {
+        "name": "Approval",
+        "type": "esriFieldTypeString",
+        "alias": "Approval"
+      },
+      {
+        "name": "CONSTRUCTION_STATUS",
+        "type": "esriFieldTypeString",
+        "alias": "CONSTRUCTION STATUS"
+      },
+      {
+        "name": "Projected_In_Service_Date",
+        "type": "esriFieldTypeString",
+        "alias": "Expected In Service Date"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last Update On Map"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "PROJECT_NAME": "Rio Oso 230/115 kV Transformer Upgrades",
+      "RATING": "230/115",
+      "PGE": "2017",
+      "CAISO": "2007",
+      "CPUC": "N/A ",
+      "Approval": "PGE/CAISO",
+      "CONSTRUCTION_STATUS": "Construction",
+      "Projected_In_Service_Date": "May-2025",
+      "OBJECTID": 1,
+      "publish": 1,
+      "Last_Update_On_Map": 1744718292000,
+      "Shape__Length": 22746.535216550794
+    }
+  },
+  {
+    "id": 10,
+    "name": "GNALineSecView",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 552,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 36,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "substationname",
+        "type": "esriFieldTypeString",
+        "alias": " Upstream Substation Name"
+      },
+      {
+        "name": "distributionservicerequired",
+        "type": "esriFieldTypeString",
+        "alias": " Distribution Service Required"
+      },
+      {
+        "name": "anticipatedneeddate",
+        "type": "esriFieldTypeString",
+        "alias": " Anticipated Need Date"
+      },
+      {
+        "name": "facilityrating",
+        "type": "esriFieldTypeDouble",
+        "alias": " Facility Rating"
+      },
+      {
+        "name": "gna_id",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Need ID"
+      },
+      {
+        "name": "deficiency_percent2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "2026 Deficiency (% )"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "deficiency_percent2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "2027 Deficiency (% )"
+      },
+      {
+        "name": "deficiency_mw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "2026 Deficiency (MW )"
+      },
+      {
+        "name": "deficiency_mw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "2027 Deficiency (MW )"
+      },
+      {
+        "name": "volt2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "2026 Volt"
+      },
+      {
+        "name": "volt2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "2027 Volt"
+      },
+      {
+        "name": "vpu2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "2026 Vpu"
+      },
+      {
+        "name": "vpu2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "2027 Vpu"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "dpa",
+        "type": "esriFieldTypeString",
+        "alias": "DPA"
+      },
+      {
+        "name": "region",
+        "type": "esriFieldTypeString",
+        "alias": "Region"
+      },
+      {
+        "name": "deficiencyunits",
+        "type": "esriFieldTypeString",
+        "alias": "Deficiency Units"
+      },
+      {
+        "name": "distributionservicerequired2026",
+        "type": "esriFieldTypeString",
+        "alias": "Distribution Service Required 2026"
+      },
+      {
+        "name": "distributionservicerequired2027",
+        "type": "esriFieldTypeString",
+        "alias": "Distribution Service Required 2027"
+      },
+      {
+        "name": "equipmentnoofpeakdeficiency",
+        "type": "esriFieldTypeString",
+        "alias": "equipmentnoofpeakdeficiency"
+      },
+      {
+        "name": "facilityname",
+        "type": "esriFieldTypeString",
+        "alias": "facilityname"
+      },
+      {
+        "name": "facilityid",
+        "type": "esriFieldTypeString",
+        "alias": "facilityid"
+      },
+      {
+        "name": "facility_type",
+        "type": "esriFieldTypeString",
+        "alias": "facilitytype"
+      },
+      {
+        "name": "deficiency_mw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "2028 Deficiency (MW )"
+      },
+      {
+        "name": "deficiency_percent2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "2028 Deficiency (% )"
+      },
+      {
+        "name": "distributionservicerequired2028",
+        "type": "esriFieldTypeString",
+        "alias": "Distribution Service Required 2028"
+      },
+      {
+        "name": "facilityratingunits",
+        "type": "esriFieldTypeString",
+        "alias": "facilityratingunits"
+      },
+      {
+        "name": "vpu2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "2028 Vpu"
+      },
+      {
+        "name": "volt2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "2028 Volt"
+      },
+      {
+        "name": "feeder_id",
+        "type": "esriFieldTypeString",
+        "alias": "FeederID"
+      },
+      {
+        "name": "feeder_name",
+        "type": "esriFieldTypeString",
+        "alias": "FeederName"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "last_update_on_map"
+      },
+      {
+        "name": "peakdeficiency2026_2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "Peak Deficiency (2026-2028)"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "substationname": "OAKLAND D 1102",
+      "distributionservicerequired": "Capacity",
+      "anticipatedneeddate": "2026",
+      "facilityrating": 2.52,
+      "gna_id": "GNA_8845_Capacity",
+      "deficiency_percent2026": -99.99,
+      "publish": 1,
+      "deficiency_percent2027": -99.99,
+      "deficiency_mw2026": -99.99,
+      "deficiency_mw2027": -99.99,
+      "volt2026": 0,
+      "volt2027": 0,
+      "vpu2026": 0,
+      "vpu2027": 0,
+      "division": "EAST BAY",
+      "dpa": "OAKLAND C-D-L",
+      "region": "Bay Area",
+      "deficiencyunits": "MW",
+      "distributionservicerequired2026": "Capacity",
+      "distributionservicerequired2027": "Capacity",
+      "equipmentnoofpeakdeficiency": "SOURCE_012041102",
+      "facilityname": "OAKLAND D 1102",
+      "facilityid": "012041102",
+      "facility_type": "LineSection",
+      "deficiency_mw2028": -99.99,
+      "deficiency_percent2028": -99.99,
+      "distributionservicerequired2028": "Capacity",
+      "facilityratingunits": "MW",
+      "vpu2028": 0,
+      "volt2028": 0,
+      "feeder_id": "012041102",
+      "feeder_name": "OAKLAND D 1102",
+      "last_update_on_map": "08/21/2026 14:08:06",
+      "peakdeficiency2026_2028": -99.99,
+      "Shape__Length": 145.08310174612834
+    }
+  },
+  {
+    "id": 11,
+    "name": "GNACircuitsView",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 3165,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 33,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "circuitid",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder ID"
+      },
+      {
+        "name": "circuitname",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder Name"
+      },
+      {
+        "name": "substationid",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Substation ID"
+      },
+      {
+        "name": "gnaneedid",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Need ID"
+      },
+      {
+        "name": "facilityid",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Facility ID"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "gnafacilityname",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Facility Name"
+      },
+      {
+        "name": "bankname",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Bank Name"
+      },
+      {
+        "name": "substationname",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Substation Name"
+      },
+      {
+        "name": "primarydriver",
+        "type": "esriFieldTypeString",
+        "alias": "Primary Driver"
+      },
+      {
+        "name": "distributionservicerequired",
+        "type": "esriFieldTypeString",
+        "alias": " Distribution Service Required"
+      },
+      {
+        "name": "anticipatedneeddate",
+        "type": "esriFieldTypeString",
+        "alias": " Anticipated Need Date"
+      },
+      {
+        "name": "peakfacilitydeficiencypercent",
+        "type": "esriFieldTypeDouble",
+        "alias": " Peak Deficiency (%)"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last Update on Map"
+      },
+      {
+        "name": "facilitytype",
+        "type": "esriFieldTypeString",
+        "alias": "Facility Type"
+      },
+      {
+        "name": "deficiencymw2026",
+        "type": "esriFieldTypeString",
+        "alias": "2026 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2027",
+        "type": "esriFieldTypeString",
+        "alias": "2027 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2028",
+        "type": "esriFieldTypeString",
+        "alias": "2028 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2029",
+        "type": "esriFieldTypeString",
+        "alias": "2029 Deficiency (MW)"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "deficiencymw2030",
+        "type": "esriFieldTypeString",
+        "alias": "2030 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "2031 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "2032 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "2033 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "2034 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "2035 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "2036 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "2037 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "2038 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "2039 Deficiency (MW)"
+      },
+      {
+        "name": "deficiencymw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "2040 Deficiency (MW)"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "circuitid": "012011101",
+      "circuitname": "OAKLAND C 1101",
+      "substationid": "01201",
+      "gnaneedid": "GNA_012011101_Capacity",
+      "facilityid": "012011101",
+      "division": "East Bay",
+      "gnafacilityname": "OAKLAND C 1101",
+      "bankname": "NETWORK GROUP OAKLAND C 1251",
+      "substationname": "OAKLAND C ",
+      "primarydriver": "N/A",
+      "distributionservicerequired": "N/A",
+      "anticipatedneeddate": "None",
+      "peakfacilitydeficiencypercent": -99.99,
+      "last_update_on_map": "09/08/2026 19:48:02",
+      "facilitytype": "FEEDER",
+      "deficiencymw2026": "-99.99",
+      "deficiencymw2027": "-99.99",
+      "deficiencymw2028": "-99.99",
+      "deficiencymw2029": "-99.99",
+      "publish": 1,
+      "deficiencymw2030": "-99.99",
+      "deficiencymw2031": -99.99,
+      "deficiencymw2032": -99.99,
+      "deficiencymw2033": -99.99,
+      "deficiencymw2034": -99.99,
+      "deficiencymw2035": -99.99,
+      "deficiencymw2036": -99.99,
+      "deficiencymw2037": -99.99,
+      "deficiencymw2038": -99.99,
+      "deficiencymw2039": -99.99,
+      "deficiencymw2040": -99.99,
+      "Shape__Length": 5155.895219888574
+    }
+  },
+  {
+    "id": 12,
+    "name": "DERCircuitsView",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 2727,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 446,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "circuitid",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder ID"
+      },
+      {
+        "name": "circuitname",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder Name"
+      },
+      {
+        "name": "distributionplanningregion",
+        "type": "esriFieldTypeString",
+        "alias": "distributionplanningregion"
+      },
+      {
+        "name": "facilityname",
+        "type": "esriFieldTypeString",
+        "alias": "facilityname"
+      },
+      {
+        "name": "facilityid",
+        "type": "esriFieldTypeString",
+        "alias": "facilityid"
+      },
+      {
+        "name": "batterystoragenonresidential2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2026"
+      },
+      {
+        "name": "batterystoragenonresidential2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2027"
+      },
+      {
+        "name": "batterystoragenonresidential2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2028"
+      },
+      {
+        "name": "batterystoragenonresidential2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2029"
+      },
+      {
+        "name": "batterystoragenonresidential2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2030"
+      },
+      {
+        "name": "batterystoragenonresidential2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2031"
+      },
+      {
+        "name": "batterystoragenonresidential2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2032"
+      },
+      {
+        "name": "batterystoragenonresidential2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2033"
+      },
+      {
+        "name": "batterystoragenonresidential2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2034"
+      },
+      {
+        "name": "batterystoragenonresidential2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2035"
+      },
+      {
+        "name": "batterystoragenonresidential2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2036"
+      },
+      {
+        "name": "batterystoragenonresidential2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2037"
+      },
+      {
+        "name": "batterystoragenonresidential2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2038"
+      },
+      {
+        "name": "batterystoragenonresidential2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2039"
+      },
+      {
+        "name": "batterystoragenonresidential2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystoragenonresidential2040"
+      },
+      {
+        "name": "batterystorageresidential2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2026"
+      },
+      {
+        "name": "batterystorageresidential2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2027"
+      },
+      {
+        "name": "batterystorageresidential2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2028"
+      },
+      {
+        "name": "batterystorageresidential2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2029"
+      },
+      {
+        "name": "batterystorageresidential2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2030"
+      },
+      {
+        "name": "batterystorageresidential2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2031"
+      },
+      {
+        "name": "batterystorageresidential2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2032"
+      },
+      {
+        "name": "batterystorageresidential2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2033"
+      },
+      {
+        "name": "batterystorageresidential2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2034"
+      },
+      {
+        "name": "batterystorageresidential2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2035"
+      },
+      {
+        "name": "batterystorageresidential2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2036"
+      },
+      {
+        "name": "batterystorageresidential2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2037"
+      },
+      {
+        "name": "batterystorageresidential2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2038"
+      },
+      {
+        "name": "batterystorageresidential2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2039"
+      },
+      {
+        "name": "batterystorageresidential2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "batterystorageresidential2040"
+      },
+      {
+        "name": "evfleethddepot2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2026"
+      },
+      {
+        "name": "evfleethddepot2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2027"
+      },
+      {
+        "name": "evfleethddepot2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2028"
+      },
+      {
+        "name": "evfleethddepot2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2029"
+      },
+      {
+        "name": "evfleethddepot2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2030"
+      },
+      {
+        "name": "evfleethddepot2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2031"
+      },
+      {
+        "name": "evfleethddepot2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2032"
+      },
+      {
+        "name": "evfleethddepot2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2033"
+      },
+      {
+        "name": "evfleethddepot2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2034"
+      },
+      {
+        "name": "evfleethddepot2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2035"
+      },
+      {
+        "name": "evfleethddepot2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2036"
+      },
+      {
+        "name": "evfleethddepot2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2037"
+      },
+      {
+        "name": "evfleethddepot2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2038"
+      },
+      {
+        "name": "evfleethddepot2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2039"
+      },
+      {
+        "name": "evfleethddepot2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleethddepot2040"
+      },
+      {
+        "name": "evfleetmddepot2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2026"
+      },
+      {
+        "name": "evfleetmddepot2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2027"
+      },
+      {
+        "name": "evfleetmddepot2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2028"
+      },
+      {
+        "name": "evfleetmddepot2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2029"
+      },
+      {
+        "name": "evfleetmddepot2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2030"
+      },
+      {
+        "name": "evfleetmddepot2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2031"
+      },
+      {
+        "name": "evfleetmddepot2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2032"
+      },
+      {
+        "name": "evfleetmddepot2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2033"
+      },
+      {
+        "name": "evfleetmddepot2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2034"
+      },
+      {
+        "name": "evfleetmddepot2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2035"
+      },
+      {
+        "name": "evfleetmddepot2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2036"
+      },
+      {
+        "name": "evfleetmddepot2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2037"
+      },
+      {
+        "name": "evfleetmddepot2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2038"
+      },
+      {
+        "name": "evfleetmddepot2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2039"
+      },
+      {
+        "name": "evfleetmddepot2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetmddepot2040"
+      },
+      {
+        "name": "evfleetschoolbus2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2026"
+      },
+      {
+        "name": "evfleetschoolbus2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2027"
+      },
+      {
+        "name": "evfleetschoolbus2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2028"
+      },
+      {
+        "name": "evfleetschoolbus2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2029"
+      },
+      {
+        "name": "evfleetschoolbus2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2030"
+      },
+      {
+        "name": "evfleetschoolbus2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2031"
+      },
+      {
+        "name": "evfleetschoolbus2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2032"
+      },
+      {
+        "name": "evfleetschoolbus2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2033"
+      },
+      {
+        "name": "evfleetschoolbus2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2034"
+      },
+      {
+        "name": "evfleetschoolbus2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2035"
+      },
+      {
+        "name": "evfleetschoolbus2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2036"
+      },
+      {
+        "name": "evfleetschoolbus2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2037"
+      },
+      {
+        "name": "evfleetschoolbus2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2038"
+      },
+      {
+        "name": "evfleetschoolbus2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2039"
+      },
+      {
+        "name": "evfleetschoolbus2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evfleetschoolbus2040"
+      },
+      {
+        "name": "evpublicl2mw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2026"
+      },
+      {
+        "name": "evpublicl2mw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2027"
+      },
+      {
+        "name": "evpublicl2mw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2028"
+      },
+      {
+        "name": "evpublicl2mw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2029"
+      },
+      {
+        "name": "evpublicl2mw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2030"
+      },
+      {
+        "name": "evpublicl2mw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2031"
+      },
+      {
+        "name": "evpublicl2mw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2032"
+      },
+      {
+        "name": "evpublicl2mw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2033"
+      },
+      {
+        "name": "evpublicl2mw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2034"
+      },
+      {
+        "name": "evpublicl2mw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2035"
+      },
+      {
+        "name": "evpublicl2mw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2036"
+      },
+      {
+        "name": "evpublicl2mw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2037"
+      },
+      {
+        "name": "evpublicl2mw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2038"
+      },
+      {
+        "name": "evpublicl2mw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2039"
+      },
+      {
+        "name": "evpublicl2mw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evpublicl2mw2040"
+      },
+      {
+        "name": "evresl1mw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2026"
+      },
+      {
+        "name": "evresl1mw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2027"
+      },
+      {
+        "name": "evresl1mw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2028"
+      },
+      {
+        "name": "evresl1mw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2029"
+      },
+      {
+        "name": "evresl1mw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2030"
+      },
+      {
+        "name": "evresl1mw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2031"
+      },
+      {
+        "name": "evresl1mw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2032"
+      },
+      {
+        "name": "evresl1mw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2033"
+      },
+      {
+        "name": "evresl1mw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2034"
+      },
+      {
+        "name": "evresl1mw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2035"
+      },
+      {
+        "name": "evresl1mw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2036"
+      },
+      {
+        "name": "evresl1mw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2037"
+      },
+      {
+        "name": "evresl1mw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2038"
+      },
+      {
+        "name": "evresl1mw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2039"
+      },
+      {
+        "name": "evresl1mw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl1mw2040"
+      },
+      {
+        "name": "evresl2mw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2026"
+      },
+      {
+        "name": "evresl2mw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2027"
+      },
+      {
+        "name": "evresl2mw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2028"
+      },
+      {
+        "name": "evresl2mw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2029"
+      },
+      {
+        "name": "evresl2mw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2030"
+      },
+      {
+        "name": "evresl2mw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2031"
+      },
+      {
+        "name": "evresl2mw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2032"
+      },
+      {
+        "name": "evresl2mw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2033"
+      },
+      {
+        "name": "evresl2mw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2034"
+      },
+      {
+        "name": "evresl2mw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2035"
+      },
+      {
+        "name": "evresl2mw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2036"
+      },
+      {
+        "name": "evresl2mw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2037"
+      },
+      {
+        "name": "evresl2mw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2038"
+      },
+      {
+        "name": "evresl2mw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2039"
+      },
+      {
+        "name": "evresl2mw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evresl2mw2040"
+      },
+      {
+        "name": "evurbandcfcmw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2026"
+      },
+      {
+        "name": "evurbandcfcmw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2027"
+      },
+      {
+        "name": "evurbandcfcmw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2028"
+      },
+      {
+        "name": "evurbandcfcmw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2029"
+      },
+      {
+        "name": "evurbandcfcmw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2030"
+      },
+      {
+        "name": "evurbandcfcmw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2031"
+      },
+      {
+        "name": "evurbandcfcmw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2032"
+      },
+      {
+        "name": "evurbandcfcmw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2033"
+      },
+      {
+        "name": "evurbandcfcmw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2034"
+      },
+      {
+        "name": "evurbandcfcmw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2035"
+      },
+      {
+        "name": "evurbandcfcmw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2036"
+      },
+      {
+        "name": "evurbandcfcmw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2037"
+      },
+      {
+        "name": "evurbandcfcmw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2038"
+      },
+      {
+        "name": "evurbandcfcmw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2039"
+      },
+      {
+        "name": "evurbandcfcmw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evurbandcfcmw2040"
+      },
+      {
+        "name": "evworkplacel2mw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2026"
+      },
+      {
+        "name": "evworkplacel2mw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2027"
+      },
+      {
+        "name": "evworkplacel2mw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2028"
+      },
+      {
+        "name": "evworkplacel2mw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2029"
+      },
+      {
+        "name": "evworkplacel2mw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2030"
+      },
+      {
+        "name": "evworkplacel2mw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2031"
+      },
+      {
+        "name": "evworkplacel2mw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2032"
+      },
+      {
+        "name": "evworkplacel2mw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2033"
+      },
+      {
+        "name": "evworkplacel2mw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2034"
+      },
+      {
+        "name": "evworkplacel2mw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2035"
+      },
+      {
+        "name": "evworkplacel2mw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2036"
+      },
+      {
+        "name": "evworkplacel2mw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2037"
+      },
+      {
+        "name": "evworkplacel2mw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2038"
+      },
+      {
+        "name": "evworkplacel2mw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2039"
+      },
+      {
+        "name": "evworkplacel2mw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "evworkplacel2mw2040"
+      },
+      {
+        "name": "ev2030mhdvhwy2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2026"
+      },
+      {
+        "name": "ev2030mhdvhwy2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2027"
+      },
+      {
+        "name": "ev2030mhdvhwy2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2028"
+      },
+      {
+        "name": "ev2030mhdvhwy2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2029"
+      },
+      {
+        "name": "ev2030mhdvhwy2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2030"
+      },
+      {
+        "name": "ev2030mhdvhwy2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2031"
+      },
+      {
+        "name": "ev2030mhdvhwy2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2032"
+      },
+      {
+        "name": "ev2030mhdvhwy2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2033"
+      },
+      {
+        "name": "ev2030mhdvhwy2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2034"
+      },
+      {
+        "name": "ev2030mhdvhwy2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2035"
+      },
+      {
+        "name": "ev2030mhdvhwy2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2036"
+      },
+      {
+        "name": "ev2030mhdvhwy2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2037"
+      },
+      {
+        "name": "ev2030mhdvhwy2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2038"
+      },
+      {
+        "name": "ev2030mhdvhwy2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2039"
+      },
+      {
+        "name": "ev2030mhdvhwy2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "ev2030mhdvhwy2040"
+      },
+      {
+        "name": "energyefficiency2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2026"
+      },
+      {
+        "name": "energyefficiency2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2027"
+      },
+      {
+        "name": "energyefficiency2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2028"
+      },
+      {
+        "name": "energyefficiency2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2029"
+      },
+      {
+        "name": "energyefficiency2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2030"
+      },
+      {
+        "name": "energyefficiency2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2031"
+      },
+      {
+        "name": "energyefficiency2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2032"
+      },
+      {
+        "name": "energyefficiency2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2033"
+      },
+      {
+        "name": "energyefficiency2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2034"
+      },
+      {
+        "name": "energyefficiency2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2035"
+      },
+      {
+        "name": "energyefficiency2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2036"
+      },
+      {
+        "name": "energyefficiency2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2037"
+      },
+      {
+        "name": "energyefficiency2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2038"
+      },
+      {
+        "name": "energyefficiency2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2039"
+      },
+      {
+        "name": "energyefficiency2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "energyefficiency2040"
+      },
+      {
+        "name": "fscomcoolbay2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2026"
+      },
+      {
+        "name": "fscomcoolbay2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2027"
+      },
+      {
+        "name": "fscomcoolbay2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2028"
+      },
+      {
+        "name": "fscomcoolbay2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2029"
+      },
+      {
+        "name": "fscomcoolbay2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2030"
+      },
+      {
+        "name": "fscomcoolbay2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2031"
+      },
+      {
+        "name": "fscomcoolbay2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2032"
+      },
+      {
+        "name": "fscomcoolbay2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2033"
+      },
+      {
+        "name": "fscomcoolbay2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2034"
+      },
+      {
+        "name": "fscomcoolbay2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2035"
+      },
+      {
+        "name": "fscomcoolbay2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2036"
+      },
+      {
+        "name": "fscomcoolbay2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2037"
+      },
+      {
+        "name": "fscomcoolbay2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2038"
+      },
+      {
+        "name": "fscomcoolbay2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2039"
+      },
+      {
+        "name": "fscomcoolbay2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolbay2040"
+      },
+      {
+        "name": "fscomcoolcoast2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2026"
+      },
+      {
+        "name": "fscomcoolcoast2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2027"
+      },
+      {
+        "name": "fscomcoolcoast2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2028"
+      },
+      {
+        "name": "fscomcoolcoast2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2029"
+      },
+      {
+        "name": "fscomcoolcoast2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2030"
+      },
+      {
+        "name": "fscomcoolcoast2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2031"
+      },
+      {
+        "name": "fscomcoolcoast2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2032"
+      },
+      {
+        "name": "fscomcoolcoast2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2033"
+      },
+      {
+        "name": "fscomcoolcoast2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2034"
+      },
+      {
+        "name": "fscomcoolcoast2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2035"
+      },
+      {
+        "name": "fscomcoolcoast2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2036"
+      },
+      {
+        "name": "fscomcoolcoast2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2037"
+      },
+      {
+        "name": "fscomcoolcoast2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2038"
+      },
+      {
+        "name": "fscomcoolcoast2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2039"
+      },
+      {
+        "name": "fscomcoolcoast2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolcoast2040"
+      },
+      {
+        "name": "fscomcoolint2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2026"
+      },
+      {
+        "name": "fscomcoolint2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2027"
+      },
+      {
+        "name": "fscomcoolint2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2028"
+      },
+      {
+        "name": "fscomcoolint2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2029"
+      },
+      {
+        "name": "fscomcoolint2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2030"
+      },
+      {
+        "name": "fscomcoolint2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2031"
+      },
+      {
+        "name": "fscomcoolint2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2032"
+      },
+      {
+        "name": "fscomcoolint2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2033"
+      },
+      {
+        "name": "fscomcoolint2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2034"
+      },
+      {
+        "name": "fscomcoolint2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2035"
+      },
+      {
+        "name": "fscomcoolint2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2036"
+      },
+      {
+        "name": "fscomcoolint2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2037"
+      },
+      {
+        "name": "fscomcoolint2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2038"
+      },
+      {
+        "name": "fscomcoolint2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2039"
+      },
+      {
+        "name": "fscomcoolint2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomcoolint2040"
+      },
+      {
+        "name": "fscomgeneral2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2026"
+      },
+      {
+        "name": "fscomgeneral2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2027"
+      },
+      {
+        "name": "fscomgeneral2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2028"
+      },
+      {
+        "name": "fscomgeneral2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2029"
+      },
+      {
+        "name": "fscomgeneral2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2030"
+      },
+      {
+        "name": "fscomgeneral2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2031"
+      },
+      {
+        "name": "fscomgeneral2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2032"
+      },
+      {
+        "name": "fscomgeneral2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2033"
+      },
+      {
+        "name": "fscomgeneral2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2034"
+      },
+      {
+        "name": "fscomgeneral2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2035"
+      },
+      {
+        "name": "fscomgeneral2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2036"
+      },
+      {
+        "name": "fscomgeneral2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2037"
+      },
+      {
+        "name": "fscomgeneral2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2038"
+      },
+      {
+        "name": "fscomgeneral2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2039"
+      },
+      {
+        "name": "fscomgeneral2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomgeneral2040"
+      },
+      {
+        "name": "fscomheatcoast2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2026"
+      },
+      {
+        "name": "fscomheatcoast2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2027"
+      },
+      {
+        "name": "fscomheatcoast2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2028"
+      },
+      {
+        "name": "fscomheatcoast2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2029"
+      },
+      {
+        "name": "fscomheatcoast2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2030"
+      },
+      {
+        "name": "fscomheatcoast2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2031"
+      },
+      {
+        "name": "fscomheatcoast2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2032"
+      },
+      {
+        "name": "fscomheatcoast2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2033"
+      },
+      {
+        "name": "fscomheatcoast2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2034"
+      },
+      {
+        "name": "fscomheatcoast2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2035"
+      },
+      {
+        "name": "fscomheatcoast2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2036"
+      },
+      {
+        "name": "fscomheatcoast2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2037"
+      },
+      {
+        "name": "fscomheatcoast2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2038"
+      },
+      {
+        "name": "fscomheatcoast2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2039"
+      },
+      {
+        "name": "fscomheatcoast2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatcoast2040"
+      },
+      {
+        "name": "fscomheatint2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2026"
+      },
+      {
+        "name": "fscomheatint2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2027"
+      },
+      {
+        "name": "fscomheatint2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2028"
+      },
+      {
+        "name": "fscomheatint2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2029"
+      },
+      {
+        "name": "fscomheatint2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2030"
+      },
+      {
+        "name": "fscomheatint2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2031"
+      },
+      {
+        "name": "fscomheatint2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2032"
+      },
+      {
+        "name": "fscomheatint2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2033"
+      },
+      {
+        "name": "fscomheatint2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2034"
+      },
+      {
+        "name": "fscomheatint2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2035"
+      },
+      {
+        "name": "fscomheatint2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2036"
+      },
+      {
+        "name": "fscomheatint2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2037"
+      },
+      {
+        "name": "fscomheatint2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2038"
+      },
+      {
+        "name": "fscomheatint2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2039"
+      },
+      {
+        "name": "fscomheatint2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatint2040"
+      },
+      {
+        "name": "fscomheatmtn2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2026"
+      },
+      {
+        "name": "fscomheatmtn2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2027"
+      },
+      {
+        "name": "fscomheatmtn2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2028"
+      },
+      {
+        "name": "fscomheatmtn2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2029"
+      },
+      {
+        "name": "fscomheatmtn2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2030"
+      },
+      {
+        "name": "fscomheatmtn2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2031"
+      },
+      {
+        "name": "fscomheatmtn2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2032"
+      },
+      {
+        "name": "fscomheatmtn2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2033"
+      },
+      {
+        "name": "fscomheatmtn2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2034"
+      },
+      {
+        "name": "fscomheatmtn2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2035"
+      },
+      {
+        "name": "fscomheatmtn2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2036"
+      },
+      {
+        "name": "fscomheatmtn2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2037"
+      },
+      {
+        "name": "fscomheatmtn2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2038"
+      },
+      {
+        "name": "fscomheatmtn2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2039"
+      },
+      {
+        "name": "fscomheatmtn2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fscomheatmtn2040"
+      },
+      {
+        "name": "fsrescoolcoast2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2026"
+      },
+      {
+        "name": "fsrescoolcoast2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2027"
+      },
+      {
+        "name": "fsrescoolcoast2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2028"
+      },
+      {
+        "name": "fsrescoolcoast2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2029"
+      },
+      {
+        "name": "fsrescoolcoast2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2030"
+      },
+      {
+        "name": "fsrescoolcoast2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2031"
+      },
+      {
+        "name": "fsrescoolcoast2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2032"
+      },
+      {
+        "name": "fsrescoolcoast2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2033"
+      },
+      {
+        "name": "fsrescoolcoast2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2034"
+      },
+      {
+        "name": "fsrescoolcoast2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2035"
+      },
+      {
+        "name": "fsrescoolcoast2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2036"
+      },
+      {
+        "name": "fsrescoolcoast2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2037"
+      },
+      {
+        "name": "fsrescoolcoast2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2038"
+      },
+      {
+        "name": "fsrescoolcoast2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2039"
+      },
+      {
+        "name": "fsrescoolcoast2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolcoast2040"
+      },
+      {
+        "name": "fsrescoolint2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2026"
+      },
+      {
+        "name": "fsrescoolint2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2027"
+      },
+      {
+        "name": "fsrescoolint2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2028"
+      },
+      {
+        "name": "fsrescoolint2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2029"
+      },
+      {
+        "name": "fsrescoolint2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2030"
+      },
+      {
+        "name": "fsrescoolint2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2031"
+      },
+      {
+        "name": "fsrescoolint2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2032"
+      },
+      {
+        "name": "fsrescoolint2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2033"
+      },
+      {
+        "name": "fsrescoolint2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2034"
+      },
+      {
+        "name": "fsrescoolint2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2035"
+      },
+      {
+        "name": "fsrescoolint2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2036"
+      },
+      {
+        "name": "fsrescoolint2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2037"
+      },
+      {
+        "name": "fsrescoolint2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2038"
+      },
+      {
+        "name": "fsrescoolint2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2039"
+      },
+      {
+        "name": "fsrescoolint2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolint2040"
+      },
+      {
+        "name": "fsrescoolmtn2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2026"
+      },
+      {
+        "name": "fsrescoolmtn2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2027"
+      },
+      {
+        "name": "fsrescoolmtn2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2028"
+      },
+      {
+        "name": "fsrescoolmtn2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2029"
+      },
+      {
+        "name": "fsrescoolmtn2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2030"
+      },
+      {
+        "name": "fsrescoolmtn2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2031"
+      },
+      {
+        "name": "fsrescoolmtn2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2032"
+      },
+      {
+        "name": "fsrescoolmtn2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2033"
+      },
+      {
+        "name": "fsrescoolmtn2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2034"
+      },
+      {
+        "name": "fsrescoolmtn2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2035"
+      },
+      {
+        "name": "fsrescoolmtn2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2036"
+      },
+      {
+        "name": "fsrescoolmtn2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2037"
+      },
+      {
+        "name": "fsrescoolmtn2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2038"
+      },
+      {
+        "name": "fsrescoolmtn2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2039"
+      },
+      {
+        "name": "fsrescoolmtn2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsrescoolmtn2040"
+      },
+      {
+        "name": "fsresgeneral2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2026"
+      },
+      {
+        "name": "fsresgeneral2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2027"
+      },
+      {
+        "name": "fsresgeneral2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2028"
+      },
+      {
+        "name": "fsresgeneral2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2029"
+      },
+      {
+        "name": "fsresgeneral2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2030"
+      },
+      {
+        "name": "fsresgeneral2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2031"
+      },
+      {
+        "name": "fsresgeneral2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2032"
+      },
+      {
+        "name": "fsresgeneral2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2033"
+      },
+      {
+        "name": "fsresgeneral2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2034"
+      },
+      {
+        "name": "fsresgeneral2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2035"
+      },
+      {
+        "name": "fsresgeneral2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2036"
+      },
+      {
+        "name": "fsresgeneral2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2037"
+      },
+      {
+        "name": "fsresgeneral2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2038"
+      },
+      {
+        "name": "fsresgeneral2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2039"
+      },
+      {
+        "name": "fsresgeneral2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresgeneral2040"
+      },
+      {
+        "name": "fsresheatcoast2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2026"
+      },
+      {
+        "name": "fsresheatcoast2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2027"
+      },
+      {
+        "name": "fsresheatcoast2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2028"
+      },
+      {
+        "name": "fsresheatcoast2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2029"
+      },
+      {
+        "name": "fsresheatcoast2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2030"
+      },
+      {
+        "name": "fsresheatcoast2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2031"
+      },
+      {
+        "name": "fsresheatcoast2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2032"
+      },
+      {
+        "name": "fsresheatcoast2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2033"
+      },
+      {
+        "name": "fsresheatcoast2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2034"
+      },
+      {
+        "name": "fsresheatcoast2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2035"
+      },
+      {
+        "name": "fsresheatcoast2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2036"
+      },
+      {
+        "name": "fsresheatcoast2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2037"
+      },
+      {
+        "name": "fsresheatcoast2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2038"
+      },
+      {
+        "name": "fsresheatcoast2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2039"
+      },
+      {
+        "name": "fsresheatcoast2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatcoast2040"
+      },
+      {
+        "name": "fsresheatint2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2026"
+      },
+      {
+        "name": "fsresheatint2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2027"
+      },
+      {
+        "name": "fsresheatint2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2028"
+      },
+      {
+        "name": "fsresheatint2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2029"
+      },
+      {
+        "name": "fsresheatint2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2030"
+      },
+      {
+        "name": "fsresheatint2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2031"
+      },
+      {
+        "name": "fsresheatint2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2032"
+      },
+      {
+        "name": "fsresheatint2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2033"
+      },
+      {
+        "name": "fsresheatint2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2034"
+      },
+      {
+        "name": "fsresheatint2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2035"
+      },
+      {
+        "name": "fsresheatint2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2036"
+      },
+      {
+        "name": "fsresheatint2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2037"
+      },
+      {
+        "name": "fsresheatint2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2038"
+      },
+      {
+        "name": "fsresheatint2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2039"
+      },
+      {
+        "name": "fsresheatint2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatint2040"
+      },
+      {
+        "name": "fsresheatmtn2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2026"
+      },
+      {
+        "name": "fsresheatmtn2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2027"
+      },
+      {
+        "name": "fsresheatmtn2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2028"
+      },
+      {
+        "name": "fsresheatmtn2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2029"
+      },
+      {
+        "name": "fsresheatmtn2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2030"
+      },
+      {
+        "name": "fsresheatmtn2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2031"
+      },
+      {
+        "name": "fsresheatmtn2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2032"
+      },
+      {
+        "name": "fsresheatmtn2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2033"
+      },
+      {
+        "name": "fsresheatmtn2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2034"
+      },
+      {
+        "name": "fsresheatmtn2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2035"
+      },
+      {
+        "name": "fsresheatmtn2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2036"
+      },
+      {
+        "name": "fsresheatmtn2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2037"
+      },
+      {
+        "name": "fsresheatmtn2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2038"
+      },
+      {
+        "name": "fsresheatmtn2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2039"
+      },
+      {
+        "name": "fsresheatmtn2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "fsresheatmtn2040"
+      },
+      {
+        "name": "photovoltaicmw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2026"
+      },
+      {
+        "name": "photovoltaicmw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2027"
+      },
+      {
+        "name": "photovoltaicmw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2028"
+      },
+      {
+        "name": "photovoltaicmw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2029"
+      },
+      {
+        "name": "photovoltaicmw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2030"
+      },
+      {
+        "name": "photovoltaicmw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2031"
+      },
+      {
+        "name": "photovoltaicmw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2032"
+      },
+      {
+        "name": "photovoltaicmw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2033"
+      },
+      {
+        "name": "photovoltaicmw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2034"
+      },
+      {
+        "name": "photovoltaicmw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2035"
+      },
+      {
+        "name": "photovoltaicmw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2036"
+      },
+      {
+        "name": "photovoltaicmw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2037"
+      },
+      {
+        "name": "photovoltaicmw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2038"
+      },
+      {
+        "name": "photovoltaicmw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2039"
+      },
+      {
+        "name": "photovoltaicmw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "photovoltaicmw2040"
+      },
+      {
+        "name": "redact",
+        "type": "esriFieldTypeString",
+        "alias": "redact"
+      },
+      {
+        "name": "feederid",
+        "type": "esriFieldTypeString",
+        "alias": "feederid"
+      },
+      {
+        "name": "feedername",
+        "type": "esriFieldTypeString",
+        "alias": "feedername"
+      },
+      {
+        "name": "bankid",
+        "type": "esriFieldTypeString",
+        "alias": "bankid"
+      },
+      {
+        "name": "bankname",
+        "type": "esriFieldTypeString",
+        "alias": "bankname"
+      },
+      {
+        "name": "aggregatebatterystoragenonresidential",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatebatterystoragenonresidential"
+      },
+      {
+        "name": "aggregatebatterystorageresidential",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatebatterystorageresidential"
+      },
+      {
+        "name": "aggregateenergyefficiencymw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateenergyefficiency"
+      },
+      {
+        "name": "aggregateevfleetmddepot",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevfleetmddepot"
+      },
+      {
+        "name": "aggregateevfleethddepot",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevfleethddepot"
+      },
+      {
+        "name": "aggregateevfleetschoolbus",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevfleetschoolbus"
+      },
+      {
+        "name": "aggregateevpublicl2mw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevpublicl2mw"
+      },
+      {
+        "name": "aggregateevresl1mw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevresl1mw"
+      },
+      {
+        "name": "aggregateevresl2mw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevresl2mw"
+      },
+      {
+        "name": "aggregateevurbandcfcmw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevurbandcfcmw"
+      },
+      {
+        "name": "aggregateevworkplacel2mw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateevworkplacel2mw"
+      },
+      {
+        "name": "aggregateev2030mhdvhwy",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregateev2030mhdvhwy"
+      },
+      {
+        "name": "aggregatefscomcoolbay",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomcoolbay"
+      },
+      {
+        "name": "aggregatefscomcoolcoast",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomcoolcoast"
+      },
+      {
+        "name": "aggregatefscomcoolint",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomcoolint"
+      },
+      {
+        "name": "aggregatefscomgeneral",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomgeneral"
+      },
+      {
+        "name": "aggregatefscomheatcoast",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomheatcoast"
+      },
+      {
+        "name": "aggregatefscomheatint",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomheatint"
+      },
+      {
+        "name": "aggregatefscomheatmtn",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefscomheatmtn"
+      },
+      {
+        "name": "aggregatefsrescoolcoast",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsrescoolcoast"
+      },
+      {
+        "name": "aggregatefsrescoolint",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsrescoolint"
+      },
+      {
+        "name": "aggregatefsrescoolmtn",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsrescoolmtn"
+      },
+      {
+        "name": "aggregatefsresgeneral",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsresgeneral"
+      },
+      {
+        "name": "aggregatefsresheatcoast",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsresheatcoast"
+      },
+      {
+        "name": "aggregatefsresheatint",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsresheatint"
+      },
+      {
+        "name": "aggregatefsresheatmtn",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatefsresheatmtn"
+      },
+      {
+        "name": "aggregatephotovoltaicmw",
+        "type": "esriFieldTypeDouble",
+        "alias": "aggregatephotovoltaicmw"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "last_update_on_map"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "division": "East Bay",
+      "circuitid": "012501111",
+      "circuitname": "EL CERRITO G 1111",
+      "distributionplanningregion": "Bay Area",
+      "facilityname": "EL CERRITO G 1111",
+      "facilityid": "012501111",
+      "batterystoragenonresidential2026": 0,
+      "batterystoragenonresidential2027": -0.01,
+      "batterystoragenonresidential2028": -0.01,
+      "batterystoragenonresidential2029": -0.01,
+      "batterystoragenonresidential2030": -0.01,
+      "batterystoragenonresidential2031": -0.01,
+      "batterystoragenonresidential2032": -0.01,
+      "batterystoragenonresidential2033": -0.01,
+      "batterystoragenonresidential2034": -0.01,
+      "batterystoragenonresidential2035": -0.01,
+      "batterystoragenonresidential2036": -0.01,
+      "batterystoragenonresidential2037": -0.01,
+      "batterystoragenonresidential2038": -0.01,
+      "batterystoragenonresidential2039": -0.01,
+      "batterystoragenonresidential2040": -0.01,
+      "batterystorageresidential2026": -0.03,
+      "batterystorageresidential2027": -0.06,
+      "batterystorageresidential2028": -0.07,
+      "batterystorageresidential2029": -0.08,
+      "batterystorageresidential2030": -0.1,
+      "batterystorageresidential2031": -0.11,
+      "batterystorageresidential2032": -0.13,
+      "batterystorageresidential2033": -0.14,
+      "batterystorageresidential2034": -0.15,
+      "batterystorageresidential2035": -0.15,
+      "batterystorageresidential2036": -0.15,
+      "batterystorageresidential2037": -0.15,
+      "batterystorageresidential2038": -0.15,
+      "batterystorageresidential2039": -0.15,
+      "batterystorageresidential2040": -0.15,
+      "evfleethddepot2026": 0,
+      "evfleethddepot2027": 0,
+      "evfleethddepot2028": 0,
+      "evfleethddepot2029": 0,
+      "evfleethddepot2030": 0,
+      "evfleethddepot2031": 0,
+      "evfleethddepot2032": 0,
+      "evfleethddepot2033": 0,
+      "evfleethddepot2034": 0,
+      "evfleethddepot2035": 0,
+      "evfleethddepot2036": 0,
+      "evfleethddepot2037": 0,
+      "evfleethddepot2038": 0,
+      "evfleethddepot2039": 0,
+      "evfleethddepot2040": 0,
+      "evfleetmddepot2026": 0,
+      "evfleetmddepot2027": 0,
+      "evfleetmddepot2028": 0,
+      "evfleetmddepot2029": 0,
+      "evfleetmddepot2030": 0,
+      "evfleetmddepot2031": 0,
+      "evfleetmddepot2032": 0,
+      "evfleetmddepot2033": 0,
+      "evfleetmddepot2034": 0,
+      "evfleetmddepot2035": 0,
+      "evfleetmddepot2036": 0,
+      "evfleetmddepot2037": 0,
+      "evfleetmddepot2038": 0,
+      "evfleetmddepot2039": 0,
+      "evfleetmddepot2040": 0,
+      "evfleetschoolbus2026": 0,
+      "evfleetschoolbus2027": 0,
+      "evfleetschoolbus2028": 0,
+      "evfleetschoolbus2029": 0,
+      "evfleetschoolbus2030": 0,
+      "evfleetschoolbus2031": 0,
+      "evfleetschoolbus2032": 0,
+      "evfleetschoolbus2033": 0,
+      "evfleetschoolbus2034": 0,
+      "evfleetschoolbus2035": 0,
+      "evfleetschoolbus2036": 0,
+      "evfleetschoolbus2037": 0,
+      "evfleetschoolbus2038": 0,
+      "evfleetschoolbus2039": 0,
+      "evfleetschoolbus2040": 0,
+      "evpublicl2mw2026": 0,
+      "evpublicl2mw2027": 0,
+      "evpublicl2mw2028": 0,
+      "evpublicl2mw2029": 0,
+      "evpublicl2mw2030": 0,
+      "evpublicl2mw2031": 0.18,
+      "evpublicl2mw2032": 0.31,
+      "evpublicl2mw2033": 0.34,
+      "evpublicl2mw2034": 0.39,
+      "evpublicl2mw2035": 0.4,
+      "evpublicl2mw2036": 0.41,
+      "evpublicl2mw2037": 0.42,
+      "evpublicl2mw2038": 0.44,
+      "evpublicl2mw2039": 0.46,
+      "evpublicl2mw2040": 0.46,
+      "evresl1mw2026": 0,
+      "evresl1mw2027": 0.04,
+      "evresl1mw2028": 0.07,
+      "evresl1mw2029": 0.07,
+      "evresl1mw2030": 0.12,
+      "evresl1mw2031": 0.24,
+      "evresl1mw2032": 0.36,
+      "evresl1mw2033": 0.5,
+      "evresl1mw2034": 0.67,
+      "evresl1mw2035": 0.74,
+      "evresl1mw2036": 0.78,
+      "evresl1mw2037": 0.87,
+      "evresl1mw2038": 0.95,
+      "evresl1mw2039": 0.98,
+      "evresl1mw2040": 1,
+      "evresl2mw2026": 0,
+      "evresl2mw2027": 0.04,
+      "evresl2mw2028": 0.4,
+      "evresl2mw2029": 0.79,
+      "evresl2mw2030": 0.98,
+      "evresl2mw2031": 1.16,
+      "evresl2mw2032": 1.2,
+      "evresl2mw2033": 1.36,
+      "evresl2mw2034": 1.85,
+      "evresl2mw2035": 2.73,
+      "evresl2mw2036": 3.8,
+      "evresl2mw2037": 4.3,
+      "evresl2mw2038": 5.26,
+      "evresl2mw2039": 5.52,
+      "evresl2mw2040": 6.35,
+      "evurbandcfcmw2026": 0,
+      "evurbandcfcmw2027": 0,
+      "evurbandcfcmw2028": 0,
+      "evurbandcfcmw2029": 0,
+      "evurbandcfcmw2030": 0,
+      "evurbandcfcmw2031": 0,
+      "evurbandcfcmw2032": 0,
+      "evurbandcfcmw2033": 0,
+      "evurbandcfcmw2034": 0,
+      "evurbandcfcmw2035": 0,
+      "evurbandcfcmw2036": 0,
+      "evurbandcfcmw2037": 0,
+      "evurbandcfcmw2038": 0,
+      "evurbandcfcmw2039": 0,
+      "evurbandcfcmw2040": 0,
+      "evworkplacel2mw2026": 0,
+      "evworkplacel2mw2027": 0,
+      "evworkplacel2mw2028": 0,
+      "evworkplacel2mw2029": 0,
+      "evworkplacel2mw2030": 0,
+      "evworkplacel2mw2031": 0,
+      "evworkplacel2mw2032": 0,
+      "evworkplacel2mw2033": 0,
+      "evworkplacel2mw2034": 0,
+      "evworkplacel2mw2035": 0.04,
+      "evworkplacel2mw2036": 0.04,
+      "evworkplacel2mw2037": 0.04,
+      "evworkplacel2mw2038": 0.04,
+      "evworkplacel2mw2039": 0.04,
+      "evworkplacel2mw2040": 0.06,
+      "ev2030mhdvhwy2026": 0,
+      "ev2030mhdvhwy2027": 0,
+      "ev2030mhdvhwy2028": 0,
+      "ev2030mhdvhwy2029": 0,
+      "ev2030mhdvhwy2030": 0,
+      "ev2030mhdvhwy2031": 0,
+      "ev2030mhdvhwy2032": 0,
+      "ev2030mhdvhwy2033": 0,
+      "ev2030mhdvhwy2034": 0,
+      "ev2030mhdvhwy2035": 0,
+      "ev2030mhdvhwy2036": 0,
+      "ev2030mhdvhwy2037": 0,
+      "ev2030mhdvhwy2038": 0,
+      "ev2030mhdvhwy2039": 0,
+      "ev2030mhdvhwy2040": 0,
+      "energyefficiency2026": -0.02,
+      "energyefficiency2027": -0.03,
+      "energyefficiency2028": -0.03,
+      "energyefficiency2029": -0.04,
+      "energyefficiency2030": -0.05,
+      "energyefficiency2031": -0.05,
+      "energyefficiency2032": -0.08,
+      "energyefficiency2033": -0.09,
+      "energyefficiency2034": -0.1,
+      "energyefficiency2035": -0.11,
+      "energyefficiency2036": -0.11,
+      "energyefficiency2037": -0.11,
+      "energyefficiency2038": -0.11,
+      "energyefficiency2039": -0.11,
+      "energyefficiency2040": -0.11,
+      "fscomcoolbay2026": 0,
+      "fscomcoolbay2027": 0,
+      "fscomcoolbay2028": 0,
+      "fscomcoolbay2029": 0,
+      "fscomcoolbay2030": 0,
+      "fscomcoolbay2031": 0,
+      "fscomcoolbay2032": 0,
+      "fscomcoolbay2033": 0,
+      "fscomcoolbay2034": 0,
+      "fscomcoolbay2035": 0,
+      "fscomcoolbay2036": 0,
+      "fscomcoolbay2037": 0,
+      "fscomcoolbay2038": 0,
+      "fscomcoolbay2039": 0,
+      "fscomcoolbay2040": 0,
+      "fscomcoolcoast2026": 0,
+      "fscomcoolcoast2027": 0,
+      "fscomcoolcoast2028": 0,
+      "fscomcoolcoast2029": 0,
+      "fscomcoolcoast2030": 0,
+      "fscomcoolcoast2031": 0,
+      "fscomcoolcoast2032": 0,
+      "fscomcoolcoast2033": 0,
+      "fscomcoolcoast2034": 0,
+      "fscomcoolcoast2035": 0,
+      "fscomcoolcoast2036": 0,
+      "fscomcoolcoast2037": 0,
+      "fscomcoolcoast2038": 0,
+      "fscomcoolcoast2039": 0,
+      "fscomcoolcoast2040": 0,
+      "fscomcoolint2026": 0,
+      "fscomcoolint2027": 0,
+      "fscomcoolint2028": 0,
+      "fscomcoolint2029": 0,
+      "fscomcoolint2030": 0,
+      "fscomcoolint2031": 0,
+      "fscomcoolint2032": 0,
+      "fscomcoolint2033": 0,
+      "fscomcoolint2034": 0,
+      "fscomcoolint2035": 0,
+      "fscomcoolint2036": 0,
+      "fscomcoolint2037": 0,
+      "fscomcoolint2038": 0,
+      "fscomcoolint2039": 0,
+      "fscomcoolint2040": 0,
+      "fscomgeneral2026": 0,
+      "fscomgeneral2027": 0,
+      "fscomgeneral2028": 0,
+      "fscomgeneral2029": 0,
+      "fscomgeneral2030": 0,
+      "fscomgeneral2031": 0,
+      "fscomgeneral2032": 0,
+      "fscomgeneral2033": 0,
+      "fscomgeneral2034": 0,
+      "fscomgeneral2035": 0,
+      "fscomgeneral2036": 0,
+      "fscomgeneral2037": 0,
+      "fscomgeneral2038": 0,
+      "fscomgeneral2039": 0,
+      "fscomgeneral2040": 0,
+      "fscomheatcoast2026": 0,
+      "fscomheatcoast2027": 0,
+      "fscomheatcoast2028": 0,
+      "fscomheatcoast2029": 0.01,
+      "fscomheatcoast2030": 0.01,
+      "fscomheatcoast2031": 0.02,
+      "fscomheatcoast2032": 0.04,
+      "fscomheatcoast2033": 0.06,
+      "fscomheatcoast2034": 0.08,
+      "fscomheatcoast2035": 0.09,
+      "fscomheatcoast2036": 0.1,
+      "fscomheatcoast2037": 0.1,
+      "fscomheatcoast2038": 0.2,
+      "fscomheatcoast2039": 0.24,
+      "fscomheatcoast2040": 0.28,
+      "fscomheatint2026": 0,
+      "fscomheatint2027": 0,
+      "fscomheatint2028": 0,
+      "fscomheatint2029": 0,
+      "fscomheatint2030": 0,
+      "fscomheatint2031": 0,
+      "fscomheatint2032": 0,
+      "fscomheatint2033": 0,
+      "fscomheatint2034": 0,
+      "fscomheatint2035": 0,
+      "fscomheatint2036": 0,
+      "fscomheatint2037": 0,
+      "fscomheatint2038": 0,
+      "fscomheatint2039": 0,
+      "fscomheatint2040": 0,
+      "fscomheatmtn2026": 0,
+      "fscomheatmtn2027": 0,
+      "fscomheatmtn2028": 0,
+      "fscomheatmtn2029": 0,
+      "fscomheatmtn2030": 0,
+      "fscomheatmtn2031": 0,
+      "fscomheatmtn2032": 0,
+      "fscomheatmtn2033": 0,
+      "fscomheatmtn2034": 0,
+      "fscomheatmtn2035": 0,
+      "fscomheatmtn2036": 0,
+      "fscomheatmtn2037": 0,
+      "fscomheatmtn2038": 0,
+      "fscomheatmtn2039": 0,
+      "fscomheatmtn2040": 0,
+      "fsrescoolcoast2026": 0.13,
+      "fsrescoolcoast2027": 0.28,
+      "fsrescoolcoast2028": 0.42,
+      "fsrescoolcoast2029": 0.62,
+      "fsrescoolcoast2030": 0.73,
+      "fsrescoolcoast2031": 0.95,
+      "fsrescoolcoast2032": 1.22,
+      "fsrescoolcoast2033": 1.43,
+      "fsrescoolcoast2034": 1.6,
+      "fsrescoolcoast2035": 1.75,
+      "fsrescoolcoast2036": 1.92,
+      "fsrescoolcoast2037": 2.21,
+      "fsrescoolcoast2038": 2.47,
+      "fsrescoolcoast2039": 2.7,
+      "fsrescoolcoast2040": 2.86,
+      "fsrescoolint2026": 0,
+      "fsrescoolint2027": 0,
+      "fsrescoolint2028": 0,
+      "fsrescoolint2029": 0,
+      "fsrescoolint2030": 0,
+      "fsrescoolint2031": 0,
+      "fsrescoolint2032": 0,
+      "fsrescoolint2033": 0,
+      "fsrescoolint2034": 0,
+      "fsrescoolint2035": 0,
+      "fsrescoolint2036": 0,
+      "fsrescoolint2037": 0,
+      "fsrescoolint2038": 0,
+      "fsrescoolint2039": 0,
+      "fsrescoolint2040": 0,
+      "fsrescoolmtn2026": 0,
+      "fsrescoolmtn2027": 0,
+      "fsrescoolmtn2028": 0,
+      "fsrescoolmtn2029": 0,
+      "fsrescoolmtn2030": 0,
+      "fsrescoolmtn2031": 0,
+      "fsrescoolmtn2032": 0,
+      "fsrescoolmtn2033": 0,
+      "fsrescoolmtn2034": 0,
+      "fsrescoolmtn2035": 0,
+      "fsrescoolmtn2036": 0,
+      "fsrescoolmtn2037": 0,
+      "fsrescoolmtn2038": 0,
+      "fsrescoolmtn2039": 0,
+      "fsrescoolmtn2040": 0,
+      "fsresgeneral2026": 0.09,
+      "fsresgeneral2027": 0.34,
+      "fsresgeneral2028": 0.54,
+      "fsresgeneral2029": 0.8,
+      "fsresgeneral2030": 0.99,
+      "fsresgeneral2031": 1.17,
+      "fsresgeneral2032": 1.33,
+      "fsresgeneral2033": 1.52,
+      "fsresgeneral2034": 1.71,
+      "fsresgeneral2035": 1.84,
+      "fsresgeneral2036": 1.93,
+      "fsresgeneral2037": 1.99,
+      "fsresgeneral2038": 2.04,
+      "fsresgeneral2039": 2.14,
+      "fsresgeneral2040": 2.19,
+      "fsresheatcoast2026": 0.02,
+      "fsresheatcoast2027": 0.08,
+      "fsresheatcoast2028": 0.11,
+      "fsresheatcoast2029": 0.14,
+      "fsresheatcoast2030": 0.2,
+      "fsresheatcoast2031": 0.24,
+      "fsresheatcoast2032": 0.3,
+      "fsresheatcoast2033": 0.36,
+      "fsresheatcoast2034": 0.41,
+      "fsresheatcoast2035": 0.46,
+      "fsresheatcoast2036": 0.48,
+      "fsresheatcoast2037": 0.5,
+      "fsresheatcoast2038": 0.52,
+      "fsresheatcoast2039": 0.56,
+      "fsresheatcoast2040": 0.57,
+      "fsresheatint2026": 0,
+      "fsresheatint2027": 0,
+      "fsresheatint2028": 0,
+      "fsresheatint2029": 0,
+      "fsresheatint2030": 0,
+      "fsresheatint2031": 0,
+      "fsresheatint2032": 0,
+      "fsresheatint2033": 0,
+      "fsresheatint2034": 0,
+      "fsresheatint2035": 0,
+      "fsresheatint2036": 0,
+      "fsresheatint2037": 0,
+      "fsresheatint2038": 0,
+      "fsresheatint2039": 0,
+      "fsresheatint2040": 0,
+      "fsresheatmtn2026": 0,
+      "fsresheatmtn2027": 0,
+      "fsresheatmtn2028": 0,
+      "fsresheatmtn2029": 0,
+      "fsresheatmtn2030": 0,
+      "fsresheatmtn2031": 0,
+      "fsresheatmtn2032": 0,
+      "fsresheatmtn2033": 0,
+      "fsresheatmtn2034": 0,
+      "fsresheatmtn2035": 0,
+      "fsresheatmtn2036": 0,
+      "fsresheatmtn2037": 0,
+      "fsresheatmtn2038": 0,
+      "fsresheatmtn2039": 0,
+      "fsresheatmtn2040": 0,
+      "photovoltaicmw2026": -0.11,
+      "photovoltaicmw2027": -0.29,
+      "photovoltaicmw2028": -0.46,
+      "photovoltaicmw2029": -0.54,
+      "photovoltaicmw2030": -0.64,
+      "photovoltaicmw2031": -0.75,
+      "photovoltaicmw2032": -0.8,
+      "photovoltaicmw2033": -0.88,
+      "photovoltaicmw2034": -0.99,
+      "photovoltaicmw2035": -1,
+      "photovoltaicmw2036": -1.04,
+      "photovoltaicmw2037": -1.07,
+      "photovoltaicmw2038": -1.08,
+      "photovoltaicmw2039": -1.09,
+      "photovoltaicmw2040": -1.11,
+      "redact": "No",
+      "feederid": "012501111",
+      "feedername": "EL CERRITO G 1111",
+      "bankid": "125001",
+      "bankname": "EL CERRITO G BANK 1",
+      "aggregatebatterystoragenonresidential": -0.13,
+      "aggregatebatterystorageresidential": -1.77,
+      "aggregateenergyefficiencymw": null,
+      "aggregateevfleetmddepot": 0,
+      "aggregateevfleethddepot": 0,
+      "aggregateevfleetschoolbus": 0,
+      "aggregateevpublicl2mw": 3.83,
+      "aggregateevresl1mw": 7.4,
+      "aggregateevresl2mw": 35.72,
+      "aggregateevurbandcfcmw": 0,
+      "aggregateevworkplacel2mw": 0.27,
+      "aggregateev2030mhdvhwy": 0,
+      "aggregatefscomcoolbay": 0,
+      "aggregatefscomcoolcoast": 0,
+      "aggregatefscomcoolint": 0,
+      "aggregatefscomgeneral": 0,
+      "aggregatefscomheatcoast": 1.23,
+      "aggregatefscomheatint": 0,
+      "aggregatefscomheatmtn": 0,
+      "aggregatefsrescoolcoast": 21.29,
+      "aggregatefsrescoolint": 0,
+      "aggregatefsrescoolmtn": 0,
+      "aggregatefsresgeneral": 20.62,
+      "aggregatefsresheatcoast": 4.95,
+      "aggregatefsresheatint": 0,
+      "aggregatefsresheatmtn": 0,
+      "aggregatephotovoltaicmw": -11.84,
+      "last_update_on_map": "09/08/2026 19:59:22",
+      "Shape__Length": 46373.74297728731
+    }
+  },
+  {
+    "id": 13,
+    "name": "DFCircuitsView",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 3050,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 31,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "substationid",
+        "type": "esriFieldTypeString",
+        "alias": " Substation ID"
+      },
+      {
+        "name": "gnaneedid",
+        "type": "esriFieldTypeString",
+        "alias": " GNA ID"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "gnafacilityname",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Facility Name"
+      },
+      {
+        "name": "bankname",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Bank Name"
+      },
+      {
+        "name": "substationname",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Substation Name"
+      },
+      {
+        "name": "facilityratingmw",
+        "type": "esriFieldTypeDouble",
+        "alias": "Facility Rating (MW)"
+      },
+      {
+        "name": "idnumber",
+        "type": "esriFieldTypeString",
+        "alias": "Facility ID"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last Update on Map"
+      },
+      {
+        "name": "facilitytype",
+        "type": "esriFieldTypeString",
+        "alias": "Facility Type"
+      },
+      {
+        "name": "facilityloadingmw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "2026 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "2027 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "2028 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "2029 Facility Loading (MW)"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "circuitid",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder ID"
+      },
+      {
+        "name": "circuitname",
+        "type": "esriFieldTypeString",
+        "alias": "Feeder Name"
+      },
+      {
+        "name": "facilityloadingmw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "2030 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "2031 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "2032 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "2033 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "2034 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "2035 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "2036 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "2037 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "2038 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "2039 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "2040 Facility Loading (MW)"
+      },
+      {
+        "name": "peakfacilityloadingpercent",
+        "type": "esriFieldTypeDouble",
+        "alias": "Peak Facility Loading (%)"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "substationid": "01201",
+      "gnaneedid": "GNA_012011101_Capacity",
+      "division": "East Bay",
+      "gnafacilityname": "OAKLAND C 1101",
+      "bankname": "NETWORK GROUP OAKLAND C 1251",
+      "substationname": "OAKLAND C ",
+      "facilityratingmw": 9.14,
+      "idnumber": "012011101",
+      "last_update_on_map": "09/08/2026 19:50:15",
+      "facilitytype": "FEEDER",
+      "facilityloadingmw2026": -99.99,
+      "facilityloadingmw2027": -99.99,
+      "facilityloadingmw2028": -99.99,
+      "facilityloadingmw2029": -99.99,
+      "publish": 1,
+      "circuitid": "012011101",
+      "circuitname": "OAKLAND C 1101",
+      "facilityloadingmw2030": -99.99,
+      "facilityloadingmw2031": -99.99,
+      "facilityloadingmw2032": -99.99,
+      "facilityloadingmw2033": -99.99,
+      "facilityloadingmw2034": -99.99,
+      "facilityloadingmw2035": -99.99,
+      "facilityloadingmw2036": -99.99,
+      "facilityloadingmw2037": -99.99,
+      "facilityloadingmw2038": -99.99,
+      "facilityloadingmw2039": -99.99,
+      "facilityloadingmw2040": -99.99,
+      "peakfacilityloadingpercent": -99.99,
+      "Shape__Length": 5155.895219888574
+    }
+  },
+  {
+    "id": 18,
+    "name": "HighFireThreatDistricts",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolygon",
+    "count": 5336,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 10,
+    "fields": [
+      {
+        "name": "pge_contact",
+        "type": "esriFieldTypeString",
+        "alias": "pge_contact"
+      },
+      {
+        "name": "pge_updated",
+        "type": "esriFieldTypeDate",
+        "alias": "pge_updated"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "hftd",
+        "type": "esriFieldTypeString",
+        "alias": "hftd"
+      },
+      {
+        "name": "cpuc_tier",
+        "type": "esriFieldTypeInteger",
+        "alias": "cpuc_tier"
+      },
+      {
+        "name": "cpuc_fire_map",
+        "type": "esriFieldTypeString",
+        "alias": "cpuc_fire_map"
+      },
+      {
+        "name": "data_source",
+        "type": "esriFieldTypeString",
+        "alias": "data_source"
+      },
+      {
+        "name": "Last_update_on_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last_update_on_Map"
+      },
+      {
+        "name": "Shape__Area",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Area"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "pge_contact": "COMY (PSPS Management), EXTA (EADM GIS Analytics)",
+      "pge_updated": 1619049600000,
+      "OBJECTID": 1,
+      "hftd": "Tier 2 - Elevated",
+      "cpuc_tier": 2,
+      "cpuc_fire_map": "Tier 2",
+      "data_source": "CPUC Fire Threat Map GO 95 4/2021",
+      "Last_update_on_Map": 1729730741000,
+      "Shape__Area": 13037527.97265625,
+      "Shape__Length": 62612.22507349963
+    }
+  },
+  {
+    "id": 19,
+    "name": "KnownLoad",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 30758,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 13,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "Circuitid",
+        "type": "esriFieldTypeString",
+        "alias": "Circuitid"
+      },
+      {
+        "name": "Unique_Identifer",
+        "type": "esriFieldTypeString",
+        "alias": "Unique_Identifer"
+      },
+      {
+        "name": "Type",
+        "type": "esriFieldTypeString",
+        "alias": "Type"
+      },
+      {
+        "name": "Category",
+        "type": "esriFieldTypeString",
+        "alias": "Category"
+      },
+      {
+        "name": "Status",
+        "type": "esriFieldTypeString",
+        "alias": "Status"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last_Update_On_Map"
+      },
+      {
+        "name": "Expected_Load__Amount_MW",
+        "type": "esriFieldTypeDouble",
+        "alias": "Expected_Load__Amount_MW"
+      },
+      {
+        "name": "feeder_id",
+        "type": "esriFieldTypeString",
+        "alias": "feeder_id"
+      },
+      {
+        "name": "feeder_name",
+        "type": "esriFieldTypeString",
+        "alias": "feeder_name"
+      },
+      {
+        "name": "SUBNAME",
+        "type": "esriFieldTypeString",
+        "alias": "SUBNAME"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "Circuitid": "163912104",
+      "Unique_Identifer": "206748B4-B499-4A1B-9E10-04742C750997",
+      "Type": "Commercial",
+      "Category": "Business",
+      "Status": "Ongoing",
+      "publish": 1,
+      "last_update_on_map": "08/21/2026 13:37:08",
+      "Expected_Load__Amount_MW": -99.99,
+      "feeder_id": "163912104",
+      "feeder_name": "EIGHT MILE 2104",
+      "SUBNAME": "EIGHT MILE",
+      "Shape__Length": 65724.58437578412
+    }
+  },
+  {
+    "id": 28,
+    "name": "GNASubstationArea__PeakFacilityDeficiencyPercent",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 4457,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 30,
+    "fields": [
+      {
+        "name": "deficiency_mw_2026",
+        "type": "esriFieldTypeString",
+        "alias": "2026 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2027",
+        "type": "esriFieldTypeString",
+        "alias": "2027 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2028",
+        "type": "esriFieldTypeString",
+        "alias": "2028 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2029",
+        "type": "esriFieldTypeString",
+        "alias": "2029 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2030",
+        "type": "esriFieldTypeString",
+        "alias": "2030 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "2031 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "2032 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "2033 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "2034 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "2035 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "2036 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "2037 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "2038 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "2039 Deficiency (MW)"
+      },
+      {
+        "name": "deficiency_mw_2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "2040 Deficiency (MW)"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "substationid",
+        "type": "esriFieldTypeString",
+        "alias": "Substation ID"
+      },
+      {
+        "name": "gnaneedid",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Need ID"
+      },
+      {
+        "name": "facilityid",
+        "type": "esriFieldTypeString",
+        "alias": "Facility ID"
+      },
+      {
+        "name": "gnafacilityname",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Facility Name"
+      },
+      {
+        "name": "bankname",
+        "type": "esriFieldTypeString",
+        "alias": "Bank Name"
+      },
+      {
+        "name": "substationname",
+        "type": "esriFieldTypeString",
+        "alias": "Substation Name"
+      },
+      {
+        "name": "facilitytype",
+        "type": "esriFieldTypeString",
+        "alias": "Facility Type"
+      },
+      {
+        "name": "primarydriver",
+        "type": "esriFieldTypeString",
+        "alias": "Primary Driver"
+      },
+      {
+        "name": "distributionservicerequired",
+        "type": "esriFieldTypeString",
+        "alias": "Distribution Service Required"
+      },
+      {
+        "name": "anticipatedneeddate",
+        "type": "esriFieldTypeString",
+        "alias": "Anticipated Need Date"
+      },
+      {
+        "name": "peakfacilitydeficiencypercent",
+        "type": "esriFieldTypeDouble",
+        "alias": "Peak Facility Deficiency (%)"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last Update On Map"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "deficiency_mw_2026": "-99.99",
+      "deficiency_mw_2027": "-99.99",
+      "deficiency_mw_2028": "-99.99",
+      "deficiency_mw_2029": "-99.99",
+      "deficiency_mw_2030": "-99.99",
+      "deficiency_mw_2031": -99.99,
+      "deficiency_mw_2032": -99.99,
+      "deficiency_mw_2033": -99.99,
+      "deficiency_mw_2034": -99.99,
+      "deficiency_mw_2035": -99.99,
+      "deficiency_mw_2036": -99.99,
+      "deficiency_mw_2037": -99.99,
+      "deficiency_mw_2038": -99.99,
+      "deficiency_mw_2039": -99.99,
+      "deficiency_mw_2040": -99.99,
+      "OBJECTID": 1,
+      "division": "East Bay",
+      "substationid": "01201",
+      "gnaneedid": "GNA_012011101_Capacity",
+      "facilityid": "012011101",
+      "gnafacilityname": "OAKLAND C 1101",
+      "bankname": "NETWORK GROUP OAKLAND C 1251",
+      "substationname": "OAKLAND C ",
+      "facilitytype": "FEEDER",
+      "primarydriver": "N/A",
+      "distributionservicerequired": "N/A",
+      "anticipatedneeddate": "None",
+      "peakfacilitydeficiencypercent": -99.99,
+      "last_update_on_map": "08/21/2026 22:28:44",
+      "publish": 1
+    }
+  },
+  {
+    "id": 29,
+    "name": "PlannedInvestments_LNBADollarsperUnitperYr",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 1340,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 27,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "substationid",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Substation ID"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "projectname",
+        "type": "esriFieldTypeString",
+        "alias": "Project Name"
+      },
+      {
+        "name": "projecttype",
+        "type": "esriFieldTypeString",
+        "alias": "Project Type"
+      },
+      {
+        "name": "distributionservicerequired",
+        "type": "esriFieldTypeString",
+        "alias": "Distribution Service Required"
+      },
+      {
+        "name": "lnbadollarsperunitperyr",
+        "type": "esriFieldTypeString",
+        "alias": "LNBA (dollars per Unit per year)"
+      },
+      {
+        "name": "deferrableyesorno",
+        "type": "esriFieldTypeString",
+        "alias": "Deferrable"
+      },
+      {
+        "name": "gnaneedid",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Need ID"
+      },
+      {
+        "name": "gnafacilityname",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Facility Name"
+      },
+      {
+        "name": "bankname",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Bank Name"
+      },
+      {
+        "name": "substationname",
+        "type": "esriFieldTypeString",
+        "alias": "Upstream Substation Name"
+      },
+      {
+        "name": "residential",
+        "type": "esriFieldTypeString",
+        "alias": "Residential"
+      },
+      {
+        "name": "commercial",
+        "type": "esriFieldTypeString",
+        "alias": "Commercial"
+      },
+      {
+        "name": "industrial",
+        "type": "esriFieldTypeString",
+        "alias": "Industrial"
+      },
+      {
+        "name": "agricultural",
+        "type": "esriFieldTypeString",
+        "alias": "Agricultural"
+      },
+      {
+        "name": "other",
+        "type": "esriFieldTypeString",
+        "alias": "Other"
+      },
+      {
+        "name": "total",
+        "type": "esriFieldTypeString",
+        "alias": "Total"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last Update on Map"
+      },
+      {
+        "name": "duprid",
+        "type": "esriFieldTypeString",
+        "alias": "DDOR ID"
+      },
+      {
+        "name": "orderno",
+        "type": "esriFieldTypeString",
+        "alias": "orderno"
+      },
+      {
+        "name": "inservicedate",
+        "type": "esriFieldTypeString",
+        "alias": "inservicedate"
+      },
+      {
+        "name": "project_cost_dollark",
+        "type": "esriFieldTypeDouble",
+        "alias": "project_cost_dollark"
+      },
+      {
+        "name": "lnbavaluedollarvpuyr",
+        "type": "esriFieldTypeString",
+        "alias": "lnbavaluedollarvpuyr"
+      },
+      {
+        "name": "facilityid",
+        "type": "esriFieldTypeString",
+        "alias": "facilityid"
+      },
+      {
+        "name": "gridneed",
+        "type": "esriFieldTypeString",
+        "alias": "gridneed"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "substationid": "18213",
+      "division": "Central Coast",
+      "projectname": "JOHNSON CANYON SUB - LAND PURCHASE",
+      "projecttype": "Bank and Feeder",
+      "distributionservicerequired": "Reliability",
+      "lnbadollarsperunitperyr": "N/A",
+      "deferrableyesorno": "N/A",
+      "gnaneedid": "GNA_1821304_Reliability",
+      "gnafacilityname": "GONZALES BANK 4",
+      "bankname": "GONZALES BANK 4",
+      "substationname": "GONZALES ",
+      "residential": "685",
+      "commercial": "119",
+      "industrial": "32",
+      "agricultural": "185",
+      "other": "356",
+      "total": "1377",
+      "publish": 1,
+      "last_update_on_map": "09/09/2026 21:50:41",
+      "duprid": "1069",
+      "orderno": "74061601",
+      "inservicedate": "2030-12-31 16:00:00",
+      "project_cost_dollark": 3006357.39,
+      "lnbavaluedollarvpuyr": "N/A",
+      "facilityid": "1821304",
+      "gridneed": "-99.99"
+    }
+  },
+  {
+    "id": 30,
+    "name": "DUR_Project_Execution",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 360,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 32,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "Project_Type",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Type"
+      },
+      {
+        "name": "Overall_Project_Status",
+        "type": "esriFieldTypeString",
+        "alias": "Overall_Project_Status"
+      },
+      {
+        "name": "Reason_for_Project_Pause_",
+        "type": "esriFieldTypeString",
+        "alias": "Reason_for_Project_Pause "
+      },
+      {
+        "name": "Date_Project_is_initiated_",
+        "type": "esriFieldTypeString",
+        "alias": "Date_Project_is_initiated "
+      },
+      {
+        "name": "Project_Scoping_Start_Date_",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Scoping_Start_Date "
+      },
+      {
+        "name": "Project_Scoping_End_Date_",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Scoping_End_Date "
+      },
+      {
+        "name": "Project_Design_Start_Date_",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Design_Start_Date "
+      },
+      {
+        "name": "Project_Design_End_Date_",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Design_End_Date "
+      },
+      {
+        "name": "Project_Construction_End_Date_",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Construction_End_Date "
+      },
+      {
+        "name": "GNA_ID",
+        "type": "esriFieldTypeString",
+        "alias": "GNA_ID"
+      },
+      {
+        "name": "GNA_Facility_ID_",
+        "type": "esriFieldTypeString",
+        "alias": "GNA_Facility_ID "
+      },
+      {
+        "name": "Year_Need_First_Identified",
+        "type": "esriFieldTypeString",
+        "alias": "Year_Need_First_Identified"
+      },
+      {
+        "name": "substationid",
+        "type": "esriFieldTypeString",
+        "alias": "substationid"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last_Update_On_Map"
+      },
+      {
+        "name": "Planned_Project_DUPR_DDOR_ID_",
+        "type": "esriFieldTypeString",
+        "alias": "Planned_Project_DUPR_DDOR_ID_"
+      },
+      {
+        "name": "projectname",
+        "type": "esriFieldTypeString",
+        "alias": "projectname"
+      },
+      {
+        "name": "order_No",
+        "type": "esriFieldTypeString",
+        "alias": "order_No"
+      },
+      {
+        "name": "Year_Planned_Project_First_Iden",
+        "type": "esriFieldTypeString",
+        "alias": "Year_Planned_Project_First_Iden"
+      },
+      {
+        "name": "Alternate_DDOR_IDs_if_applicabl",
+        "type": "esriFieldTypeString",
+        "alias": "Alternate_DDOR_IDs_if_applicabl"
+      },
+      {
+        "name": "Original_Expected_In_Service_Da",
+        "type": "esriFieldTypeString",
+        "alias": "Original_Expected_In_Service_Da"
+      },
+      {
+        "name": "Current_Expected_or_Actual_In_S",
+        "type": "esriFieldTypeString",
+        "alias": "Current_Expected_or_Actual_In_S"
+      },
+      {
+        "name": "ProjectEasementsDesignPermittin",
+        "type": "esriFieldTypeString",
+        "alias": "ProjectEasementsDesignPermittin"
+      },
+      {
+        "name": "ProjectEasementsDesignPermitt_1",
+        "type": "esriFieldTypeString",
+        "alias": "ProjectEasementsDesignPermitt_1"
+      },
+      {
+        "name": "Project_Construction_Start_Date",
+        "type": "esriFieldTypeString",
+        "alias": "Project_Construction_Start_Date"
+      },
+      {
+        "name": "Project_included_in_any_other_w",
+        "type": "esriFieldTypeString",
+        "alias": "Project_included_in_any_other_w"
+      },
+      {
+        "name": "Description_of_workstreams_in_w",
+        "type": "esriFieldTypeString",
+        "alias": "Description_of_workstreams_in_w"
+      },
+      {
+        "name": "Cost_of_Completed_project_dolla",
+        "type": "esriFieldTypeString",
+        "alias": "Cost_of_Completed_project_dolla"
+      },
+      {
+        "name": "Expense_Account_for_Completed_P",
+        "type": "esriFieldTypeString",
+        "alias": "Expense_Account_for_Completed_P"
+      },
+      {
+        "name": "Actual_Peak_Load_from_last_cycl",
+        "type": "esriFieldTypeString",
+        "alias": "Actual_Peak_Load_from_last_cycl"
+      },
+      {
+        "name": "Forecast_Peak_Load_from_last_cy",
+        "type": "esriFieldTypeString",
+        "alias": "Forecast_Peak_Load_from_last_cy"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "Project_Type": "Substation Upgrades",
+      "Overall_Project_Status": "Pre-execution",
+      "Reason_for_Project_Pause_": "N/A",
+      "Date_Project_is_initiated_": null,
+      "Project_Scoping_Start_Date_": null,
+      "Project_Scoping_End_Date_": null,
+      "Project_Design_Start_Date_": null,
+      "Project_Design_End_Date_": null,
+      "Project_Construction_End_Date_": null,
+      "GNA_ID": "GNA_1823302_Capacity, GNA_18233_Capacity",
+      "GNA_Facility_ID_": "1823302, 18233",
+      "Year_Need_First_Identified": "N/A",
+      "substationid": "18233",
+      "publish": 1,
+      "last_update_on_map": "09/04/2026 19:40:32",
+      "Planned_Project_DUPR_DDOR_ID_": "79",
+      "projectname": "Gabilan - Install Bank 2",
+      "order_No": "74040725",
+      "Year_Planned_Project_First_Iden": "2024",
+      "Alternate_DDOR_IDs_if_applicabl": "N/A",
+      "Original_Expected_In_Service_Da": "2024-12-31 00:00:00",
+      "Current_Expected_or_Actual_In_S": "2030-06-01 00:00:00",
+      "ProjectEasementsDesignPermittin": null,
+      "ProjectEasementsDesignPermitt_1": null,
+      "Project_Construction_Start_Date": null,
+      "Project_included_in_any_other_w": "No",
+      "Description_of_workstreams_in_w": "N/A",
+      "Cost_of_Completed_project_dolla": "N/A",
+      "Expense_Account_for_Completed_P": "N/A",
+      "Actual_Peak_Load_from_last_cycl": "N/A",
+      "Forecast_Peak_Load_from_last_cy": "N/A"
+    }
+  },
+  {
+    "id": 31,
+    "name": "DFSubstationArea___PeakFacilityLoadingPercent",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPoint",
+    "count": 4316,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 28,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "substationid",
+        "type": "esriFieldTypeString",
+        "alias": "Substation ID"
+      },
+      {
+        "name": "gnaneedid",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Need ID"
+      },
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "Division"
+      },
+      {
+        "name": "gnafacilityname",
+        "type": "esriFieldTypeString",
+        "alias": "GNA Facility Name"
+      },
+      {
+        "name": "bankname",
+        "type": "esriFieldTypeString",
+        "alias": "Bank Name"
+      },
+      {
+        "name": "substationname",
+        "type": "esriFieldTypeString",
+        "alias": "Substation Name"
+      },
+      {
+        "name": "facilitytype",
+        "type": "esriFieldTypeString",
+        "alias": "Facility Type"
+      },
+      {
+        "name": "facilityratingmw",
+        "type": "esriFieldTypeDouble",
+        "alias": "Facility Rating (MW)"
+      },
+      {
+        "name": "facilityloadingmw2026",
+        "type": "esriFieldTypeDouble",
+        "alias": "2026 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2027",
+        "type": "esriFieldTypeDouble",
+        "alias": "2027 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2028",
+        "type": "esriFieldTypeDouble",
+        "alias": "2028 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2029",
+        "type": "esriFieldTypeDouble",
+        "alias": "2029 Facility Loading (MW)"
+      },
+      {
+        "name": "peakfacilityloadingpercent",
+        "type": "esriFieldTypeDouble",
+        "alias": "Peak Facility Loading (%)"
+      },
+      {
+        "name": "idnumber",
+        "type": "esriFieldTypeString",
+        "alias": "ID Number"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "Last Update on Map"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "facilityloadingmw2030",
+        "type": "esriFieldTypeDouble",
+        "alias": "2030 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2031",
+        "type": "esriFieldTypeDouble",
+        "alias": "2031 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2032",
+        "type": "esriFieldTypeDouble",
+        "alias": "2032 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2033",
+        "type": "esriFieldTypeDouble",
+        "alias": "2033 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2034",
+        "type": "esriFieldTypeDouble",
+        "alias": "2034 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2035",
+        "type": "esriFieldTypeDouble",
+        "alias": "2035 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2036",
+        "type": "esriFieldTypeDouble",
+        "alias": "2036 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2037",
+        "type": "esriFieldTypeDouble",
+        "alias": "2037 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2038",
+        "type": "esriFieldTypeDouble",
+        "alias": "2038 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2039",
+        "type": "esriFieldTypeDouble",
+        "alias": "2039 Facility Loading (MW)"
+      },
+      {
+        "name": "facilityloadingmw2040",
+        "type": "esriFieldTypeDouble",
+        "alias": "2040 Facility Loading (MW)"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "substationid": "01264",
+      "gnaneedid": "GNA_0126401_Capacity",
+      "division": "East Bay",
+      "gnafacilityname": "BECK STREET BANK 1",
+      "bankname": "BECK STREET BANK 1",
+      "substationname": "BECK STREET ",
+      "facilitytype": "BANK",
+      "facilityratingmw": 2.48,
+      "facilityloadingmw2026": 0.49,
+      "facilityloadingmw2027": 0.49,
+      "facilityloadingmw2028": 0.49,
+      "facilityloadingmw2029": 0.49,
+      "peakfacilityloadingpercent": 19.76,
+      "idnumber": "0126401",
+      "last_update_on_map": "08/21/2026 22:30:36",
+      "publish": 1,
+      "facilityloadingmw2030": 0.49,
+      "facilityloadingmw2031": 0.49,
+      "facilityloadingmw2032": 0.49,
+      "facilityloadingmw2033": 0.49,
+      "facilityloadingmw2034": 0.49,
+      "facilityloadingmw2035": 0.49,
+      "facilityloadingmw2036": 0.49,
+      "facilityloadingmw2037": 0.49,
+      "facilityloadingmw2038": 0.49,
+      "facilityloadingmw2039": 0.49,
+      "facilityloadingmw2040": 0.49
+    }
+  },
+  {
+    "id": 32,
+    "name": "Climate_Zone",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolygon",
+    "count": 36,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 4,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "cz_code",
+        "type": "esriFieldTypeString",
+        "alias": "cz_code"
+      },
+      {
+        "name": "Shape__Area",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Area"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "cz_code": "1",
+      "Shape__Area": 27367317982.98828,
+      "Shape__Length": 5904042.293922438
+    }
+  },
+  {
+    "id": 33,
+    "name": "PendingLoad",
+    "itemType": "layer",
+    "geometryType": "esriGeometryPolyline",
+    "count": 108,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 13,
+    "fields": [
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "Unique_Identifer",
+        "type": "esriFieldTypeString",
+        "alias": "Unique_Identifer"
+      },
+      {
+        "name": "Circuitid",
+        "type": "esriFieldTypeString",
+        "alias": "Circuitid"
+      },
+      {
+        "name": "Type",
+        "type": "esriFieldTypeString",
+        "alias": "Type"
+      },
+      {
+        "name": "Category",
+        "type": "esriFieldTypeString",
+        "alias": "Category"
+      },
+      {
+        "name": "Expected_Load__Amount_MW",
+        "type": "esriFieldTypeDouble",
+        "alias": "Expected_Load__Amount_MW"
+      },
+      {
+        "name": "Status",
+        "type": "esriFieldTypeString",
+        "alias": "Status"
+      },
+      {
+        "name": "feeder_name",
+        "type": "esriFieldTypeString",
+        "alias": "feeder_name"
+      },
+      {
+        "name": "feeder_id",
+        "type": "esriFieldTypeString",
+        "alias": "feeder_id"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      },
+      {
+        "name": "SUBNAME",
+        "type": "esriFieldTypeString",
+        "alias": "SUBNAME"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeString",
+        "alias": "last_update_on_map"
+      },
+      {
+        "name": "Shape__Length",
+        "type": "esriFieldTypeDouble",
+        "alias": "Shape__Length"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "OBJECTID": 1,
+      "Unique_Identifer": "AD48E4A8-56A1-4D8B-A5DB-BA24690890B1",
+      "Circuitid": "014722111",
+      "Type": "Transportation",
+      "Category": "LD EV",
+      "Expected_Load__Amount_MW": -99.99,
+      "Status": "New",
+      "feeder_name": "DIXON LANDING 2111",
+      "feeder_id": "014722111",
+      "publish": 1,
+      "SUBNAME": "DIXON LANDING",
+      "last_update_on_map": "09/04/2026 19:39:30",
+      "Shape__Length": 29938.101422814485
+    }
+  },
+  {
+    "id": 23,
+    "name": "FeederLoadProfile",
+    "itemType": "table",
+    "geometryType": "None (Table)",
+    "count": 637056,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 8,
+    "fields": [
+      {
+        "name": "division",
+        "type": "esriFieldTypeString",
+        "alias": "division"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "FeederID",
+        "type": "esriFieldTypeInteger",
+        "alias": "FeederID"
+      },
+      {
+        "name": "MonthHour",
+        "type": "esriFieldTypeString",
+        "alias": "MonthHour"
+      },
+      {
+        "name": "Low",
+        "type": "esriFieldTypeInteger",
+        "alias": "Low"
+      },
+      {
+        "name": "High",
+        "type": "esriFieldTypeInteger",
+        "alias": "High"
+      },
+      {
+        "name": "Publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "Publish"
+      },
+      {
+        "name": "Last_Update_On_Map",
+        "type": "esriFieldTypeDate",
+        "alias": "Last_Update_On_Map"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "division": "East Bay",
+      "OBJECTID": 1,
+      "FeederID": 12011108,
+      "MonthHour": "01_00",
+      "Low": 1305,
+      "High": 1427,
+      "Publish": 1,
+      "Last_Update_On_Map": 1769622471000
+    }
+  },
+  {
+    "id": 25,
+    "name": "SubstationLoadProfile",
+    "itemType": "table",
+    "geometryType": "None (Table)",
+    "count": 182856,
+    "maxRecordCount": 2000,
+    "supportsPagination": true,
+    "fieldsCount": 8,
+    "fields": [
+      {
+        "name": "subname",
+        "type": "esriFieldTypeString",
+        "alias": "subname"
+      },
+      {
+        "name": "OBJECTID",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID"
+      },
+      {
+        "name": "subid",
+        "type": "esriFieldTypeInteger",
+        "alias": "subid"
+      },
+      {
+        "name": "monthhour",
+        "type": "esriFieldTypeString",
+        "alias": "monthhour"
+      },
+      {
+        "name": "high",
+        "type": "esriFieldTypeInteger",
+        "alias": "high"
+      },
+      {
+        "name": "low",
+        "type": "esriFieldTypeInteger",
+        "alias": "low"
+      },
+      {
+        "name": "last_update_on_map",
+        "type": "esriFieldTypeDate",
+        "alias": "last_update_on_map"
+      },
+      {
+        "name": "publish",
+        "type": "esriFieldTypeInteger",
+        "alias": "publish"
+      }
+    ],
+    "relationships": [],
+    "sampleRecord": {
+      "subname": "CLAYTON",
+      "OBJECTID": 1,
+      "subid": 1202,
+      "monthhour": "01_00",
+      "high": 30677,
+      "low": 27494,
+      "last_update_on_map": 1775130618000,
+      "publish": 1
+    }
+  }
+]

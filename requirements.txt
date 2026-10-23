@@ -1,0 +1,23 @@
+# Core Framework & Agent SDK
+deepagents>=0.7.31
+langchain>=1.4.7
+langchain-core>=1.7.0
+langchain-google-genai>=4.4.2
+langchain-ollama>=1.1.0
+langgraph>=1.2.16
+langgraph-checkpoint-sqlite>=3.1.2
+
+# LLM Providers
+google-genai>=2.33.0
+ollama>=0.6.3
+
+# Web Server & API
+fastapi>=0.162.0
+uvicorn>=0.54.0
+httpx>=0.28.1
+pydantic>=2.14.1
+python-dotenv>=1.2.4
+
+# Data & Utilities
+PyYAML>=6.0.3
+requests>=2.34.2
