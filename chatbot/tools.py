@@ -452,6 +452,15 @@ def query_layer_direct(
     fields = to_str(out_fields) or "*"
     lim = to_int(limit, default=10)
 
+    # Security check: Block SQL injection / destructive statements in WHERE clause
+    upper_w = w_clause.upper()
+    dangerous_keywords = ["DROP ", "DELETE ", "UPDATE ", "INSERT ", "EXEC ", "TRUNCATE ", "ALTER ", "--", ";", "XP_"]
+    for kw in dangerous_keywords:
+        if kw in upper_w:
+            return json.dumps({
+                "error": f"Security validation failed: SQL keyword or pattern '{kw.strip()}' is disallowed in read-only queries."
+            }, indent=2)
+
     res = arcgis_service.query(
         layer=target_layer,
         where=w_clause,
