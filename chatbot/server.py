@@ -291,6 +291,28 @@ async def verify_one(check_id: str):
         raise HTTPException(status_code=404, detail=f"Check '{check_id}' not found.")
     return await run_single_check(match)
 
+# In-memory high-performance cache with TTL (1 hour)
+_MAP_CACHE: Dict[str, Dict[str, Any]] = {}
+_MAP_CACHE_TTL = 3600  # seconds
+
+
+def _get_from_cache(key: str) -> Optional[Any]:
+    if key in _MAP_CACHE:
+        entry = _MAP_CACHE[key]
+        if time.time() - entry["timestamp"] < _MAP_CACHE_TTL:
+            return entry["data"]
+        else:
+            del _MAP_CACHE[key]
+    return None
+
+
+def _set_in_cache(key: str, data: Any) -> None:
+    _MAP_CACHE[key] = {
+        "data": data,
+        "timestamp": time.time(),
+    }
+
+
 # =====================================================================
 # OpenFreeMap / MapLibre GIS Endpoints
 # =====================================================================
@@ -298,6 +320,11 @@ async def verify_one(check_id: str):
 @app.get("/api/map/feeders-list")
 async def get_map_feeders_list():
     """Return curated feeders with names, voltages, and parent substations for the map selector."""
+    cache_key = "feeders_list_curated"
+    cached = _get_from_cache(cache_key)
+    if cached is not None:
+        return cached
+
     client = arcgis_service
     try:
         data = await asyncio.to_thread(
@@ -321,7 +348,9 @@ async def get_map_feeders_list():
                 "total_dg_kw": attr.get("Total_DG", 0),
                 "division": attr.get("Division"),
             })
-        return {"feeders": feeders}
+        result = {"feeders": feeders, "cached": False}
+        _set_in_cache(cache_key, {"feeders": feeders, "cached": True})
+        return result
     except Exception as e:
         return {"feeders": [], "error": str(e)}
 
@@ -330,6 +359,11 @@ async def get_map_feeders_list():
 async def get_feeder_geojson(feeder_id: str):
     """Return GeoJSON FeatureCollection of feeder line sections (Layer 3) + parent substation (Layer 0)."""
     clean_id = feeder_id.strip()
+    cache_key = f"feeder_geojson_{clean_id}"
+    cached = _get_from_cache(cache_key)
+    if cached is not None:
+        return cached
+
     client = arcgis_service
 
     # 1. Query LineDetail (Layer 3) with WGS84 geometry
@@ -426,7 +460,7 @@ async def get_feeder_geojson(feeder_id: str):
     max_gen_kw = max((f["properties"].get("GenCapacity_kW") or 0 for f in features), default=0)
     max_load_kw = max((f["properties"].get("LoadCapacity_kW") or 0 for f in features), default=0)
 
-    return {
+    result = {
         "type": "FeatureCollection",
         "feeder_id": clean_id,
         "feeder_meta": feeder_meta,
@@ -442,11 +476,18 @@ async def get_feeder_geojson(feeder_id: str):
         },
         "features": features,
     }
+    _set_in_cache(cache_key, result)
+    return result
 
 
 @app.get("/api/map/substations")
 async def get_map_substations():
     """Return GeoJSON FeatureCollection of major substations from Layer 0 (EDSubstations)."""
+    cache_key = "substations_geojson"
+    cached = _get_from_cache(cache_key)
+    if cached is not None:
+        return cached
+
     client = arcgis_service
     try:
         data = await asyncio.to_thread(
@@ -471,11 +512,13 @@ async def get_map_substations():
                     },
                     "properties": f.get("attributes", {}),
                 })
-        return {
+        result = {
             "type": "FeatureCollection",
             "count": len(features),
             "features": features,
         }
+        _set_in_cache(cache_key, result)
+        return result
     except Exception as e:
         return {"type": "FeatureCollection", "count": 0, "features": [], "error": str(e)}
 
@@ -483,6 +526,11 @@ async def get_map_substations():
 @app.get("/api/map/fire-districts")
 async def get_map_fire_districts():
     """Return GeoJSON FeatureCollection of CPUC High Fire Threat Districts (Layer 18)."""
+    cache_key = "fire_districts_geojson"
+    cached = _get_from_cache(cache_key)
+    if cached is not None:
+        return cached
+
     client = arcgis_service
     try:
         data = await asyncio.to_thread(
@@ -506,11 +554,13 @@ async def get_map_fire_districts():
                     },
                     "properties": f.get("attributes", {}),
                 })
-        return {
+        result = {
             "type": "FeatureCollection",
             "count": len(features),
             "features": features,
         }
+        _set_in_cache(cache_key, result)
+        return result
     except Exception as e:
         return {"type": "FeatureCollection", "count": 0, "features": [], "error": str(e)}
 

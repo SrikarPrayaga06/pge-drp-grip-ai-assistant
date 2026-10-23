@@ -58,6 +58,38 @@ body {
   flex-direction: column;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+/* GPU Acceleration & Performance Optimizations */
+.map-hud,
+.map-sidebar,
+.test-card,
+.message-bubble,
+.inspector-card,
+.view-panel {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.test-card {
+  contain: layout style paint;
+}
+
+.message-row {
+  contain: layout style;
+}
+
+.chat-messages,
+.map-sidebar-content,
+.verify-grid-container,
+.results-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* Base App Layout */

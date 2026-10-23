@@ -202,16 +202,18 @@ function setupNavigation() {
       document.getElementById(targetId)?.classList.add('active');
 
       if (targetId === 'map-view' && gridMap) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           gridMap.resize();
           if (currentFeederData?.bbox) {
             gridMap.fitBounds(currentFeederData.bbox, {
-              padding: { top: 70, bottom: 70, left: 390, right: 70 },
+              padding: { top: 75, bottom: 75, left: 395, right: 75 },
               maxZoom: 15,
-              duration: 600
+              duration: 500,
+              essential: true,
+              easing: (t) => 1 - Math.pow(1 - t, 3)
             });
           }
-        }, 100);
+        });
       }
     });
   });
@@ -420,7 +422,12 @@ function appendMessage(role, content, shouldScroll = true) {
 
   elements.messagesContainer.appendChild(row);
   if (shouldScroll) {
-    elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+    requestAnimationFrame(() => {
+      elements.messagesContainer.scrollTo({
+        top: elements.messagesContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    });
   }
 }
 
@@ -718,6 +725,11 @@ let currentStyle = 'dark';
 let activeFeederId = '162611703'; // Default Manteca 1703
 let currentFeederData = null;
 let selectedFeatureProps = null;
+
+// High-speed client-side caches
+const clientFeederCache = new Map();
+let clientSubstationsCache = null;
+let clientFireDistrictsCache = null;
 
 function setupInteractiveMap() {
   const container = document.getElementById('openfreemap-container');
@@ -1062,9 +1074,34 @@ function updateInspectorCard(type, props, isPass) {
   if (btnAsk) btnAsk.style.display = 'block';
 }
 
+function applyFeederStatsToUI(data, hudFeeder, hudSub, hudSections, hudScreen, hudGen) {
+  const fMeta = data.feeder_meta || {};
+  const subName = fMeta.Substation || (data.substation_feature?.properties?.SubstationName) || 'Substation';
+  const volt = fMeta.Nominal_Voltage ? `${fMeta.Nominal_Voltage} kV` : '12 kV';
+
+  if (hudFeeder) hudFeeder.textContent = fMeta.Feeder_Name || `Feeder ${data.feeder_id || activeFeederId}`;
+  if (hudSub) hudSub.textContent = `${subName} (${volt})`;
+  if (hudSections) hudSections.textContent = data.summary?.total_sections || data.count || 0;
+  if (hudScreen) {
+    hudScreen.textContent = `${data.summary?.screen_l_pass || 0} Passed / ${data.summary?.screen_l_unlikely || 0} Unlikely`;
+  }
+  if (hudGen) {
+    hudGen.textContent = (data.summary?.max_gen_capacity_kw ? Number(data.summary.max_gen_capacity_kw).toLocaleString() : '0') + ' kW';
+  }
+
+  // Auto-populate inspector card with a representative line section
+  if (data.features && data.features.length > 0) {
+    const sample = data.features[0].properties;
+    const isPass = (sample.ScreenL || '').toLowerCase().includes('likely to pass') && !(sample.ScreenL || '').toLowerCase().includes('unlikely');
+    updateInspectorCard('Line Section (Sample)', sample, isPass);
+    selectedFeatureProps = sample;
+  }
+}
+
 async function loadFeederOnMap(feederId) {
   if (!feederId) return;
-  activeFeederId = feederId;
+  const cleanId = String(feederId).trim();
+  activeFeederId = cleanId;
 
   const hudFeeder = document.getElementById('hud-feeder-name');
   const hudSub = document.getElementById('hud-substation-name');
@@ -1072,42 +1109,29 @@ async function loadFeederOnMap(feederId) {
   const hudScreen = document.getElementById('hud-screen-l');
   const hudGen = document.getElementById('hud-max-gen');
 
-  if (hudFeeder) hudFeeder.textContent = 'Loading...';
+  // Instant client cache hit (0ms latency, buttery smooth)
+  if (clientFeederCache.has(cleanId)) {
+    const cachedData = clientFeederCache.get(cleanId);
+    currentFeederData = cachedData;
+    renderFeederGeoJSON(cachedData, true);
+    applyFeederStatsToUI(cachedData, hudFeeder, hudSub, hudSections, hudScreen, hudGen);
+    return;
+  }
+
+  if (hudFeeder) hudFeeder.textContent = 'Loading Feeder...';
 
   try {
-    const res = await fetch(`/api/map/feeder/${encodeURIComponent(feederId)}`);
+    const res = await fetch(`/api/map/feeder/${encodeURIComponent(cleanId)}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+    clientFeederCache.set(cleanId, data);
     currentFeederData = data;
 
     renderFeederGeoJSON(data, true);
-
-    // Update HUD Metrics
-    const fMeta = data.feeder_meta || {};
-    const subName = fMeta.Substation || (data.substation_feature?.properties?.SubstationName) || 'Substation';
-    const volt = fMeta.Nominal_Voltage ? `${fMeta.Nominal_Voltage} kV` : '12 kV';
-
-    if (hudFeeder) hudFeeder.textContent = fMeta.Feeder_Name || `Feeder ${feederId}`;
-    if (hudSub) hudSub.textContent = `${subName} (${volt})`;
-    if (hudSections) hudSections.textContent = data.summary?.total_sections || data.count || 0;
-    if (hudScreen) {
-      hudScreen.textContent = `${data.summary?.screen_l_pass || 0} Passed / ${data.summary?.screen_l_unlikely || 0} Unlikely`;
-    }
-    if (hudGen) {
-      hudGen.textContent = (data.summary?.max_gen_capacity_kw ? Number(data.summary.max_gen_capacity_kw).toLocaleString() : '0') + ' kW';
-    }
-
-    // Auto-populate inspector card with a representative line section
-    if (data.features && data.features.length > 0) {
-      const sample = data.features[0].properties;
-      const isPass = (sample.ScreenL || '').toLowerCase().includes('likely to pass') && !(sample.ScreenL || '').toLowerCase().includes('unlikely');
-      updateInspectorCard('Line Section (Sample)', sample, isPass);
-      selectedFeatureProps = sample;
-    }
-
+    applyFeederStatsToUI(data, hudFeeder, hudSub, hudSections, hudScreen, hudGen);
   } catch (err) {
     console.error('Failed to load feeder GeoJSON:', err);
-    if (hudFeeder) hudFeeder.textContent = `Error loading ${feederId}`;
+    if (hudFeeder) hudFeeder.textContent = `Error loading ${cleanId}`;
   }
 }
 
@@ -1130,12 +1154,14 @@ function renderFeederGeoJSON(data, animateCamera = true) {
     });
   }
 
-  // Camera FlyTo Bounding Box
+  // Ultra-smooth Camera FitBounds with ease-out cubic curve
   if (animateCamera && data.bbox && data.bbox[0] <= data.bbox[2]) {
     gridMap.fitBounds(data.bbox, {
-      padding: { top: 70, bottom: 70, left: 390, right: 70 },
-      maxZoom: 15,
-      duration: 1600
+      padding: { top: 75, bottom: 75, left: 395, right: 75 },
+      maxZoom: 15.2,
+      duration: 1000,
+      essential: true,
+      easing: (t) => 1 - Math.pow(1 - t, 3)
     });
   }
 }
@@ -1143,8 +1169,12 @@ function renderFeederGeoJSON(data, animateCamera = true) {
 async function loadAllSubstationsOnMap() {
   if (!gridMap) return;
   try {
-    const res = await fetch('/api/map/substations');
-    const data = await res.json();
+    let data = clientSubstationsCache;
+    if (!data) {
+      const res = await fetch('/api/map/substations');
+      data = await res.json();
+      clientSubstationsCache = data;
+    }
 
     if (!gridMap.getSource('all-substations-source')) {
       gridMap.addSource('all-substations-source', {
@@ -1191,8 +1221,12 @@ async function loadAllSubstationsOnMap() {
 async function loadFireDistrictsOnMap() {
   if (!gridMap) return;
   try {
-    const res = await fetch('/api/map/fire-districts');
-    const data = await res.json();
+    let data = clientFireDistrictsCache;
+    if (!data) {
+      const res = await fetch('/api/map/fire-districts');
+      data = await res.json();
+      clientFireDistrictsCache = data;
+    }
 
     if (!gridMap.getSource('fire-districts-source')) {
       gridMap.addSource('fire-districts-source', {
