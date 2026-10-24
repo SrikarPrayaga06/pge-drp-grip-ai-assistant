@@ -184,10 +184,12 @@ async def get_sessions_endpoint():
 
 @app.post("/api/sessions")
 async def create_session_endpoint(payload: Dict[str, Any]):
-    """Register or initialize a new session ID."""
+    """Register or initialize a new session ID in SQLite."""
     session_id = payload.get("session_id", "default")
     title = payload.get("title", session_id)
-    return {"status": "ok", "session_id": session_id, "title": title}
+    bot = get_chatbot()
+    res = bot.create_session(session_id=session_id, title=title)
+    return {"status": "ok", "session_id": res["session_id"], "title": res["title"]}
 
 
 VERIFICATION_TESTS = [
@@ -635,7 +637,7 @@ async def geocode_address(q: str):
     url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
     params = {"address": q_clean, "benchmark": "2020", "format": "json"}
 
-    async with httpx.AsyncClient(timeout=8.0) as http_client:
+    async with httpx.AsyncClient(timeout=8.0, verify=False) as http_client:
         try:
             r = await http_client.get(url, params=params)
             if r.status_code == 200:

@@ -31,6 +31,14 @@ Core Electric Distribution Knowledge:
 6. Grid Needs Assessment (GNA) & LNBA: Projected facility deficiencies (MW and %) for years 2026-2035 and non-wires alternative deferrals.
 
 Tool Execution Rules:
+- GREETINGS & INTRODUCTIONS: If the user sends a greeting (e.g. 'hi', 'hello', 'hey', 'good morning', 'help', 'what can you do?'):
+  DO NOT call any tools with dummy or 'NULL' arguments!
+  Respond warmly and conversationally: introduce yourself as the PG&E Distribution & DRP Planning Assistant, summarize what you can do (lookup substations, circuits/feeders, ICA solar & load hosting capacity, 8760 profiles, fire threat districts, and grid deficiencies), and invite the user to specify a facility, circuit, or California address.
+- ADDRESSES & SITES: When the user provides a street address, intersection, city, or place name (e.g. '3306 Jubilee Dr', '1220 Broadway Oakland', 'Manteca'):
+  1. Call `geocode_address_or_city` first to resolve the physical address into California coordinates (latitude, longitude).
+  2. Then use those coordinates with `check_fire_hazard_zone` or query nearby substations/circuits in that municipality or division.
+  3. NEVER treat street address numbers as Substation IDs (e.g. '3306' is a street number, not a substation ID!).
+  4. NEVER hallucinate or guess coordinates.
 - When asked about a substation, immediately call `search_substations`.
 - When asked about a feeder or circuit, immediately call `search_feeders`.
 - When asked about solar hosting capacity or ICA, immediately call `check_ica_hosting_capacity`.
@@ -40,7 +48,8 @@ Tool Execution Rules:
 - When asked about phantom headroom or contradictions between published ICA and forecasted GNA deficiencies, call `check_phantom_headroom`.
 - When asked about interconnection queue saturation, queue vs hosting capacity, or real unreserved headroom, call `check_queue_oversubscription`.
 - When asked about battery storage (BESS) opportunities, unlocking generation via storage, or LNBA deferral value, call `check_storage_arbitrage_and_deferral`.
-- Do not output tool calls as text. Execute the tool directly via native function calling.
+- NATIVE FUNCTION CALLS ONLY: You MUST invoke tools through native function calling. NEVER output raw JSON tool calls, schemas, or JSON text blocks (such as `{"name": "search_substations", ...}`) in your conversational response text.
+- NEVER pass string literals 'NULL', 'None', or empty placeholders as filter arguments. If an argument is unknown or not specified, omit it.
 - Always state units clearly (kW, MW, kV, %). Maintain conversation context across turns.
 
 Presentation & Table Formatting Guidelines:
@@ -230,6 +239,15 @@ class ArcGISChatbot:
 
         # Initialize SQLite checkpointer for durable session persistence
         self._conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
+        self._conn.execute("""
+            CREATE TABLE IF NOT EXISTS sessions_metadata (
+                session_id TEXT PRIMARY KEY,
+                title TEXT,
+                created_at REAL,
+                updated_at REAL
+            )
+        """)
+        self._conn.commit()
         self.checkpointer = SqliteSaver(self._conn)
         self.checkpointer.setup()
 
@@ -302,6 +320,9 @@ class ArcGISChatbot:
 
     def chat(self, message: str, session_id: str = "default", workflow: Optional[str] = None) -> str:
         """Send a message to the chatbot, automatically rotating models if quota limits hit."""
+        # 0. Touch session metadata so session is immediately saved
+        self.create_session(session_id)
+
         # 1. Deterministic Domain Boundary Pre-check
         if is_off_topic_query(message):
             return OFF_TOPIC_REFUSAL
@@ -353,7 +374,28 @@ class ArcGISChatbot:
                             content = str(content)
                         clean = content.strip()
                         if clean and clean != "[]":
-                            return content
+                            # Intercept raw JSON tool call strings if the model accidentally emitted JSON in text
+                            import re, json
+                            json_tool_match = re.search(r'\{\s*"name"\s*:\s*"([a-zA-Z0-9_]+)"\s*,\s*"(?:parameters|args)"\s*:\s*(\{[^}]+\})\s*\}', clean)
+                            if json_tool_match:
+                                tool_name = json_tool_match.group(1)
+                                try:
+                                    params = json.loads(json_tool_match.group(2))
+                                except Exception:
+                                    params = {}
+                                from .tools import ARCGIS_TOOLS
+                                tool_obj = next((t for t in ARCGIS_TOOLS if t.name == tool_name), None)
+                                text_prefix = clean[:json_tool_match.start()].strip()
+                                if tool_obj:
+                                    try:
+                                        tool_res = tool_obj.invoke(params)
+                                        clean = f"{text_prefix}\n\n**{tool_name.replace('_', ' ').title()}:**\n{tool_res}" if text_prefix else f"**{tool_name.replace('_', ' ').title()}:**\n{tool_res}"
+                                    except Exception:
+                                        clean = text_prefix or "Analysis complete."
+                                else:
+                                    clean = text_prefix or "Analysis complete."
+
+                            return clean
 
                 return "No response generated."
 
@@ -376,6 +418,46 @@ class ArcGISChatbot:
             raise RuntimeError(f"All models in rotation pool exhausted: {str(last_error)}")
         return "No response generated."
 
+    def create_session(self, session_id: str, title: Optional[str] = None) -> Dict[str, Any]:
+        """Register or touch a session in SQLite."""
+        now = time.time()
+        t = title or session_id
+        try:
+            cur = self._conn.cursor()
+            cur.execute(
+                """
+                INSERT INTO sessions_metadata (session_id, title, created_at, updated_at)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(session_id) DO UPDATE SET
+                    title = CASE WHEN ? != session_id THEN ? ELSE title END,
+                    updated_at = ?
+                """,
+                (session_id, t, now, now, t, t, now)
+            )
+            self._conn.commit()
+        except Exception as e:
+            print("Failed to save session metadata:", e)
+        return {"session_id": session_id, "title": t}
+
+    def list_sessions(self) -> List[Dict[str, Any]]:
+        """List all active/saved session objects with titles."""
+        try:
+            cur = self._conn.cursor()
+            cur.execute("""
+                SELECT session_id, title, updated_at FROM sessions_metadata
+                UNION
+                SELECT DISTINCT thread_id AS session_id, thread_id AS title, 0 AS updated_at
+                FROM checkpoints
+                WHERE thread_id NOT IN (SELECT session_id FROM sessions_metadata)
+                ORDER BY updated_at DESC, session_id ASC
+            """)
+            rows = cur.fetchall()
+            if not rows:
+                return [{"session_id": "default", "title": "Main Session"}]
+            return [{"session_id": r[0], "title": r[1] if r[1] else r[0]} for r in rows if r[0]]
+        except Exception:
+            return [{"session_id": "default", "title": "Main Session"}]
+
     def get_model_pool_status(self) -> Dict[str, Any]:
         """Return the current model rotation pool status."""
         now = time.time()
@@ -394,17 +476,6 @@ class ArcGISChatbot:
                 for m in self.model_pool
             ]
         }
-
-    def list_sessions(self) -> List[str]:
-        """List all active/saved session IDs in SQLite."""
-        try:
-            cur = self._conn.cursor()
-            cur.execute("SELECT DISTINCT thread_id FROM checkpoints ORDER BY thread_id ASC")
-            rows = cur.fetchall()
-            sessions = [r[0] for r in rows if r[0]]
-            return sessions if sessions else ["default"]
-        except Exception:
-            return ["default"]
 
     def get_history(self, session_id: str = "default") -> List[Dict[str, str]]:
         """Retrieve conversation history for a given session."""

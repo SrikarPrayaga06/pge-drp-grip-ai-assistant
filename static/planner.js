@@ -554,11 +554,19 @@ async function loadSessionsList() {
         el.sessionSelect.appendChild(opt);
       });
 
-      if (!foundActive && sessions.length > 0) {
-        const firstSid = typeof sessions[0] === 'string' ? sessions[0] : (sessions[0].session_id || 'planner-session');
-        plannerState.currentSessionId = firstSid;
-        el.sessionSelect.value = firstSid;
-        localStorage.setItem('pge_planner_session_id', firstSid);
+      if (!foundActive) {
+        if (plannerState.currentSessionId) {
+          const opt = document.createElement('option');
+          opt.value = plannerState.currentSessionId;
+          opt.textContent = plannerState.currentSessionId === 'default' ? 'Main Session' : 'Active Plan';
+          opt.selected = true;
+          el.sessionSelect.appendChild(opt);
+        } else if (sessions.length > 0) {
+          const firstSid = typeof sessions[0] === 'string' ? sessions[0] : (sessions[0].session_id || 'planner-session');
+          plannerState.currentSessionId = firstSid;
+          el.sessionSelect.value = firstSid;
+          localStorage.setItem('pge_planner_session_id', firstSid);
+        }
       }
     }
 
@@ -603,7 +611,6 @@ async function clearCurrentChat() {
       method: 'DELETE'
     });
     resetChatView();
-    await loadSessionsList();
   } catch (err) {
     console.error('Failed to clear session chat:', err);
   }

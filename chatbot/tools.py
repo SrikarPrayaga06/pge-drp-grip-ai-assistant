@@ -16,30 +16,99 @@ def escape_sql(val: Any) -> str:
 
 
 def to_str(val: Any) -> str:
-    """Safely convert any value to string, stripping whitespace and treating None as empty string."""
+    """Safely convert any value to string, stripping whitespace and treating None/NULL as empty string."""
     if val is None:
         return ""
-    return str(val).strip()
+    s = str(val).strip()
+    if s.lower() in ("null", "none", "undefined", "n/a", "unknown"):
+        return ""
+    return s
 
 
 def to_int(val: Any, default: int = 5) -> int:
-    """Safely convert any value to int with fallback default."""
+    """Safely convert any value to int with fallback default, treating NULL/None as default."""
     if val is None or val == "":
         return default
+    s = str(val).strip()
+    if s.lower() in ("null", "none", "undefined", "n/a"):
+        return default
     try:
-        return int(val)
+        return int(float(s))
     except (ValueError, TypeError):
         return default
 
 
 def to_float(val: Any) -> Optional[float]:
-    """Safely convert any value to float or return None."""
+    """Safely convert any value to float or return None, treating NULL/None as None."""
     if val is None or val == "":
         return None
+    s = str(val).strip()
+    if s.lower() in ("null", "none", "undefined", "n/a"):
+        return None
     try:
-        return float(val)
+        return float(s)
     except (ValueError, TypeError):
         return None
+
+
+@tool
+def geocode_address_or_city(address: str) -> str:
+    """Geocode a California street address, city, intersection, or site into latitude and longitude coordinates.
+    
+    Use this tool whenever the user provides a street address (e.g. '3306 Jubilee Dr', '1220 Broadway Oakland') or city name (e.g. 'Manteca', 'Fresno')
+    to resolve exact California geographic coordinates for fire threat analysis, nearby substations, or circuits.
+    
+    Args:
+        address: Physical California address or city name (e.g. '3306 Jubilee Dr', '1220 Broadway Oakland', 'Manteca, CA').
+    """
+    clean_addr = to_str(address)
+    if not clean_addr:
+        return json.dumps({"matched": False, "error": "Address cannot be empty"})
+
+    import httpx
+    # 1. Try US Census Bureau
+    url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
+    params = {"address": clean_addr, "benchmark": "2020", "format": "json"}
+    try:
+        with httpx.Client(timeout=6.0, verify=False) as client:
+            r = client.get(url, params=params)
+            if r.status_code == 200:
+                data = r.json()
+                matches = data.get("result", {}).get("addressMatches", [])
+                if matches:
+                    pt = matches[0]["coordinates"]
+                    return json.dumps({
+                        "matched": True,
+                        "address": matches[0]["matchedAddress"],
+                        "latitude": float(pt["y"]),
+                        "longitude": float(pt["x"]),
+                        "source": "US Census Bureau",
+                    })
+    except Exception:
+        pass
+
+    # 2. Fallback to OpenStreetMap Nominatim
+    nom_url = "https://nominatim.openstreetmap.org/search"
+    query_str = clean_addr if "california" in clean_addr.lower() or "ca" in clean_addr.lower() else f"{clean_addr}, California"
+    nom_params = {"q": query_str, "format": "json", "limit": 1}
+    headers = {"User-Agent": "PGEDRPPublicPlanner/1.0"}
+    try:
+        with httpx.Client(timeout=6.0, verify=False) as client:
+            r2 = client.get(nom_url, params=nom_params, headers=headers)
+            if r2.status_code == 200:
+                nom_data = r2.json()
+                if nom_data:
+                    return json.dumps({
+                        "matched": True,
+                        "address": nom_data[0].get("display_name", clean_addr),
+                        "latitude": float(nom_data[0]["lat"]),
+                        "longitude": float(nom_data[0]["lon"]),
+                        "source": "OpenStreetMap Nominatim",
+                    })
+    except Exception as e:
+        return json.dumps({"matched": False, "error": f"Geocoding service error: {str(e)}"})
+
+    return json.dumps({"matched": False, "error": f"Address '{clean_addr}' could not be resolved to California coordinates."})
 
 
 @tool
@@ -744,6 +813,7 @@ def check_storage_arbitrage_and_deferral(
 
 
 ARCGIS_TOOLS = [
+    geocode_address_or_city,
     search_substations,
     search_feeders,
     check_ica_hosting_capacity,
