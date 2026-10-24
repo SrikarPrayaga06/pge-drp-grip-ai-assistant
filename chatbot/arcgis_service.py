@@ -1,5 +1,6 @@
 """ArcGIS FeatureServer REST client for the PG&E DRP Compliance service."""
 
+import json
 import httpx
 from typing import Any, Dict, List, Optional, Union
 
@@ -83,9 +84,12 @@ class ArcGISService:
         return_geometry: bool = False,
         out_sr: int = 4326,
         return_count_only: bool = False,
+        out_statistics: Optional[Union[List[Dict[str, Any]], str]] = None,
+        group_by: Optional[str] = None,
     ) -> Dict[str, Any]:
         layer_id = self.resolve_layer_id(layer)
-        cache_key = f"{layer_id}|{where}|{out_fields}|{limit}|{offset}|{order_by}|{return_geometry}|{return_count_only}"
+        stats_key = json.dumps(out_statistics) if isinstance(out_statistics, list) else str(out_statistics or "")
+        cache_key = f"{layer_id}|{where}|{out_fields}|{limit}|{offset}|{order_by}|{return_geometry}|{return_count_only}|{stats_key}|{group_by or ''}"
         if cache_key in self._query_cache:
             return self._query_cache[cache_key]
 
@@ -98,7 +102,11 @@ class ArcGISService:
             "f": "json",
             "returnCountOnly": "true" if return_count_only else "false",
         }
-        if not return_count_only:
+        if out_statistics:
+            params["outStatistics"] = json.dumps(out_statistics) if isinstance(out_statistics, list) else out_statistics
+            if group_by:
+                params["groupByFieldsForStatistics"] = group_by
+        elif not return_count_only:
             params["resultRecordCount"] = min(limit, 1000)
             if offset:
                 params["resultOffset"] = offset

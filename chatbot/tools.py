@@ -477,6 +477,256 @@ def query_layer_direct(
     }, indent=2)
 
 
+@tool
+def check_phantom_headroom(
+    feeder_id: Optional[str] = None,
+    substation_name: Optional[str] = None,
+) -> str:
+    """Detect 'Phantom Headroom' by cross-referencing Layer 3 published ICA load headroom with Layer 11/13 GNA forecast deficiencies.
+    
+    Identifies circuits where published ICA indicates load capacity (>0 kW) but GNA projects the circuit will overload
+    or experience distribution deficiencies by 2026-2030, presenting hidden risk of costly interconnection delays or upgrades.
+    
+    Args:
+        feeder_id: PG&E Circuit/Feeder ID (e.g. '022390402').
+        substation_name: Name of substation (e.g. 'AIRWAYS', 'MISSION').
+    """
+    clean_fid = to_str(feeder_id)
+    clean_sub = to_str(substation_name)
+    if not clean_fid and not clean_sub:
+        return json.dumps({"error": "Please provide either a feeder_id or substation_name to check phantom headroom."})
+
+    # Step 1: Query Layer 3 (ICA LineDetail) statistics
+    l3_where = f"FeederId = '{escape_sql(clean_fid)}'" if clean_fid else f"UPPER(FeederName) LIKE '%{escape_sql(clean_sub.upper())}%'"
+    stats = [
+        {"statisticType": "min", "onStatisticField": "LoadCapacity_kW", "outStatisticFieldName": "min_load_kw"},
+        {"statisticType": "max", "onStatisticField": "LoadCapacity_kW", "outStatisticFieldName": "max_load_kw"},
+        {"statisticType": "count", "onStatisticField": "CSV_LineSection", "outStatisticFieldName": "section_count"},
+    ]
+    try:
+        l3_res = arcgis_service.query(3, where=l3_where, out_statistics=stats)
+        l3_stats = l3_res.get("features", [{}])[0].get("attributes", {}) if l3_res.get("features") else {}
+    except Exception as e:
+        l3_stats = {"error": str(e)}
+
+    # Step 2: Query Layer 11 (GNACircuitsView) for forecasted deficiencies
+    l11_where = f"circuitid = '{escape_sql(clean_fid)}'" if clean_fid else f"UPPER(substationname) LIKE '%{escape_sql(clean_sub.upper())}%'"
+    l11_fields = "circuitid,circuitname,substationname,anticipatedneeddate,peakfacilitydeficiencypercent,deficiencymw2026,deficiencymw2027,deficiencymw2028,deficiencymw2029,deficiencymw2030"
+    l11_res = arcgis_service.query(11, where=l11_where, out_fields=l11_fields, limit=5)
+    deficiencies = [f.get("attributes", {}) for f in l11_res.get("features", [])]
+
+    # Step 3: Query Layer 13 (DFCircuitsView) for loading vs rating
+    l13_fields = "circuitid,facilityratingmw,facilityloadingmw2026,facilityloadingmw2027,facilityloadingmw2028,peakfacilityloadingpercent"
+    l13_res = arcgis_service.query(13, where=l11_where, out_fields=l13_fields, limit=5)
+    loading_data = [f.get("attributes", {}) for f in l13_res.get("features", [])]
+
+    # Analysis & Risk Evaluation
+    min_load = to_float(l3_stats.get("min_load_kw")) or 0.0
+    max_load = to_float(l3_stats.get("max_load_kw")) or 0.0
+    has_ica_load = max_load > 0
+
+    has_gna_deficiency = False
+    earliest_need = None
+    max_deficiency_mw = 0.0
+    for d in deficiencies:
+        for yr in ["2026", "2027", "2028", "2029", "2030"]:
+            val = to_float(d.get(f"deficiencymw{yr}"))
+            if val is not None and val != -99.99 and val > 0:
+                has_gna_deficiency = True
+                max_deficiency_mw = max(max_deficiency_mw, val)
+                if not earliest_need or yr < earliest_need:
+                    earliest_need = yr
+
+    # Check for loading over 100%
+    overload_flag = False
+    for ld in loading_data:
+        rating = to_float(ld.get("facilityratingmw"))
+        for yr in ["2026", "2027", "2028"]:
+            loading = to_float(ld.get(f"facilityloadingmw{yr}"))
+            if rating and loading and rating > 0 and loading != -99.99:
+                if loading > rating:
+                    overload_flag = True
+
+    if has_ica_load and (has_gna_deficiency or overload_flag):
+        verdict = "PHANTOM_HEADROOM_DETECTED"
+        assessment = (
+            f"HIGH RISK: Published ICA indicates available load headroom (up to {max_load} kW), "
+            f"but GNA/DF grid models forecast distribution deficiencies ({max_deficiency_mw:.2f} MW) starting in {earliest_need or '2026-2028'}. "
+            "New large load interconnections may trigger unadvertised substation/circuit reinforcement delays."
+        )
+    elif has_ica_load:
+        verdict = "CONFIRMED_HEADROOM"
+        assessment = f"LOW RISK: Published ICA load headroom ({min_load}-{max_load} kW) is supported by GNA forecast with no projected 2026-2030 overload."
+    else:
+        verdict = "NO_PUBLISHED_HEADROOM"
+        assessment = "Published ICA load headroom is 0 kW or not published on this circuit."
+
+    return json.dumps({
+        "feeder_id": clean_fid,
+        "substation": clean_sub,
+        "verdict": verdict,
+        "assessment": assessment,
+        "published_ica_stats": l3_stats,
+        "gna_deficiencies": deficiencies,
+        "facility_loading_projections": loading_data
+    }, indent=2)
+
+
+@tool
+def check_queue_oversubscription(
+    feeder_id: Optional[str] = None,
+    substation_name: Optional[str] = None,
+) -> str:
+    """Analyze generation queue oversubscription by cross-referencing Layer 2 Queued DG against Layer 3 ICA Gen Capacity.
+    
+    Identifies 'Green Map Illusions' where published ICA maps display hosting capacity, but PG&E's interconnection
+    queue (Queued_DG) already exceeds maximum line section generation limits (Oversubscription Ratio > 1.0).
+    
+    Args:
+        feeder_id: PG&E Circuit/Feeder ID (e.g. '022390402').
+        substation_name: Name of substation (e.g. 'MISSION', 'OAKLAND').
+    """
+    clean_fid = to_str(feeder_id)
+    clean_sub = to_str(substation_name)
+    if not clean_fid and not clean_sub:
+        return json.dumps({"error": "Please provide either a feeder_id or substation_name."})
+
+    # Step 1: Query Layer 2 for Existing & Queued DG
+    l2_where = f"FeederID = '{escape_sql(clean_fid)}'" if clean_fid else f"UPPER(Substation) LIKE '%{escape_sql(clean_sub.upper())}%'"
+    l2_fields = "FeederID,Feeder_Name,Substation,Existing_DG,Queued_DG,Total_DG,Nominal_Voltage"
+    l2_res = arcgis_service.query(2, where=l2_where, out_fields=l2_fields, limit=5)
+    feeders = [f.get("attributes", {}) for f in l2_res.get("features", [])]
+    if not feeders:
+        return json.dumps({"error": f"No feeder records found matching {l2_where}."})
+
+    f_data = feeders[0]
+    target_fid = f_data.get("FeederID")
+    existing_dg_kw = float(f_data.get("Existing_DG") or 0)
+    queued_dg_kw = float(f_data.get("Queued_DG") or 0)
+
+    # Step 2: Query Layer 3 for Server-Side Max Gen Hosting Capacity
+    stats = [
+        {"statisticType": "max", "onStatisticField": "GenCapacity_kW", "outStatisticFieldName": "max_gen_kw"},
+        {"statisticType": "max", "onStatisticField": "GenericPVCapacity_kW", "outStatisticFieldName": "max_pv_kw"},
+        {"statisticType": "min", "onStatisticField": "GenCapacity_kW", "outStatisticFieldName": "min_gen_kw"},
+    ]
+    l3_res = arcgis_service.query(3, where=f"FeederId = '{escape_sql(target_fid)}'", out_statistics=stats)
+    l3_stats = l3_res.get("features", [{}])[0].get("attributes", {}) if l3_res.get("features") else {}
+
+    max_gen_kw = float(l3_stats.get("max_gen_kw") or 0)
+    max_pv_kw = float(l3_stats.get("max_pv_kw") or 0)
+
+    # Step 3: Compute Queue Metrics
+    if max_gen_kw > 0:
+        ratio = queued_dg_kw / max_gen_kw
+        real_headroom_kw = max(0.0, max_gen_kw - queued_dg_kw)
+    else:
+        ratio = float("inf") if queued_dg_kw > 0 else 0.0
+        real_headroom_kw = 0.0
+
+    if ratio > 1.0:
+        status = "OVERSUBSCRIBED_QUEUE"
+        finding = (
+            f"QUEUE EXHAUSTED (Green Map Illusion): Interconnection queue ({queued_dg_kw:,.0f} kW) "
+            f"exceeds maximum published generation hosting capacity ({max_gen_kw:,.0f} kW) by {(ratio - 1.0)*100:.1f}%. "
+            f"Queue Oversubscription Ratio: {ratio:.2f}x. Real available generation headroom is ~0 kW."
+        )
+    elif ratio > 0.7:
+        status = "QUEUE_CONGESTED"
+        finding = (
+            f"MODERATE QUEUE PRESSURE: Queue ({queued_dg_kw:,.0f} kW) consumes {ratio*100:.1f}% of published hosting capacity "
+            f"({max_gen_kw:,.0f} kW). Estimated unreserved headroom: {real_headroom_kw:,.0f} kW."
+        )
+    else:
+        status = "HEADROOM_AVAILABLE"
+        finding = (
+            f"FAVORABLE INTERCONNECTION: Queue ({queued_dg_kw:,.0f} kW) represents only {ratio*100:.1f}% of max capacity "
+            f"({max_gen_kw:,.0f} kW). Unreserved headroom: {real_headroom_kw:,.0f} kW."
+        )
+
+    return json.dumps({
+        "feeder_id": target_fid,
+        "feeder_name": f_data.get("Feeder_Name"),
+        "substation": f_data.get("Substation"),
+        "status": status,
+        "queue_oversubscription_ratio": round(ratio, 2) if ratio != float("inf") else "Infinite",
+        "finding": finding,
+        "metrics": {
+            "existing_dg_kw": existing_dg_kw,
+            "queued_dg_kw": queued_dg_kw,
+            "published_max_gen_kw": max_gen_kw,
+            "published_max_pv_kw": max_pv_kw,
+            "unreserved_headroom_kw": real_headroom_kw,
+        }
+    }, indent=2)
+
+
+@tool
+def check_storage_arbitrage_and_deferral(
+    feeder_id: Optional[str] = None,
+    substation_name: Optional[str] = None,
+) -> str:
+    """Evaluate Battery Storage (BESS) opportunity to unlock generation capacity and capture LNBA grid deferral value.
+    
+    Cross-references Layer 3 ICA limiting hours/criteria, Layer 23 8760 hourly load profiles,
+    and Layer 29 Planned Investments (LNBA $/kW-yr deferral value).
+    
+    Args:
+        feeder_id: PG&E Feeder ID (e.g. '022390402').
+        substation_name: Name of substation (e.g. 'AIRWAYS', 'MISSION').
+    """
+    clean_fid = to_str(feeder_id)
+    clean_sub = to_str(substation_name)
+    if not clean_fid and not clean_sub:
+        return json.dumps({"error": "Please provide either a feeder_id or substation_name."})
+
+    # Step 1: Query Layer 3 for limiting month/hour & OpFlex delta
+    l3_where = f"FeederId = '{escape_sql(clean_fid)}'" if clean_fid else f"UPPER(FeederName) LIKE '%{escape_sql(clean_sub.upper())}%'"
+    l3_fields = "CSV_LineSection,limiting_criteria,limiting_month_hour,GenCapacity_kW,GenCapacity_no_OpFlex_kW,ScreenL"
+    l3_res = arcgis_service.query(3, where=l3_where, out_fields=l3_fields, limit=5)
+    sections = [f.get("attributes", {}) for f in l3_res.get("features", [])]
+
+    limiting_mh = sections[0].get("limiting_month_hour") if sections else None
+    limiting_crit = sections[0].get("limiting_criteria") if sections else None
+
+    # Step 2: Query Layer 23 (8760 Load Profile) for that limiting hour
+    load_profile_sample = []
+    if clean_fid and limiting_mh and "_" in limiting_mh:
+        try:
+            p_res = arcgis_service.query(23, where=f"FeederID = '{escape_sql(clean_fid)}' AND MonthHour = '{escape_sql(limiting_mh)}'", out_fields="MonthHour,Low,High", limit=1)
+            load_profile_sample = [f.get("attributes", {}) for f in p_res.get("features", [])]
+        except Exception:
+            pass
+
+    # Step 3: Query Layer 29 (LNBA Planned Investments) for deferral value
+    lnba_where = f"UPPER(substationname) LIKE '%{escape_sql(clean_sub.upper())}%'" if clean_sub else "1=1"
+    if clean_fid and not clean_sub:
+        f2 = arcgis_service.query(2, where=f"FeederID = '{escape_sql(clean_fid)}'", out_fields="Substation", limit=1)
+        if f2.get("features") and f2["features"][0].get("attributes", {}).get("Substation"):
+            sub_name = f2["features"][0]["attributes"]["Substation"]
+            lnba_where = f"UPPER(substationname) LIKE '%{escape_sql(sub_name.upper())}%'"
+
+    lnba_fields = "projectname,projecttype,distributionservicerequired,lnbadollarsperunitperyr,deferrableyesorno,project_cost_dollark,inservicedate,gridneed"
+    lnba_res = arcgis_service.query(29, where=lnba_where, out_fields=lnba_fields, limit=5)
+    lnba_projects = [f.get("attributes", {}) for f in lnba_res.get("features", [])]
+
+    return json.dumps({
+        "feeder_id": clean_fid,
+        "substation": clean_sub,
+        "limiting_constraint": {
+            "limiting_month_hour": limiting_mh,
+            "limiting_criteria": limiting_crit,
+            "note": "Charging BESS during minimum-load hour directly relieves voltage/thermal backfeed and raises gen capacity."
+        },
+        "load_profile_at_limiting_hour": load_profile_sample,
+        "lnba_deferral_projects": lnba_projects,
+        "storage_opportunity_summary": (
+            f"BESS Opportunity Identified: Feeder capacity is constrained by {limiting_crit or 'thermal/voltage'} limits at {limiting_mh or 'peak solar hour'}. "
+            f"Found {len(lnba_projects)} planned grid investment(s) in substation area that may qualify for Non-Wires Alternative (NWA) deferral compensation."
+        )
+    }, indent=2)
+
+
 ARCGIS_TOOLS = [
     search_substations,
     search_feeders,
@@ -484,5 +734,8 @@ ARCGIS_TOOLS = [
     get_load_profile_summary,
     check_fire_hazard_zone,
     check_grid_deficiencies,
+    check_phantom_headroom,
+    check_queue_oversubscription,
+    check_storage_arbitrage_and_deferral,
     query_layer_direct,
 ]

@@ -18,6 +18,9 @@ from chatbot.tools import (
     get_load_profile_summary,
     check_fire_hazard_zone,
     check_grid_deficiencies,
+    check_phantom_headroom,
+    check_queue_oversubscription,
+    check_storage_arbitrage_and_deferral,
     query_layer_direct,
 )
 from chatbot.agent import ArcGISChatbot
@@ -69,6 +72,29 @@ class TestArcGISTools(unittest.TestCase):
         data = json.loads(res_str)
         self.assertFalse(data["in_fire_threat_district"])
         print(f"✓ San Francisco coordinates correctly evaluated: in_fire_threat_district = {data['in_fire_threat_district']}")
+
+    def test_check_phantom_headroom(self):
+        print("\n[Tool Test 6] Testing check_phantom_headroom('022390402')...")
+        res_str = check_phantom_headroom.invoke({"feeder_id": "022390402"})
+        data = json.loads(res_str)
+        self.assertIn("verdict", data)
+        self.assertIn("assessment", data)
+        print(f"✓ Phantom Headroom check: Verdict = {data['verdict']}")
+
+    def test_check_queue_oversubscription(self):
+        print("\n[Tool Test 7] Testing check_queue_oversubscription('022390402')...")
+        res_str = check_queue_oversubscription.invoke({"feeder_id": "022390402"})
+        data = json.loads(res_str)
+        self.assertIn("status", data)
+        self.assertIn("queue_oversubscription_ratio", data)
+        print(f"✓ Queue Oversubscription check: Status = {data['status']}, Ratio = {data['queue_oversubscription_ratio']}")
+
+    def test_check_storage_arbitrage_and_deferral(self):
+        print("\n[Tool Test 8] Testing check_storage_arbitrage_and_deferral('022390402')...")
+        res_str = check_storage_arbitrage_and_deferral.invoke({"feeder_id": "022390402"})
+        data = json.loads(res_str)
+        self.assertIn("storage_opportunity_summary", data)
+        print(f"✓ Storage Arbitrage & Deferral check: Summary = {data['storage_opportunity_summary'][:80]}...")
 
 
 class TestChatbotSessionMemory(unittest.TestCase):
