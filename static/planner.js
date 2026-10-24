@@ -667,7 +667,7 @@ async function sendPlannerMessage(message, workflow = null) {
   el.plannerChatMessages.style.display = 'flex';
   el.workflowsSection.classList.add('collapsed');
 
-  const loadingBubble = appendPlannerBubble('assistant', 'Analyzing grid capacity across PG&E FeatureServer...');
+  const loadingBubble = appendThinkingBubble();
   plannerState.isGenerating = true;
   el.btnSendPlanner.disabled = true;
 
@@ -686,10 +686,12 @@ async function sendPlannerMessage(message, workflow = null) {
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+    loadingBubble.classList.remove('thinking-bubble');
     loadingBubble.innerHTML = formatMarkdown(data.reply);
 
   } catch (err) {
-    loadingBubble.innerHTML = `<span style="color: #ef4444;">Error: ${err.message}</span>`;
+    loadingBubble.classList.remove('thinking-bubble');
+    loadingBubble.innerHTML = `<span style="color: #ef4444;">Error: ${escapeHtml(err.message)}</span>`;
   } finally {
     plannerState.isGenerating = false;
     el.btnSendPlanner.disabled = false;
@@ -728,6 +730,29 @@ async function geocodeAndFly(addressText) {
   } catch (err) {
     console.warn('Geocoding notice:', err);
   }
+}
+
+function appendThinkingBubble() {
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble assistant thinking-bubble';
+  bubble.innerHTML = `
+    <div class="thinking-indicator">
+      <div class="typing-dots">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      </div>
+      <span class="thinking-label">
+        <svg class="thinking-sparkle" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        Thinking...
+      </span>
+    </div>
+  `;
+  el.plannerChatMessages.appendChild(bubble);
+  el.plannerChatMessages.scrollTop = el.plannerChatMessages.scrollHeight;
+  return bubble;
 }
 
 function appendPlannerBubble(role, content) {
