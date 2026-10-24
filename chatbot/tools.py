@@ -76,14 +76,17 @@ def search_substations(
         conditions.append(f"(Existing_DG >= {min_dg})")
 
     where = " AND ".join(conditions) if conditions else "1=1"
-    res = arcgis_service.query(
-        layer=0,
-        where=where,
-        out_fields="OBJECTID,SubstationName,SubstationID,Division,Voltage_kV,NUMBANKS,UNGROUNDEDBANKS,Existing_DG,Queued_DG,Total_DG",
-        limit=lim,
-        order_by="SubstationName ASC",
-        return_geometry=True,
-    )
+    try:
+        res = arcgis_service.query(
+            layer=0,
+            where=where,
+            out_fields="OBJECTID,SubstationName,SubstationID,Division,Voltage_kV,NUMBANKS,UNGROUNDEDBANKS,Existing_DG,Queued_DG,Total_DG",
+            limit=lim,
+            order_by="SubstationName ASC",
+            return_geometry=True,
+        )
+    except Exception as e:
+        return json.dumps({"count": 0, "substations": [], "error": str(e)}, indent=2)
 
     features = res.get("features", [])
     if not features:
@@ -409,21 +412,27 @@ def check_grid_deficiencies(
         conditions.append(f"(UPPER(circuitname) LIKE UPPER('%{escape_sql(clean_circuit)}%'))")
 
     where = " AND ".join(conditions) if conditions else "1=1"
-    gna_res = arcgis_service.query(
-        layer=28,
-        where=where,
-        limit=lim,
-        return_geometry=False,
-    )
+    try:
+        gna_res = arcgis_service.query(
+            layer=28,
+            where=where,
+            limit=lim,
+            return_geometry=False,
+        )
+    except Exception as e:
+        gna_res = {"features": [], "error": str(e)}
     
     lnba_where = f"UPPER(substationid) LIKE UPPER('%{escape_sql(clean_sub)}%')" if clean_sub else "1=1"
-    lnba_res = arcgis_service.query(
-        layer=29,
-        where=lnba_where,
-        limit=lim,
-        out_fields="projectname,projecttype,distributionservicerequired,lnbadollarsperunitperyr,deferrableyesorno",
-        return_geometry=False,
-    )
+    try:
+        lnba_res = arcgis_service.query(
+            layer=29,
+            where=lnba_where,
+            limit=lim,
+            out_fields="projectname,projecttype,distributionservicerequired,lnbadollarsperunitperyr,deferrableyesorno",
+            return_geometry=False,
+        )
+    except Exception as e:
+        lnba_res = {"features": [], "error": str(e)}
 
     return json.dumps({
         "deficiencies_count": len(gna_res.get("features", [])),
@@ -461,20 +470,27 @@ def query_layer_direct(
                 "error": f"Security validation failed: SQL keyword or pattern '{kw.strip()}' is disallowed in read-only queries."
             }, indent=2)
 
-    res = arcgis_service.query(
-        layer=target_layer,
-        where=w_clause,
-        out_fields=fields,
-        limit=lim,
-        return_geometry=False,
-    )
-    features = res.get("features", [])
-    records = [f.get("attributes") for f in features]
-    return json.dumps({
-        "layer": target_layer,
-        "count": len(records),
-        "records": records,
-    }, indent=2)
+    try:
+        res = arcgis_service.query(
+            layer=target_layer,
+            where=w_clause,
+            out_fields=fields,
+            limit=lim,
+            return_geometry=False,
+        )
+        features = res.get("features", [])
+        records = [f.get("attributes") for f in features]
+        return json.dumps({
+            "layer": target_layer,
+            "count": len(records),
+            "records": records,
+        }, indent=2)
+    except Exception as e:
+        return json.dumps({
+            "layer": target_layer,
+            "error": str(e),
+            "hint": "Check field names or query syntax."
+        }, indent=2)
 
 
 @tool

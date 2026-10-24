@@ -433,6 +433,16 @@ class ArcGISChatbot:
                 history.append({"role": "assistant", "content": content})
         return history
 
+    def clear_history(self, session_id: str = "default") -> None:
+        """Clear all conversation checkpoints and writes for a given session thread."""
+        try:
+            cur = self._conn.cursor()
+            cur.execute("DELETE FROM checkpoints WHERE thread_id = ?", (session_id,))
+            cur.execute("DELETE FROM writes WHERE thread_id = ?", (session_id,))
+            self._conn.commit()
+        except Exception:
+            pass
+
     def close(self):
         """Close SQLite database connection."""
         if self._conn:

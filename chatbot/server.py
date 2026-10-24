@@ -139,7 +139,13 @@ async def chat_endpoint(request: ChatRequest):
             last_used_model=bot.last_used_model,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Agent error: {str(e)}")
+        logger.error(f"Agent chat error: {e}")
+        return ChatResponse(
+            reply=f"Notice: The grid analysis encountered a query error: {str(e)}. Please try rephrasing with specific circuit or substation names.",
+            session_id=session_id,
+            model=bot.active_model,
+            last_used_model=bot.last_used_model,
+        )
 
 
 @app.get("/api/workflows")
@@ -160,12 +166,28 @@ async def get_history_endpoint(session_id: str):
     }
 
 
+@app.delete("/api/history/{session_id}")
+async def delete_history_endpoint(session_id: str):
+    """Clear conversation history for a given session."""
+    bot = get_chatbot()
+    bot.clear_history(session_id=session_id)
+    return {"status": "ok", "session_id": session_id, "message": "History cleared."}
+
+
 @app.get("/api/sessions")
 async def get_sessions_endpoint():
     """List all persisted session IDs."""
     bot = get_chatbot()
     sessions = bot.list_sessions()
     return {"sessions": sessions}
+
+
+@app.post("/api/sessions")
+async def create_session_endpoint(payload: Dict[str, Any]):
+    """Register or initialize a new session ID."""
+    session_id = payload.get("session_id", "default")
+    title = payload.get("title", session_id)
+    return {"status": "ok", "session_id": session_id, "title": title}
 
 
 VERIFICATION_TESTS = [
