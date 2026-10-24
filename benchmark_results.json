@@ -1,0 +1,174 @@
+{
+  "timestamp": 1792866069.5739021,
+  "model": "google_genai:gemini-3.1-flash-lite",
+  "metrics": {
+    "total_cases": 10,
+    "passed_cases": 9,
+    "pass_rate_pct": 90.0,
+    "avg_latency_sec": 8.182,
+    "median_latency_sec": 7.069,
+    "p90_latency_sec": 24.032,
+    "avg_reasoning_score": 4.8
+  },
+  "cases": [
+    {
+      "id": "T01_GREETING",
+      "name": "Zero-Tool Conversational Greeting",
+      "latency_sec": 7.729,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "Hello! I am your PG&E Distribution & DRP Planning Assistant, specialized in helping you navigate California electric distribution and Grid Resource Integration Portal (GRIP) data. \n\nI can assist you w..."
+    },
+    {
+      "id": "T02_SUBSTATION_SEARCH",
+      "name": "Single-Tool Direct Substation Query",
+      "latency_sec": 8.154,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "Here are the details for the **MISSION** substation in San Francisco based on PG&E's grid planning data:\n\n| Substation Name | Substation ID | Operating Voltage (kV) | Number of Banks | Existing DG (kW..."
+    },
+    {
+      "id": "T03_ADDRESS_GEOCODE_SPATIAL",
+      "name": "Physical Address Geocoding & Fire Threat Check",
+      "latency_sec": 24.032,
+      "score": 3,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "Missing keywords: ['not within']",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)"
+      ],
+      "reply_preview": "Here are the details for **3306 Jubilee Dr, Hayward, CA**:\n\n### Location & Fire Hazard Threat Analysis\n* **Resolved Coordinates:** Latitude `37.6643234`, Longitude `-122.0944906`\n* **CPUC High Fire Th..."
+    },
+    {
+      "id": "T04_ICA_HOSTING_CAPACITY",
+      "name": "ICA Line Section Headroom & Screen L",
+      "latency_sec": 11.026,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "Based on PG&E's Integration Capacity Analysis (ICA) data (Sep 2024), here is the hosting capacity breakdown and Rule 21 Screen L status for **Feeder 022390402** (Feeder Name: **0402**):\n\n### Feeder Su..."
+    },
+    {
+      "id": "T05_8760_LOAD_PROFILE",
+      "name": "8760 Hourly Profile & Peak Demand Analysis",
+      "latency_sec": 4.624,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "For Feeder **22390402** in San Francisco, here is the summary of the July hourly load profile. \n\n### July Load Profile Summary (Partial)\n*Units: kW*\n\n| Month-Hour | High Load | Low Load |\n| :--- | :--..."
+    },
+    {
+      "id": "T06_PHANTOM_HEADROOM",
+      "name": "Cross-Layer Synthesis: Phantom Headroom Detection",
+      "latency_sec": 6.362,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "The analysis for feeder **022390402** (18TH STREET 0402) indicates **low risk** regarding phantom headroom. There is no contradiction between the published ICA capacity and the forecasted GNA deficien..."
+    },
+    {
+      "id": "T07_QUEUE_OVERSUBSCRIPTION",
+      "name": "Interconnection Queue Oversubscription Analysis",
+      "latency_sec": 12.886,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "The analysis for circuit **022390402** confirms that the interconnection queue is currently **oversubscribed**, representing a \"Green Map Illusion.\" \n\nWhile published Integration Capacity Analysis (IC..."
+    },
+    {
+      "id": "T08_STORAGE_ARBITRAGE_LNBA",
+      "name": "Energy Storage (BESS) & LNBA Deferral Opportunities",
+      "latency_sec": 6.409,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "For feeder **022390402**, a battery storage (BESS) installation presents a strategic opportunity to unlock generation hosting capacity and potentially capture LNBA deferral value.\n\n### BESS & Grid Int..."
+    },
+    {
+      "id": "T09_GUARDRAIL_OFFTOPIC",
+      "name": "Fast Deterministic Guardrail Refusal",
+      "latency_sec": 0.001,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "I am specialized exclusively in California electric distribution and PG&E grid planning data. Please let me know if you have questions regarding substations, circuits, ICA hosting capacity, load profi..."
+    },
+    {
+      "id": "T10_MULTI_TURN_CONTEXT",
+      "name": "Multi-Turn Context & Pronoun Resolution",
+      "latency_sec": 0.598,
+      "score": 5,
+      "max_score": 5,
+      "success": true,
+      "feedback": [
+        "Substantive narrative length",
+        "All expected technical keywords matched",
+        "No invalid tokens or NULL values",
+        "Structured presentation (Markdown table or formatted bullets)",
+        "Strong technical reasoning and domain alignment"
+      ],
+      "reply_preview": "The OAKLAND C substation (ID: 01201) operates at a voltage of **12 kV** and has **4 transformer banks**...."
+    }
+  ]
+}
