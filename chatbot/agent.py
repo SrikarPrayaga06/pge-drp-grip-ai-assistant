@@ -82,6 +82,87 @@ def build_model_pool() -> List[str]:
     return ["ollama:llama3.2"]
 
 
+WORKFLOW_SKILLS: Dict[str, Dict[str, str]] = {
+    "check_capacity_address": {
+        "title": "Address Capacity Verification Skill",
+        "description": "Analyzes electric distribution line section headroom, nominal voltage, and Rule 21 Screen L status for specific physical addresses.",
+        "prompt": (
+            "SPECIALIZED WORKFLOW SKILL: Address Capacity Verification.\n"
+            "Goal: Determine exact electrical service, line section headroom, and substation interconnection for a specific street address or site.\n"
+            "Execution Instructions:\n"
+            "1. Extract the address and municipality. When coordinates are provided, search the serving feeder.\n"
+            "2. Query Integration Capacity Analysis (ICA Layer 3) to examine LoadCapacity_kW, GenCapacity_kW, and Rule 21 Screen L status ('Likely to pass' vs 'Unlikely to pass').\n"
+            "3. Cross-reference CPUC High Fire Threat District (Layer 18) to determine if wildfire mitigation or PSPS applies.\n"
+            "4. Summarize results in a clean Markdown table with Available Load (kW/MW), Solar PV Headroom (kW/MW), Substation Bank Margin, and Interconnection Application steps."
+        ),
+    },
+    "find_generation_headroom": {
+        "title": "Solar & DER Generation Headroom Finder Skill",
+        "description": "Locates distribution circuits and substations with high export capacity and passing Screen L.",
+        "prompt": (
+            "SPECIALIZED WORKFLOW SKILL: Solar & DER Generation Headroom Finder.\n"
+            "Goal: Identify optimal circuits and substations capable of interconnecting new solar PV or battery storage without triggering costly grid upgrades.\n"
+            "Execution Instructions:\n"
+            "1. Search feeders in the target region with high GenCapacity_kW and low queued generation.\n"
+            "2. Prioritize line sections where Rule 21 Screen L is 'Likely to pass' (minimal risk of thermal overload, reverse flow, or voltage deviation).\n"
+            "3. Identify limiting criteria (thermal conductor rating vs operational flexibility).\n"
+            "4. Present a comparative table of top 3-5 candidate circuits with Available Gen (MW), Substation, Voltage (kV), and passing Screen L sections."
+        ),
+    },
+    "add_units_property": {
+        "title": "Residential Electrification & ADU Headroom Skill",
+        "description": "Guides residential additions, ADUs, and multi-family service upgrades.",
+        "prompt": (
+            "SPECIALIZED WORKFLOW SKILL: Residential Electrification & ADU Headroom.\n"
+            "Goal: Evaluate whether adding residential units, ADUs, Level 2 EV chargers, or heat pumps will require distribution service or utility panel upgrades.\n"
+            "Execution Instructions:\n"
+            "1. Identify the circuit serving the property and review line section LoadCapacity_kW.\n"
+            "2. Typical load additions: ADU (5-10 kW), Level 2 EV charger (7.7-11.5 kW), Heat pump HVAC (4-8 kW).\n"
+            "3. Compare incremental demand against circuit load capacity. If LoadCapacity_kW > 20 kW, local primary distribution easily supports the addition.\n"
+            "4. Outline PG&E service upgrade steps: Greenbook standards, service planning application, and meter panel requirements."
+        ),
+    },
+    "plan_subdivision_development": {
+        "title": "Subdivision & Large Development Planner Skill",
+        "description": "Evaluates multi-megawatt new master-planned communities and commercial subdivisions.",
+        "prompt": (
+            "SPECIALIZED WORKFLOW SKILL: Subdivision & Large Development Planner.\n"
+            "Goal: Provide comprehensive infrastructure assessments for new housing developments, master-planned communities, or commercial parks (typically 2-10+ MW).\n"
+            "Execution Instructions:\n"
+            "1. Query parent substations in the target region for available bank capacity (MW) and number of transformer banks.\n"
+            "2. Check Grid Needs Assessment (GNA Layers 20/21) for projected deficiencies between years 2026-2035 on serving facilities.\n"
+            "3. Identify if Locational Net Benefits Analysis (LNBA) identifies any non-wires alternatives (NWA) or deferral opportunities.\n"
+            "4. Recommend whether dual-feeder extension or substation transformer bank addition is anticipated, with structured table comparison."
+        ),
+    },
+    "find_large_load_sites": {
+        "title": "Large Commercial & Industrial Load Siting Skill",
+        "description": "Identifies sites capable of hosting high-demand loads like data centers, cold storage, and fleet EV hubs.",
+        "prompt": (
+            "SPECIALIZED WORKFLOW SKILL: Large Commercial & Industrial Load Siting.\n"
+            "Goal: Screen and locate distribution facilities capable of hosting significant point loads (3 MW to 20+ MW) such as fleet EV charging depots, data centers, cold storage, or manufacturing.\n"
+            "Execution Instructions:\n"
+            "1. Focus on robust distribution substations with 21 kV or 12 kV high-capacity banks and low existing peak utilization.\n"
+            "2. Inspect hourly 8760 load curves (`get_load_profile_summary`) to determine peak hour loading vs off-peak headroom.\n"
+            "3. Flag whether substation capacity deficiency exists in GNA data.\n"
+            "4. Present top candidate areas with Substation Name, Bank Count, Operating Voltage, and estimated Megawatt headroom margin."
+        ),
+    },
+    "connect_solar_battery": {
+        "title": "Commercial Solar PV & Battery Storage Interconnection Skill",
+        "description": "Evaluates solar export, battery storage charging/discharging, and Rule 21 interconnection.",
+        "prompt": (
+            "SPECIALIZED WORKFLOW SKILL: Commercial Solar PV & Battery Storage Interconnection.\n"
+            "Goal: Provide engineering assessment for connecting front-of-meter (FOM) or behind-the-meter (BTM) commercial solar PV and battery energy storage systems (BESS).\n"
+            "Execution Instructions:\n"
+            "1. Check GenericPVCapacity_kW and GenCapacity_kW on target feeders.\n"
+            "2. Review Rule 21 Screen L feasibility and limiting criteria.\n"
+            "3. Cross-reference CPUC High Fire Threat District (HFTD Layer 18) Tier 2/Tier 3 status to determine microgrid / PSPS resilience value.\n"
+            "4. Provide step-by-step guidance on PG&E Rule 21 Fast Track vs Detailed Study interconnection process."
+        ),
+    },
+}
+
 OFF_TOPIC_REFUSAL = (
     "I am specialized exclusively in California electric distribution and PG&E grid planning data. "
     "Please let me know if you have questions regarding substations, circuits, ICA hosting capacity, "
@@ -98,7 +179,9 @@ def is_off_topic_query(message: str) -> bool:
         "substation", "feeder", "circuit", "ica", "hosting", "capacity", "load", "profile",
         "fire", "threat", "hftd", "cpuc", "dg", "kw", "mw", "kv", "grid", "distribution",
         "transmission", "transformer", "bank", "interconnection", "deficiency", "gna", "lnba",
-        "arcgis", "featureserver", "der", "pv", "solar", "battery", "ev", "pg&e", "pge"
+        "arcgis", "featureserver", "der", "pv", "solar", "battery", "ev", "pg&e", "pge",
+        "address", "units", "property", "subdivision", "development", "headroom", "site", "siting",
+        "broadway", "oakland", "fresno", "san francisco", "bess", "area", "drawn", "box", "polygon"
     ]
     if any(k in text for k in grid_keywords):
         return False
@@ -214,15 +297,21 @@ class ArcGISChatbot:
         self.active_model = self.model_pool[self.active_model_index]
         return self.active_model
 
-    def chat(self, message: str, session_id: str = "default") -> str:
+    def chat(self, message: str, session_id: str = "default", workflow: Optional[str] = None) -> str:
         """Send a message to the chatbot, automatically rotating models if quota limits hit."""
         # 1. Deterministic Domain Boundary Pre-check
         if is_off_topic_query(message):
             return OFF_TOPIC_REFUSAL
 
+        # 2. Inject specialized workflow skill context if active
+        effective_message = message
+        if workflow and workflow in WORKFLOW_SKILLS:
+            skill = WORKFLOW_SKILLS[workflow]
+            effective_message = f"[{skill['prompt']}]\n\nUser Request: {message}"
+
         config = {"configurable": {"thread_id": session_id}}
         input_data = {
-            "messages": [HumanMessage(content=message)]
+            "messages": [HumanMessage(content=effective_message)]
         }
 
         attempts = 0

@@ -15,7 +15,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from .agent import ArcGISChatbot
+from .agent import ArcGISChatbot, WORKFLOW_SKILLS
 from .arcgis_service import arcgis_service
 from .tools import (
     search_substations,
@@ -60,6 +60,7 @@ def get_chatbot() -> ArcGISChatbot:
 class ChatRequest(BaseModel):
     message: str
     session_id: Optional[str] = "default"
+    workflow: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
@@ -130,7 +131,7 @@ async def chat_endpoint(request: ChatRequest):
     session_id = request.session_id.strip() if request.session_id else "default"
 
     try:
-        reply = await asyncio.to_thread(bot.chat, request.message, session_id=session_id)
+        reply = await asyncio.to_thread(bot.chat, request.message, session_id=session_id, workflow=request.workflow)
         return ChatResponse(
             reply=reply,
             session_id=session_id,
@@ -139,6 +140,12 @@ async def chat_endpoint(request: ChatRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent error: {str(e)}")
+
+
+@app.get("/api/workflows")
+async def get_workflows_endpoint():
+    """Return available specialized workflow skills with titles, descriptions, and personas."""
+    return {"workflows": WORKFLOW_SKILLS}
 
 
 @app.get("/api/history/{session_id}")

@@ -421,6 +421,65 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+}
+
+.session-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planner-session-select {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 3px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  color: var(--text-secondary);
+  max-width: 125px;
+  cursor: pointer;
+}
+
+.planner-session-select:focus {
+  outline: none;
+  border-color: #0284c7;
+}
+
+.btn-session-action {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-session-action:hover {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+  border-color: #cbd5e1;
+}
+
+.workflow-item-btn.selected {
+  background: #eff6ff;
+  border-color: #60a5fa;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.wf-icon {
+  margin-right: 4px;
+}
+
+.maplibregl-canvas-container.drawing-active {
+  cursor: crosshair !important;
 }
 
 .card-brand {

@@ -1,7 +1,7 @@
 /**
  * PG&E AI Assisted Public Planning Tool (Senpilot Style Interface)
  * Map-First Architecture, Full Statewide Feeder Network, MW Rollup Legends,
- * County Zoom Pills, Address Geocoding & AI Chat Workflows
+ * County Zoom Pills, Address Geocoding, Smooth Drag-to-Draw, Workflow Skills & Multi-Session
  */
 
 // Application State
@@ -9,9 +9,12 @@ const plannerState = {
   mode: 'load', // 'load' | 'solar'
   selectedFeeder: null,
   activePersona: 'all',
+  activeWorkflow: null,
   isDrawing: false,
-  drawPoints: [],
-  drawingPolygonGeoJSON: null,
+  isDraggingBox: false,
+  dragStartLngLat: null,
+  networkGeoJSON: null,
+  currentSessionId: localStorage.getItem('pge_planner_session_id') || 'planner-session',
   isGenerating: false,
 };
 
@@ -88,13 +91,17 @@ const el = {
   btnDrawArea: document.getElementById('btn-draw-area'),
   drawingBanner: document.getElementById('drawing-banner'),
   btnCancelDraw: document.getElementById('btn-cancel-draw'),
+  sessionSelect: document.getElementById('planner-session-select'),
+  btnNewSession: document.getElementById('btn-new-session'),
+  btnClearChat: document.getElementById('btn-clear-chat'),
 };
 
 // Initialize Application
-function initPlanner() {
+async function initPlanner() {
   initMap();
   setupEventListeners();
   renderLegend();
+  await initSessionManagement();
 }
 
 function initMap() {
@@ -118,6 +125,7 @@ function initMap() {
   map.on('load', async () => {
     setupMapLayers();
     setupCountyPills();
+    setupDragToDrawEvents();
     await loadStatewideFeederNetwork();
   });
 
@@ -186,7 +194,7 @@ function setupMapLayers() {
     }
   });
 
-  // 5. Drawing Source & Layer for Polygon Tool
+  // 5. Drawing Source & Layer for Bounding Box / Polygon Tool
   map.addSource('drawing-source', {
     type: 'geojson',
     data: { type: 'FeatureCollection', features: [] }
@@ -227,9 +235,6 @@ function setupMapLayers() {
     if (!e.features || !e.features.length) return;
     selectFeeder(e.features[0].properties);
   });
-
-  // Map Click for Drawing Polygon
-  map.on('click', handleMapDrawClick);
 }
 
 async function loadStatewideFeederNetwork() {
@@ -237,6 +242,7 @@ async function loadStatewideFeederNetwork() {
     const res = await fetch('/api/map/network');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+    plannerState.networkGeoJSON = data;
 
     const src = map.getSource('feeder-network');
     if (src) src.setData(data);
@@ -346,82 +352,297 @@ function renderLegend() {
   `).join('');
 }
 
-// Drawing Mode Implementation
+// -------------------------------------------------------------
+// Smooth Drag-To-Draw Bounding Box Area Feature
+// -------------------------------------------------------------
 function toggleDrawArea() {
   plannerState.isDrawing = !plannerState.isDrawing;
+  const container = map.getCanvasContainer();
+
   if (plannerState.isDrawing) {
-    plannerState.drawPoints = [];
     el.btnDrawArea.classList.add('active');
     el.drawingBanner.style.display = 'flex';
-    map.getCanvas().style.cursor = 'crosshair';
+    container.classList.add('drawing-active');
   } else {
-    cancelDrawing();
+    cancelDrawing(true);
   }
 }
 
-function cancelDrawing() {
+function cancelDrawing(clearLayer = true) {
   plannerState.isDrawing = false;
-  plannerState.drawPoints = [];
+  plannerState.isDraggingBox = false;
+  plannerState.dragStartLngLat = null;
   el.btnDrawArea.classList.remove('active');
   el.drawingBanner.style.display = 'none';
-  map.getCanvas().style.cursor = '';
-  const src = map.getSource('drawing-source');
-  if (src) src.setData({ type: 'FeatureCollection', features: [] });
-}
 
-function handleMapDrawClick(e) {
-  if (!plannerState.isDrawing) return;
+  const container = map.getCanvasContainer();
+  container.classList.remove('drawing-active');
+  map.dragPan.enable();
 
-  const pt = [e.lngLat.lng, e.lngLat.lat];
-  plannerState.drawPoints.push(pt);
-
-  // If at least 3 points, render polygon
-  if (plannerState.drawPoints.length >= 3) {
-    const coords = [...plannerState.drawPoints, plannerState.drawPoints[0]];
-    const poly = {
-      type: 'Feature',
-      geometry: { type: 'Polygon', coordinates: [coords] }
-    };
+  if (clearLayer) {
     const src = map.getSource('drawing-source');
-    if (src) src.setData({ type: 'FeatureCollection', features: [poly] });
-  }
-
-  // If user double clicked or has 4 points, prompt analysis
-  if (plannerState.drawPoints.length === 4) {
-    finishDrawing();
+    if (src) src.setData({ type: 'FeatureCollection', features: [] });
   }
 }
 
-function finishDrawing() {
-  if (plannerState.drawPoints.length < 3) {
-    cancelDrawing();
-    return;
-  }
+function setupDragToDrawEvents() {
+  const canvas = map.getCanvas();
 
-  const bounds = plannerState.drawPoints;
-  const avgLon = (bounds.reduce((a, b) => a + b[0], 0) / bounds.length).toFixed(4);
-  const avgLat = (bounds.reduce((a, b) => a + b[1], 0) / bounds.length).toFixed(4);
+  // Mouse Down: start drag
+  map.on('mousedown', (e) => {
+    if (!plannerState.isDrawing) return;
+    // Disable map pan so mouse movement draws the box instead
+    map.dragPan.disable();
+    plannerState.isDraggingBox = true;
+    plannerState.dragStartLngLat = e.lngLat;
+  });
 
-  plannerState.isDrawing = false;
-  el.btnDrawArea.classList.remove('active');
-  el.drawingBanner.style.display = 'none';
-  map.getCanvas().style.cursor = '';
+  // Mouse Move: update box polygon in real-time
+  map.on('mousemove', (e) => {
+    if (!plannerState.isDrawing || !plannerState.isDraggingBox || !plannerState.dragStartLngLat) return;
 
-  const prompt = `Evaluate the grid capacity and solar hosting inside the drawn area centered at coordinates (${avgLon}, ${avgLat}).`;
-  sendPlannerMessage(prompt);
+    const start = plannerState.dragStartLngLat;
+    const current = e.lngLat;
+
+    const minLng = Math.min(start.lng, current.lng);
+    const maxLng = Math.max(start.lng, current.lng);
+    const minLat = Math.min(start.lat, current.lat);
+    const maxLat = Math.max(start.lat, current.lat);
+
+    const polyCoords = [[
+      [minLng, minLat],
+      [maxLng, minLat],
+      [maxLng, maxLat],
+      [minLng, maxLat],
+      [minLng, minLat]
+    ]];
+
+    const src = map.getSource('drawing-source');
+    if (src) {
+      src.setData({
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature',
+          geometry: { type: 'Polygon', coordinates: polyCoords }
+        }]
+      });
+    }
+  });
+
+  // Mouse Up: finish box and calculate intersecting circuits
+  map.on('mouseup', (e) => {
+    if (!plannerState.isDrawing || !plannerState.isDraggingBox || !plannerState.dragStartLngLat) return;
+
+    const start = plannerState.dragStartLngLat;
+    const end = e.lngLat;
+    plannerState.isDraggingBox = false;
+    map.dragPan.enable();
+
+    const minLng = Math.min(start.lng, end.lng);
+    const maxLng = Math.max(start.lng, end.lng);
+    const minLat = Math.min(start.lat, end.lat);
+    const maxLat = Math.max(start.lat, end.lat);
+
+    // Guard against accidental tiny clicks
+    const dLng = Math.abs(maxLng - minLng);
+    const dLat = Math.abs(maxLat - minLat);
+    if (dLng < 0.001 && dLat < 0.001) {
+      return;
+    }
+
+    finishDragDrawing(minLng, minLat, maxLng, maxLat);
+  });
 }
 
+function finishDragDrawing(minLng, minLat, maxLng, maxLat) {
+  // Find intersecting feeders from statewide network
+  const intersecting = [];
+  if (plannerState.networkGeoJSON && plannerState.networkGeoJSON.features) {
+    for (const feat of plannerState.networkGeoJSON.features) {
+      const coords = feat.geometry?.coordinates || [];
+      const hits = coords.some(c => c[0] >= minLng && c[0] <= maxLng && c[1] >= minLat && c[1] <= maxLat);
+      if (hits) {
+        intersecting.push(feat.properties);
+      }
+    }
+  }
+
+  // Calculate capacity summary
+  const circuitCount = intersecting.length;
+  let totalLoadMax = 0;
+  let totalGenMax = 0;
+  intersecting.forEach(f => {
+    if (f.load_max_mw) totalLoadMax += Number(f.load_max_mw);
+    if (f.gen_max_mw) totalGenMax += Number(f.gen_max_mw);
+  });
+
+  const centerLng = ((minLng + maxLng) / 2).toFixed(4);
+  const centerLat = ((minLat + maxLat) / 2).toFixed(4);
+
+  // Close drawing mode but keep polygon
+  cancelDrawing(false);
+
+  // Construct workflow prompt
+  let prompt = `Evaluate the grid capacity and solar hosting inside the drawn area [SW: (${minLat.toFixed(3)}, ${minLng.toFixed(3)}) to NE: (${maxLat.toFixed(3)}, ${maxLng.toFixed(3)})] near center (${centerLat}, ${centerLng}).`;
+  if (circuitCount > 0) {
+    prompt += ` Detected ${circuitCount} intersecting circuits with ~${totalLoadMax.toFixed(1)} MW aggregate load capacity and ~${totalGenMax.toFixed(1)} MW solar hosting capacity. What are the key feeders and substation interconnection constraints in this area?`;
+  }
+
+  sendPlannerMessage(prompt, 'find_large_load_sites');
+}
+
+// -------------------------------------------------------------
+// Session Management & History
+// -------------------------------------------------------------
+async function initSessionManagement() {
+  await loadSessionsList();
+
+  if (el.sessionSelect) {
+    el.sessionSelect.addEventListener('change', (e) => {
+      switchSession(e.target.value);
+    });
+  }
+
+  if (el.btnNewSession) {
+    el.btnNewSession.addEventListener('click', createNewSession);
+  }
+
+  if (el.btnClearChat) {
+    el.btnClearChat.addEventListener('click', clearCurrentChat);
+  }
+}
+
+async function loadSessionsList() {
+  if (!el.sessionSelect) return;
+  try {
+    const res = await fetch('/api/sessions');
+    if (!res.ok) return;
+    const data = await res.json();
+    const sessions = data.sessions || [];
+
+    el.sessionSelect.innerHTML = '';
+
+    // If no sessions, add default
+    if (sessions.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = plannerState.currentSessionId;
+      opt.textContent = 'Main Session';
+      el.sessionSelect.appendChild(opt);
+    } else {
+      let foundActive = false;
+      sessions.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.session_id;
+        const count = s.message_count ? ` (${s.message_count})` : '';
+        opt.textContent = `${s.title || s.session_id}${count}`;
+        if (s.session_id === plannerState.currentSessionId) {
+          opt.selected = true;
+          foundActive = true;
+        }
+        el.sessionSelect.appendChild(opt);
+      });
+
+      if (!foundActive) {
+        plannerState.currentSessionId = sessions[0].session_id;
+        el.sessionSelect.value = sessions[0].session_id;
+        localStorage.setItem('pge_planner_session_id', sessions[0].session_id);
+      }
+    }
+
+    // Load history for selected session
+    await loadSessionHistory(plannerState.currentSessionId);
+
+  } catch (err) {
+    console.warn('Could not load sessions:', err);
+  }
+}
+
+async function switchSession(sessionId) {
+  if (!sessionId) return;
+  plannerState.currentSessionId = sessionId;
+  localStorage.setItem('pge_planner_session_id', sessionId);
+  await loadSessionHistory(sessionId);
+}
+
+async function createNewSession() {
+  const newId = 'session_' + Math.random().toString(36).substring(2, 9);
+  const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const title = `Plan ${timeStr}`;
+
+  try {
+    await fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: newId, title: title })
+    });
+    plannerState.currentSessionId = newId;
+    localStorage.setItem('pge_planner_session_id', newId);
+    await loadSessionsList();
+    resetChatView();
+  } catch (err) {
+    console.error('Failed to create new session:', err);
+  }
+}
+
+async function clearCurrentChat() {
+  try {
+    await fetch(`/api/history/${encodeURIComponent(plannerState.currentSessionId)}`, {
+      method: 'DELETE'
+    });
+    resetChatView();
+    await loadSessionsList();
+  } catch (err) {
+    console.error('Failed to clear session chat:', err);
+  }
+}
+
+function resetChatView() {
+  el.plannerChatMessages.innerHTML = '';
+  el.plannerChatMessages.style.display = 'none';
+  el.workflowsSection.classList.remove('collapsed');
+  el.workflowItems.forEach(b => b.classList.remove('selected'));
+  plannerState.activeWorkflow = null;
+  cancelDrawing(true);
+  closeFeederCard();
+}
+
+async function loadSessionHistory(sessionId) {
+  try {
+    const res = await fetch(`/api/history/${encodeURIComponent(sessionId)}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const messages = data.messages || [];
+
+    el.plannerChatMessages.innerHTML = '';
+
+    if (messages.length > 0) {
+      el.plannerChatMessages.style.display = 'flex';
+      el.workflowsSection.classList.add('collapsed');
+      messages.forEach(m => {
+        appendPlannerBubble(m.role, m.content);
+      });
+    } else {
+      el.plannerChatMessages.style.display = 'none';
+      el.workflowsSection.classList.remove('collapsed');
+    }
+  } catch (err) {
+    console.warn('Could not load session history:', err);
+  }
+}
+
+// -------------------------------------------------------------
 // AI Chat & Workflow Handling
+// -------------------------------------------------------------
 async function handleChatSubmit(e) {
   if (e) e.preventDefault();
   const text = el.plannerInput.value.trim();
   if (!text || plannerState.isGenerating) return;
 
   el.plannerInput.value = '';
-  await sendPlannerMessage(text);
+  await sendPlannerMessage(text, plannerState.activeWorkflow);
 }
 
-async function sendPlannerMessage(message) {
+async function sendPlannerMessage(message, workflow = null) {
   // If user enters an address, try geocoding first to fly the map!
   const addressMatch = message.match(/(?:at|near|address|site:?)\s+([0-9]+[a-zA-Z0-9\s,.-]+(?:CA|California|Oakland|San Francisco|Fresno|San Jose|Bakersfield|Sacramento|Manteca)?)/i);
   if (addressMatch && addressMatch[1] && addressMatch[1].trim().length > 5) {
@@ -438,10 +659,16 @@ async function sendPlannerMessage(message) {
   el.btnSendPlanner.disabled = true;
 
   try {
+    const bodyPayload = {
+      message: message,
+      session_id: plannerState.currentSessionId,
+      workflow: workflow || plannerState.activeWorkflow || null
+    };
+
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: message, session_id: 'planner-session' })
+      body: JSON.stringify(bodyPayload)
     });
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -552,7 +779,7 @@ function setupEventListeners() {
     if (!plannerState.selectedFeeder) return;
     const f = plannerState.selectedFeeder;
     const prompt = `What is the detailed hosting capacity and interconnection status for feeder ${f.name || f.fid} in ${f.sub || 'the'} substation area?`;
-    sendPlannerMessage(prompt);
+    sendPlannerMessage(prompt, 'check_capacity_address');
   });
 
   // Workflows accordion toggle
@@ -566,7 +793,18 @@ function setupEventListeners() {
     chip.addEventListener('click', () => {
       el.personaChips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      plannerState.activePersona = chip.getAttribute('data-persona');
+      const persona = chip.getAttribute('data-persona');
+      plannerState.activePersona = persona;
+
+      // Filter workflows by persona
+      el.workflowItems.forEach(btn => {
+        const personas = (btn.getAttribute('data-personas') || '').split(',');
+        if (persona === 'all' || personas.includes(persona)) {
+          btn.style.display = 'block';
+        } else {
+          btn.style.display = 'none';
+        }
+      });
     });
   });
 
@@ -574,18 +812,26 @@ function setupEventListeners() {
   el.workflowItems.forEach(btn => {
     btn.addEventListener('click', () => {
       const prompt = btn.getAttribute('data-prompt');
-      if (prompt) sendPlannerMessage(prompt);
+      const wf = btn.getAttribute('data-workflow');
+
+      el.workflowItems.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      plannerState.activeWorkflow = wf;
+
+      if (prompt) {
+        sendPlannerMessage(prompt, wf);
+      }
     });
   });
 
   // Drawing area
   el.btnDrawArea.addEventListener('click', toggleDrawArea);
-  el.btnCancelDraw.addEventListener('click', cancelDrawing);
+  el.btnCancelDraw.addEventListener('click', () => cancelDrawing(true));
 
   // Keyboard Escape
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (plannerState.isDrawing) cancelDrawing();
+      if (plannerState.isDrawing) cancelDrawing(true);
       else if (plannerState.selectedFeeder) closeFeederCard();
     }
   });
