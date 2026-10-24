@@ -9,164 +9,57 @@
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
-  <!-- Google Fonts: Inter -->
+  <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/static/planner.css?v=20261024">
+  <link rel="stylesheet" href="/static/planner.css?v=20261024_split">
 </head>
 <body>
-  <div class="planner-container">
-    <!-- Map Canvas with Glowing Edge Vignette -->
-    <div id="planner-map" class="planner-map"></div>
-    <div class="glow-vignette"></div>
-
-    <!-- Top-Right Controls -->
-    <div class="top-controls">
-      <div class="capacity-toggles">
-        <button id="toggle-load" class="capacity-btn active" data-mode="load">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-          </svg>
-          Load capacity
-        </button>
-        <button id="toggle-solar" class="capacity-btn" data-mode="solar">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          Solar hosting
-        </button>
-      </div>
-
-      <!-- Quick Link to Grid AI Suite -->
-      <a href="/" class="icon-link-btn" title="Back to Engineering Suite" aria-label="Back to Engineering Suite">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="10" y1="14" x2="21" y2="3"></line>
-        </svg>
-      </a>
-    </div>
-
-    <!-- Feeder Detail Card (Slides in top-right upon click) -->
-    <div id="feeder-card" class="feeder-card">
-      <div class="feeder-card-header">
-        <div class="feeder-card-title">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-          </svg>
-          <span id="card-feeder-name">Feeder Name</span>
-        </div>
-        <button id="btn-close-card" class="card-close-btn" aria-label="Close card">✕</button>
-      </div>
-
-      <div class="feeder-card-body">
-        <div class="feeder-stat-box">
-          <div class="stat-box-label">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
-            Load capacity
-          </div>
-          <div id="card-load-capacity" class="stat-box-value">0 MW</div>
-        </div>
-
-        <div class="feeder-stat-box">
-          <div class="stat-box-label">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            Solar hosting
-          </div>
-          <div id="card-solar-capacity" class="stat-box-value">0 MW</div>
-        </div>
-      </div>
-
-      <div class="feeder-card-meta" id="card-feeder-meta">
-        Substation: <span id="card-substation">--</span> • Voltage: <span id="card-voltage">12 kV</span>
-      </div>
-
-      <div class="feeder-card-actions">
-        <button id="btn-view-grip" class="btn-grip-link">
-          View full details on PG&E GRIP
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-        </button>
-        <button id="btn-ask-ai-feeder" class="btn-secondary-action">
-          💬 Ask AI about this Feeder
-        </button>
-      </div>
-    </div>
-
-    <!-- County Navigation Pills (Rendered over the map at high level) -->
-    <div id="county-pills-container" class="county-pills-container">
-      <!-- Injected dynamically in planner.js -->
-    </div>
-
-    <!-- Bottom-Right Dynamic Capacity Legend -->
-    <div class="planner-legend" id="planner-legend">
-      <div class="legend-header">
-        <span id="legend-title">Load capacity</span>
-        <span class="legend-unit">MW</span>
-      </div>
-      <div class="legend-scale-bars" id="legend-scale-bars">
-        <!-- Scale items injected dynamically based on mode -->
-      </div>
-      <div class="legend-footer">
-        <span class="legend-dot-gray"></span>
-        <span>Not published</span>
-      </div>
-    </div>
-
-    <!-- Bottom-Left Floating AI Assisted Public Planning Card -->
-    <div class="planner-chat-card" id="planner-chat-card">
+  <div class="planner-layout" id="planner-layout">
+    
+    <!-- Left Pane: AI Planning Assistant (Half Page - 50% Width) -->
+    <aside class="planner-sidebar-panel" id="planner-sidebar-panel">
+      <!-- Header -->
       <div class="chat-card-header">
         <div class="card-brand">
           <div class="pge-logo-pill">
             <span class="pge-blue">PG&E</span>
           </div>
-          <span class="brand-title">AI assisted public planning tool</span>
+          <div class="brand-text">
+            <span class="brand-title">AI Assisted Public Planning Tool</span>
+            <span class="brand-subtitle">California Distribution Grid & DRP</span>
+          </div>
         </div>
+
         <div class="session-controls">
           <select id="planner-session-select" class="planner-session-select" title="Switch Session">
             <option value="">Main Session</option>
           </select>
           <button id="btn-new-session" type="button" class="btn-session-action" title="New Planning Session">+ New</button>
           <button id="btn-clear-chat" type="button" class="btn-session-action" title="Clear Conversation">Clear</button>
+          <button id="btn-toggle-layout" type="button" class="btn-layout-toggle" title="Toggle Split View / Full Map">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="12" y1="3" x2="12" y2="21"></line>
+            </svg>
+            <span id="layout-toggle-label">50/50</span>
+          </button>
         </div>
       </div>
 
       <!-- Collapsible Workflows Container -->
       <div class="workflows-section" id="workflows-section">
         <div class="workflows-header">
-          <span class="section-title">Try a workflow</span>
+          <span class="section-title">Select Planning Workflow</span>
           <button id="btn-toggle-workflows" class="btn-browse-workflows">
             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="12" y1="8" x2="12" y2="12"></line>
               <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            Browse workflows
+            Workflows
             <span id="workflow-caret">⌄</span>
           </button>
         </div>
@@ -180,38 +73,38 @@
           <button class="persona-chip" data-persona="solar">☀️ Solar</button>
         </div>
 
-        <!-- 6 Preset Workflow Action Buttons -->
+        <!-- 6 Preset Workflow Action Buttons (Grid Layout in 50% pane) -->
         <div class="workflow-list" id="workflow-list">
           <button class="workflow-item-btn" data-workflow="check_capacity_address" data-personas="homeowner,business,developer" data-prompt="Check available capacity at an address: 1220 Broadway, Oakland, CA">
-            <span class="wf-icon">📍</span> Check available capacity at an address
+            <span class="wf-icon">📍</span>
+            <span class="wf-text">Check available capacity at an address</span>
           </button>
           <button class="workflow-item-btn" data-workflow="find_generation_headroom" data-personas="solar,developer" data-prompt="Find areas with generation headroom near Central Valley and San Joaquin">
-            <span class="wf-icon">⚡</span> Find areas with generation headroom
+            <span class="wf-icon">⚡</span>
+            <span class="wf-text">Find areas with generation headroom</span>
           </button>
           <button class="workflow-item-btn" data-workflow="add_units_property" data-personas="homeowner,developer" data-prompt="I want to add units to an existing residential property. What distribution line upgrades or ICA load headroom are needed?">
-            <span class="wf-icon">🏠</span> Add units to a property
+            <span class="wf-icon">🏠</span>
+            <span class="wf-text">Add units to a property</span>
           </button>
           <button class="workflow-item-btn" data-workflow="plan_subdivision_development" data-personas="developer" data-prompt="Plan a new subdivision or development in Fresno division. Which feeders have over 5 MW capacity?">
-            <span class="wf-icon">🏗️</span> Plan a new subdivision or development
+            <span class="wf-icon">🏗️</span>
+            <span class="wf-text">Plan a new subdivision or development</span>
           </button>
           <button class="workflow-item-btn" data-workflow="find_large_load_sites" data-personas="business,developer" data-prompt="Find sites that can host a large load of 3 MW or more in Alameda and Oakland">
-            <span class="wf-icon">🏭</span> Find sites that can host a large load
+            <span class="wf-icon">🏭</span>
+            <span class="wf-text">Find sites that can host a large load</span>
           </button>
           <button class="workflow-item-btn" data-workflow="connect_solar_battery" data-personas="solar,business" data-prompt="Connect a commercial solar or battery storage project. Where is Rule 21 Screen L likely to pass?">
-            <span class="wf-icon">☀️</span> Connect solar or a battery
+            <span class="wf-icon">☀️</span>
+            <span class="wf-text">Connect solar or a battery</span>
           </button>
         </div>
       </div>
 
-      <!-- Chat Response Conversation Stream -->
+      <!-- Chat Response Conversation Stream (Full Height in 50% Pane) -->
       <div id="planner-chat-messages" class="chat-messages-container" style="display: none;">
         <!-- Injected dynamically -->
-      </div>
-
-      <!-- Drawing Mode Banner -->
-      <div id="drawing-banner" class="drawing-banner" style="display: none;">
-        <span>✏️ Click and drag on map to draw area box. Release to inspect circuits.</span>
-        <button id="btn-cancel-draw" class="btn-cancel-draw">Cancel (Esc)</button>
       </div>
 
       <!-- Input Bar Form -->
@@ -219,8 +112,8 @@
         <textarea 
           id="planner-input" 
           class="chat-input-textarea" 
-          rows="1" 
-          placeholder="What are you trying to do?"
+          rows="2" 
+          placeholder="Ask anything about circuits, substations, hosting capacity, or addresses..."
         ></textarea>
 
         <div class="input-actions-bar">
@@ -232,6 +125,8 @@
             Draw an area
           </button>
 
+          <span class="input-hint">Tip: Drag on map or type an address</span>
+
           <button type="submit" id="btn-send-planner" class="btn-send-planner" aria-label="Send message">
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
               <line x1="12" y1="19" x2="12" y2="5"></line>
@@ -240,9 +135,138 @@
           </button>
         </div>
       </form>
-    </div>
+    </aside>
+
+    <!-- Right Pane: Interactive Map (Half Page - 50% Width) -->
+    <main class="planner-map-panel" id="planner-map-panel">
+      <!-- Map Canvas -->
+      <div id="planner-map" class="planner-map"></div>
+      <div class="glow-vignette"></div>
+
+      <!-- Drawing Mode Banner (Centered at top of map) -->
+      <div id="drawing-banner" class="drawing-banner" style="display: none;">
+        <span>✏️ Click and drag on map to draw area box. Release to inspect circuits.</span>
+        <button id="btn-cancel-draw" class="btn-cancel-draw">Cancel (Esc)</button>
+      </div>
+
+      <!-- Top-Right Controls on Map -->
+      <div class="top-controls">
+        <div class="capacity-toggles">
+          <button id="toggle-load" class="capacity-btn active" data-mode="load">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            Load capacity
+          </button>
+          <button id="toggle-solar" class="capacity-btn" data-mode="solar">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            Solar hosting
+          </button>
+        </div>
+
+        <!-- Quick Link to Grid AI Suite -->
+        <a href="/" class="icon-link-btn" title="Back to Engineering Suite" aria-label="Back to Engineering Suite">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Feeder Detail Card (Slides in top-right of map) -->
+      <div id="feeder-card" class="feeder-card">
+        <div class="feeder-card-header">
+          <div class="feeder-card-title">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <span id="card-feeder-name">Feeder Name</span>
+          </div>
+          <button id="btn-close-card" class="card-close-btn" aria-label="Close card">✕</button>
+        </div>
+
+        <div class="feeder-card-body">
+          <div class="feeder-stat-box">
+            <div class="stat-box-label">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              Load capacity
+            </div>
+            <div id="card-load-capacity" class="stat-box-value">0 MW</div>
+          </div>
+
+          <div class="feeder-stat-box">
+            <div class="stat-box-label">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+              Solar hosting
+            </div>
+            <div id="card-solar-capacity" class="stat-box-value">0 MW</div>
+          </div>
+        </div>
+
+        <div class="feeder-card-meta" id="card-feeder-meta">
+          Substation: <span id="card-substation">--</span> • Voltage: <span id="card-voltage">12 kV</span>
+        </div>
+
+        <div class="feeder-card-actions">
+          <button id="btn-view-grip" class="btn-grip-link">
+            View full details on PG&E GRIP
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </button>
+          <button id="btn-ask-ai-feeder" class="btn-secondary-action">
+            💬 Ask AI about this Feeder
+          </button>
+        </div>
+      </div>
+
+      <!-- County Navigation Pills -->
+      <div id="county-pills-container" class="county-pills-container">
+        <!-- Injected dynamically in planner.js -->
+      </div>
+
+      <!-- Dynamic Capacity Legend (Bottom-Right of Map) -->
+      <div class="planner-legend" id="planner-legend">
+        <div class="legend-header">
+          <span id="legend-title">Load capacity</span>
+          <span class="legend-unit">MW</span>
+        </div>
+        <div class="legend-scale-bars" id="legend-scale-bars">
+          <!-- Scale items injected dynamically based on mode -->
+        </div>
+        <div class="legend-footer">
+          <span class="legend-dot-gray"></span>
+          <span>Not published</span>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <script src="/static/planner.js?v=20261024"></script>
+  <script src="/static/planner.js?v=20261024_split"></script>
 </body>
 </html>

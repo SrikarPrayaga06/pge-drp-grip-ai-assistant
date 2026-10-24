@@ -94,6 +94,9 @@ const el = {
   sessionSelect: document.getElementById('planner-session-select'),
   btnNewSession: document.getElementById('btn-new-session'),
   btnClearChat: document.getElementById('btn-clear-chat'),
+  btnToggleLayout: document.getElementById('btn-toggle-layout'),
+  layoutToggleLabel: document.getElementById('layout-toggle-label'),
+  sidebarPanel: document.getElementById('planner-sidebar-panel'),
 };
 
 // Initialize Application
@@ -126,7 +129,12 @@ function initMap() {
     setupMapLayers();
     setupCountyPills();
     setupDragToDrawEvents();
+    map.resize();
     await loadStatewideFeederNetwork();
+  });
+
+  window.addEventListener('resize', () => {
+    if (map) map.resize();
   });
 
   // Toggle county pills visibility based on zoom level
@@ -532,20 +540,25 @@ async function loadSessionsList() {
       let foundActive = false;
       sessions.forEach(s => {
         const opt = document.createElement('option');
-        opt.value = s.session_id;
-        const count = s.message_count ? ` (${s.message_count})` : '';
-        opt.textContent = `${s.title || s.session_id}${count}`;
-        if (s.session_id === plannerState.currentSessionId) {
+        const sid = typeof s === 'string' ? s : (s.session_id || 'session');
+        let label = typeof s === 'object' && s.title ? s.title : sid;
+        if (label === 'planner-session') label = 'Main Session';
+        if (label === 'default') label = 'Default Session';
+        const count = typeof s === 'object' && s.message_count ? ` (${s.message_count})` : '';
+        opt.value = sid;
+        opt.textContent = `${label}${count}`;
+        if (sid === plannerState.currentSessionId) {
           opt.selected = true;
           foundActive = true;
         }
         el.sessionSelect.appendChild(opt);
       });
 
-      if (!foundActive) {
-        plannerState.currentSessionId = sessions[0].session_id;
-        el.sessionSelect.value = sessions[0].session_id;
-        localStorage.setItem('pge_planner_session_id', sessions[0].session_id);
+      if (!foundActive && sessions.length > 0) {
+        const firstSid = typeof sessions[0] === 'string' ? sessions[0] : (sessions[0].session_id || 'planner-session');
+        plannerState.currentSessionId = firstSid;
+        el.sessionSelect.value = firstSid;
+        localStorage.setItem('pge_planner_session_id', firstSid);
       }
     }
 
@@ -835,6 +848,20 @@ function setupEventListeners() {
       else if (plannerState.selectedFeeder) closeFeederCard();
     }
   });
+
+  // Layout Toggle (Split 50/50 vs Full)
+  if (el.btnToggleLayout) {
+    el.btnToggleLayout.addEventListener('click', () => {
+      if (!el.sidebarPanel) return;
+      const isFullScreen = el.sidebarPanel.classList.toggle('full-screen');
+      if (el.layoutToggleLabel) {
+        el.layoutToggleLabel.textContent = isFullScreen ? 'Full' : '50/50';
+      }
+      setTimeout(() => {
+        if (map) map.resize();
+      }, 350);
+    });
+  }
 
   // Chat submit
   el.plannerChatForm.addEventListener('submit', handleChatSubmit);

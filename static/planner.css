@@ -1,6 +1,7 @@
 /* ==========================================================================
    PG&E AI Assisted Public Planning Tool (Senpilot Style Interface)
-   Light Mode, Crisp Geometry, Floating AI Chat Card, MW Capacity Scales
+   Split-Screen Layout: 50% AI Assistant Panel | 50% Interactive Map
+   Light Mode, Crisp Geometry, Full Statewide Feeder Network & Capacity Scales
    ========================================================================== */
 
 :root {
@@ -8,7 +9,7 @@
   --font-mono: 'JetBrains Mono', monospace;
 
   --bg-page: #f8fafc;
-  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card: #ffffff;
   --bg-card-solid: #ffffff;
   --bg-input: #f8fafc;
   --bg-muted: #f1f5f9;
@@ -24,10 +25,12 @@
   --navy-primary: #0f172a;
   --navy-hover: #1e293b;
   --blue-accent: #0284c7;
+  --blue-light: #e0f2fe;
   --blue-glow: rgba(56, 189, 248, 0.35);
 
-  --shadow-card: 0 20px 45px -10px rgba(15, 23, 42, 0.18), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 20px 45px -10px rgba(15, 23, 42, 0.12), 0 0 1px 1px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -46,14 +49,484 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.planner-container {
-  position: relative;
+/* ==========================================================================
+   Split Layout: Left 50% AI Chat & Workflows | Right 50% Map View
+   ========================================================================== */
+.planner-layout {
+  display: flex;
+  flex-direction: row;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background: #ffffff;
 }
 
-/* Full-Bleed Map Canvas */
+/* --------------------------------------------------------------------------
+   Left Pane: AI Planning Assistant (Takes 50% of the screen)
+   -------------------------------------------------------------------------- */
+.planner-sidebar-panel {
+  width: 50%;
+  min-width: 460px;
+  max-width: 50%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-right: 1px solid var(--border-subtle);
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.04);
+  z-index: 20;
+  position: relative;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.planner-sidebar-panel.full-screen {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.planner-sidebar-panel.collapsed {
+  width: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border-right: none;
+}
+
+/* Header */
+.chat-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.card-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pge-logo-pill {
+  background: #0077c8;
+  color: #ffffff;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 119, 200, 0.25);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.brand-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.session-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planner-session-select {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: #f8fafc;
+  color: var(--text-secondary);
+  max-width: 130px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.planner-session-select:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #0284c7;
+}
+
+.btn-session-action {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: #f8fafc;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-session-action:hover {
+  background: #f1f5f9;
+  color: var(--text-primary);
+  border-color: #cbd5e1;
+}
+
+.btn-layout-toggle {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+  background: #f0f9ff;
+  color: #0369a1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-layout-toggle:hover {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+/* Workflows Section */
+.workflows-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: #fbfcfe;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.workflows-section.collapsed .workflow-list,
+.workflows-section.collapsed .persona-chips-row {
+  display: none;
+}
+
+.workflows-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.btn-browse-workflows {
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--blue-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-browse-workflows:hover {
+  color: #0369a1;
+}
+
+/* Persona Chips */
+.persona-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.persona-chip {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.persona-chip:hover {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+}
+
+.persona-chip.active {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+  box-shadow: 0 1px 3px rgba(3, 105, 161, 0.1);
+}
+
+/* 2-Column Grid for Preset Workflows */
+.workflow-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.workflow-item-btn {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.35;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.workflow-item-btn:hover {
+  background: #f8fafc;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+}
+
+.workflow-item-btn.selected {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.wf-icon {
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.wf-text {
+  flex: 1;
+}
+
+/* Chat Messages Container: Full Height in 50% Pane */
+.chat-messages-container {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #ffffff;
+}
+
+.chat-bubble {
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  max-width: 90%;
+  word-break: break-word;
+}
+
+.chat-bubble.user {
+  background: #0f172a;
+  color: #ffffff;
+  align-self: flex-end;
+  border-radius: 16px 16px 4px 16px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+
+.chat-bubble.assistant {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  align-self: flex-start;
+  border-radius: 16px 16px 16px 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  max-width: 95%;
+}
+
+.chat-bubble.assistant p {
+  margin-bottom: 8px;
+}
+
+.chat-bubble.assistant p:last-child {
+  margin-bottom: 0;
+}
+
+.chat-bubble.assistant table {
+  margin: 10px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.chat-bubble.assistant th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: left;
+}
+
+.chat-bubble.assistant tr:nth-child(even) td {
+  background: #fafafa;
+}
+
+/* Chat Input Bar Form */
+.chat-input-form {
+  padding: 16px 20px;
+  background: #ffffff;
+  border-top: 1px solid var(--border-subtle);
+  box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.chat-input-textarea {
+  width: 100%;
+  min-height: 52px;
+  max-height: 120px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: #f8fafc;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  resize: none;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+}
+
+.chat-input-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-input-textarea:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.input-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-draw-area {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-draw-area:hover {
+  color: var(--text-primary);
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.btn-draw-area.active {
+  color: #0284c7;
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+.input-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.btn-send-planner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--navy-primary);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+}
+
+.btn-send-planner:hover {
+  background: #0284c7;
+  transform: scale(1.05);
+}
+
+.btn-send-planner:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   Right Pane: Interactive Map (Takes 50% of the screen)
+   -------------------------------------------------------------------------- */
+.planner-map-panel {
+  flex: 1;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
 .planner-map {
   position: absolute;
   top: 0;
@@ -63,16 +536,55 @@ body {
   z-index: 1;
 }
 
-/* Glowing Blue Edge Vignette */
 .glow-vignette {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 4;
-  box-shadow: inset 0 0 70px rgba(56, 189, 248, 0.35), inset 0 0 120px rgba(99, 102, 241, 0.12);
+  box-shadow: inset 0 0 60px rgba(56, 189, 248, 0.25), inset 0 0 100px rgba(99, 102, 241, 0.08);
 }
 
-/* Top-Right Capacity Controls */
+.maplibregl-canvas-container.drawing-active {
+  cursor: crosshair !important;
+}
+
+/* Floating Drawing Banner on Map */
+.drawing-banner {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #ffffff;
+  padding: 9px 18px;
+  border-radius: 30px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.btn-cancel-draw {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-cancel-draw:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Top-Right Controls on Map */
 .top-controls {
   position: absolute;
   top: 20px;
@@ -86,7 +598,7 @@ body {
 .capacity-toggles {
   display: flex;
   align-items: center;
-  background: var(--bg-card-solid);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
   padding: 4px;
@@ -98,15 +610,15 @@ body {
   background: transparent;
   border: none;
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--text-secondary);
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -118,15 +630,15 @@ body {
 .capacity-btn.active {
   background: var(--navy-primary);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.18);
 }
 
 .icon-link-btn {
-  background: var(--bg-card-solid);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -142,55 +654,13 @@ body {
   transform: translateY(-1px);
 }
 
-/* County Navigation Pills */
-.county-pills-container {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 8;
-}
-
-.county-pill-marker {
-  pointer-events: auto;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: #ffffff;
-  border: 1px solid #93c5fd;
-  color: #0369a1;
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 24px;
-  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.18);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-}
-
-.county-pill-marker:hover {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #0284c7;
-  transform: translate(-50%, -54%) scale(1.05);
-  box-shadow: 0 10px 25px rgba(2, 132, 199, 0.35);
-}
-
-.county-pill-arrow {
-  font-size: 0.88rem;
-  font-weight: 700;
-}
-
-/* Feeder Detail Card (Top-Right) */
+/* Feeder Detail Card (Top-Right of Map) */
 .feeder-card {
   position: absolute;
   top: 76px;
   right: 20px;
   width: 340px;
-  background: var(--bg-card-solid);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
@@ -224,7 +694,6 @@ body {
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
-  font-family: var(--font-sans);
 }
 
 .card-close-btn {
@@ -248,9 +717,10 @@ body {
 }
 
 .feeder-stat-box {
-  background: var(--bg-muted);
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -262,19 +732,21 @@ body {
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .stat-box-value {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
 }
 
 .feeder-card-meta {
-  font-size: 0.76rem;
-  color: var(--text-muted);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 10px;
 }
 
 .feeder-card-actions {
@@ -319,12 +791,54 @@ body {
   background: #f1f5f9;
 }
 
-/* Bottom-Right Capacity Legend */
+/* County Navigation Pills */
+.county-pills-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.county-pill-marker {
+  pointer-events: auto;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 1px solid #93c5fd;
+  color: #0369a1;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.16);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.county-pill-marker:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  transform: translate(-50%, -54%) scale(1.05);
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
+}
+
+.county-pill-arrow {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Dynamic Capacity Legend (Bottom-Right of Map) */
 .planner-legend {
   position: absolute;
   bottom: 24px;
   right: 24px;
-  background: var(--bg-card);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
@@ -395,357 +909,24 @@ body {
   border-radius: 2px;
 }
 
-/* Bottom-Left Floating AI Card */
-.planner-chat-card {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  width: 480px;
-  max-width: calc(100vw - 48px);
-  max-height: calc(100vh - 48px);
-  background: var(--bg-card);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
-  padding: 16px;
-  z-index: 15;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.chat-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.session-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.planner-session-select {
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 500;
-  padding: 3px 6px;
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  background: #ffffff;
-  color: var(--text-secondary);
-  max-width: 125px;
-  cursor: pointer;
-}
-
-.planner-session-select:focus {
-  outline: none;
-  border-color: #0284c7;
-}
-
-.btn-session-action {
-  font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 3px 7px;
-  border-radius: 6px;
-  border: 1px solid var(--border-subtle);
-  background: #ffffff;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-session-action:hover {
-  background: var(--bg-muted);
-  color: var(--text-primary);
-  border-color: #cbd5e1;
-}
-
-.workflow-item-btn.selected {
-  background: #eff6ff;
-  border-color: #60a5fa;
-  color: #1d4ed8;
-  font-weight: 600;
-}
-
-.wf-icon {
-  margin-right: 4px;
-}
-
-.maplibregl-canvas-container.drawing-active {
-  cursor: crosshair !important;
-}
-
-.card-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pge-logo-pill {
-  background: #0077c8;
-  color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 0.82rem;
-  letter-spacing: -0.02em;
-}
-
-.brand-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-/* Workflows Section */
-.workflows-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: all 0.3s ease;
-}
-
-.workflows-section.collapsed .workflow-list,
-.workflows-section.collapsed .persona-chips-row {
-  display: none;
-}
-
-.workflows-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.section-title {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.btn-browse-workflows {
-  background: transparent;
-  border: none;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.btn-browse-workflows:hover {
-  color: var(--text-primary);
-}
-
-/* Persona Chips */
-.persona-chips-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
-
-.persona-chip {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  border-radius: 18px;
-  padding: 5px 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-}
-
-.persona-chip:hover {
-  background: var(--bg-muted);
-  color: var(--text-primary);
-}
-
-.persona-chip.active {
-  background: #e0f2fe;
-  color: #0369a1;
-  border-color: #7dd3fc;
-}
-
-/* Preset Workflow Buttons */
-.workflow-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 220px;
-  overflow-y: auto;
-}
-
-.workflow-item-btn {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 10px 14px;
-  text-align: left;
-  font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-.workflow-item-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  transform: translateX(2px);
-}
-
-/* Chat Messages Container */
-.chat-messages-container {
-  max-height: 280px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-right: 4px;
-}
-
-.chat-bubble {
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-
-.chat-bubble.user {
-  background: #f1f5f9;
-  color: var(--text-primary);
-  align-self: flex-end;
-  font-weight: 500;
-}
-
-.chat-bubble.assistant {
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-  align-self: flex-start;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-/* Drawing Banner */
-.drawing-banner {
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  color: #92400e;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.btn-cancel-draw {
-  background: #ffffff;
-  border: 1px solid #d97706;
-  color: #b45309;
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Input Bar Form */
-.chat-input-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #ffffff;
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 10px 12px;
-  box-shadow: var(--shadow-sm);
-}
-
-.chat-input-textarea {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  resize: none;
-  min-height: 24px;
-  max-height: 120px;
-}
-
-.chat-input-textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.input-actions-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.btn-draw-area {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-}
-
-.btn-draw-area:hover {
-  color: var(--text-primary);
-  background: var(--bg-muted);
-}
-
-.btn-draw-area.active {
-  color: #0284c7;
-  background: #e0f2fe;
-}
-
-.btn-send-planner {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--navy-primary);
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.btn-send-planner:hover {
-  background: var(--navy-hover);
-  transform: scale(1.05);
-}
-
-.btn-send-planner:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 960px) {
+  .planner-layout {
+    flex-direction: column-reverse;
+  }
+  .planner-sidebar-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    height: 55vh;
+  }
+  .planner-map-panel {
+    width: 100%;
+    height: 45vh;
+  }
+  .workflow-list {
+    grid-template-columns: 1fr;
+  }
 }
