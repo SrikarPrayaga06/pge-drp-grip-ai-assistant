@@ -8,8 +8,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -42,6 +43,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Enable automatic gzip compression for responses >= 1KB
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Shared chatbot instance
 chatbot_instance: Optional[ArcGISChatbot] = None
@@ -570,6 +573,86 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.get("/api/map/network")
+async def get_statewide_feeder_network():
+    """Return pre-compressed statewide feeder network GeoJSON (3,259 feeders with ICA MW rollups)."""
+    gz_path = STATIC_DIR / "data" / "feeder_network.geojson.gz"
+    if gz_path.exists():
+        content = gz_path.read_bytes()
+        return Response(
+            content=content,
+            media_type="application/json",
+            headers={
+                "Content-Encoding": "gzip",
+                "Cache-Control": "public, max-age=86400",
+            },
+        )
+    raw_path = STATIC_DIR / "data" / "feeder_network.geojson"
+    if raw_path.exists():
+        return FileResponse(str(raw_path), media_type="application/json")
+    raise HTTPException(status_code=404, detail="Feeder network data not built yet. Run build_feeder_network.py.")
+
+
+@app.get("/api/geocode")
+async def geocode_address(q: str):
+    """Geocode an address to lat/lon using US Census Bureau Geocoder API with Nominatim fallback."""
+    import httpx
+    q_clean = q.strip()
+    if not q_clean:
+        return {"matched": False, "error": "Query cannot be empty"}
+
+    url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
+    params = {"address": q_clean, "benchmark": "2020", "format": "json"}
+
+    async with httpx.AsyncClient(timeout=8.0) as http_client:
+        try:
+            r = await http_client.get(url, params=params)
+            if r.status_code == 200:
+                data = r.json()
+                matches = data.get("result", {}).get("addressMatches", [])
+                if matches:
+                    pt = matches[0]["coordinates"]
+                    return {
+                        "matched": True,
+                        "address": matches[0]["matchedAddress"],
+                        "lon": float(pt["x"]),
+                        "lat": float(pt["y"]),
+                        "source": "US Census Bureau",
+                    }
+        except Exception:
+            pass
+
+        # Fallback to OpenStreetMap Nominatim
+        nom_url = "https://nominatim.openstreetmap.org/search"
+        nom_params = {"q": f"{q_clean}, California", "format": "json", "limit": 1}
+        headers = {"User-Agent": "PGEDRPPublicPlanner/1.0"}
+        try:
+            r2 = await http_client.get(nom_url, params=nom_params, headers=headers)
+            if r2.status_code == 200:
+                nom_data = r2.json()
+                if nom_data:
+                    return {
+                        "matched": True,
+                        "address": nom_data[0].get("display_name", q_clean),
+                        "lon": float(nom_data[0]["lon"]),
+                        "lat": float(nom_data[0]["lat"]),
+                        "source": "OpenStreetMap Nominatim",
+                    }
+        except Exception as e:
+            return {"matched": False, "error": str(e)}
+
+    return {"matched": False, "error": f"No California location found for '{q_clean}'"}
+
+
+@app.get("/planner")
+async def serve_planner():
+    """Serve Senpilot-style AI Public Planning Tool."""
+    planner_file = STATIC_DIR / "planner.html"
+    if planner_file.exists():
+        return FileResponse(str(planner_file))
+    return {"message": "Planner page not found. Place planner.html in static/"}
 
 
 @app.get("/")

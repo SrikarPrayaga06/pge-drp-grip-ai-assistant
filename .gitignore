@@ -40,6 +40,9 @@ data/*.db*
 data/*.sqlite*
 *.sqlite3
 !data/.gitkeep
+static/data/*.geojson
+!static/data/*.geojson.gz
+!static/data/.gitkeep
 
 # Operating System & IDE
 .DS_Store

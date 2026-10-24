@@ -39,6 +39,18 @@ Full-screen interactive spatial grid map powered by [OpenFreeMap](https://openfr
 ![OpenFreeMap Feeder Overlay](docs/images/ui_openfreemap_feeder.png)
 ![OpenFreeMap Overview & Inspector](docs/images/ui_openfreemap_overview.png)
 
+### 5. Map-First Public Planning Tool (`/planner` - Senpilot Architecture)
+A public-facing, map-first planning tool replicating the full UX and capabilities of modern grid planning interfaces:
+- **Full-Bleed Statewide Network**: Renders all **3,259 PG&E feeders** simultaneously with pre-computed server-side MW rollup statistics.
+- **Dynamic MW Color Ramping**: Toggle between **Load capacity** (mint to deep-green scale) and **Solar hosting** (yellow to rust scale) with live legend.
+- **Interactive Feeder Card**: Click any circuit to reveal minimum-to-maximum capacity ranges (e.g., `0.00–6.23 MW`), nominal voltage, parent substation, and direct link to official PG&E GRIP.
+- **Floating AI Assistant Card**: Integrated persona chips (*Homeowner*, *Small business*, *Developer*, *Solar*) and 6 guided workflows.
+- **Address Geocoding**: Enter any California address (e.g. `1220 Broadway, Oakland, CA`) to drop a location marker and immediately identify circuit headroom.
+- **Spatial Area Drawing Tool**: Draw custom polygons on the map to evaluate aggregated grid hosting capacity.
+
+![Public Planner Feeder Detail Card](docs/images/ui_planner_feeder_card.png)
+![Public Planner AI Response](docs/images/ui_planner_chat_response.png)
+
 ---
 
 ## ⚡ Core Architecture
