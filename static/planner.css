@@ -479,6 +479,22 @@ body {
   50% { opacity: 1; transform: rotate(15deg) scale(1.1); }
 }
 
+.streaming-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  background-color: #0284c7;
+  margin-left: 4px;
+  vertical-align: -2px;
+  border-radius: 2px;
+  animation: cursorBlink 0.8s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Chat Input Bar Form */
 .chat-input-form {
   padding: 16px 20px;

@@ -3,6 +3,7 @@
 import asyncio
 import json
 import os
+import threading
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -11,7 +12,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -146,6 +147,47 @@ async def chat_endpoint(request: ChatRequest):
             model=bot.active_model,
             last_used_model=bot.last_used_model,
         )
+
+
+@app.post("/api/chat/stream")
+async def chat_stream_endpoint(request: ChatRequest):
+    """Stream response tokens and live tool status events using Server-Sent Events (SSE)."""
+    if not request.message or not request.message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty.")
+
+    bot = get_chatbot()
+    session_id = request.session_id.strip() if request.session_id else "default"
+
+    async def event_generator():
+        q: asyncio.Queue = asyncio.Queue()
+        loop = asyncio.get_running_loop()
+
+        def run_stream():
+            try:
+                for event in bot.chat_stream(request.message, session_id=session_id, workflow=request.workflow):
+                    loop.call_soon_threadsafe(q.put_nowait, event)
+            except Exception as e:
+                loop.call_soon_threadsafe(q.put_nowait, {"type": "error", "error": str(e)})
+            finally:
+                loop.call_soon_threadsafe(q.put_nowait, None)
+
+        threading.Thread(target=run_stream, daemon=True).start()
+
+        while True:
+            item = await q.get()
+            if item is None:
+                break
+            yield f"data: {json.dumps(item)}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @app.get("/api/workflows")

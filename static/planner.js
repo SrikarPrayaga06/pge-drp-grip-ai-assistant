@@ -685,16 +685,87 @@ async function sendPlannerMessage(message, workflow = null) {
       workflow: workflow || plannerState.activeWorkflow || null
     };
 
-    const res = await fetch('/api/chat', {
+    const res = await fetch('/api/chat/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyPayload)
     });
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    loadingBubble.classList.remove('thinking-bubble');
-    loadingBubble.innerHTML = formatMarkdown(data.reply);
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let accumulatedText = '';
+    let isFirstToken = true;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // Keep partial line in buffer
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data:')) continue;
+        const dataJson = trimmed.slice(5).trim();
+        if (!dataJson) continue;
+
+        try {
+          const ev = JSON.parse(dataJson);
+          if (ev.type === 'status') {
+            const labelEl = loadingBubble.querySelector('.thinking-label');
+            if (labelEl && isFirstToken) {
+              labelEl.innerHTML = `
+                <svg class="thinking-sparkle" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                </svg>
+                ${escapeHtml(ev.message)}
+              `;
+            }
+          } else if (ev.type === 'token') {
+            if (isFirstToken) {
+              loadingBubble.classList.remove('thinking-bubble');
+              isFirstToken = false;
+            }
+            accumulatedText += ev.content;
+            loadingBubble.innerHTML = formatMarkdown(accumulatedText) + '<span class="streaming-cursor"></span>';
+            el.plannerChatMessages.scrollTop = el.plannerChatMessages.scrollHeight;
+          } else if (ev.type === 'done') {
+            if (isFirstToken) {
+              loadingBubble.classList.remove('thinking-bubble');
+              isFirstToken = false;
+            }
+            const finalReply = ev.reply || accumulatedText;
+            loadingBubble.innerHTML = formatMarkdown(finalReply);
+            accumulatedText = finalReply;
+          } else if (ev.type === 'error') {
+            throw new Error(ev.error);
+          }
+        } catch (jsonErr) {
+          console.warn('Failed parsing SSE payload:', jsonErr, dataJson);
+        }
+      }
+    }
+
+    // Ensure cursor is removed and final text is properly rendered
+    if (accumulatedText) {
+      loadingBubble.innerHTML = formatMarkdown(accumulatedText);
+    } else if (isFirstToken) {
+      // Stream produced no tokens, fallback to regular fetch
+      const fallbackRes = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyPayload)
+      });
+      if (fallbackRes.ok) {
+        const data = await fallbackRes.json();
+        loadingBubble.classList.remove('thinking-bubble');
+        loadingBubble.innerHTML = formatMarkdown(data.reply);
+      }
+    }
 
   } catch (err) {
     loadingBubble.classList.remove('thinking-bubble');

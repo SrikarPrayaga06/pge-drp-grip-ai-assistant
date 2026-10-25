@@ -429,6 +429,7 @@ function appendMessage(role, content, shouldScroll = true) {
       });
     });
   }
+  return bubble;
 }
 
 function showTypingIndicator() {
@@ -471,7 +472,7 @@ async function sendMessage(message) {
   showTypingIndicator();
 
   try {
-    const res = await fetch('/api/chat', {
+    const res = await fetch('/api/chat/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -480,18 +481,74 @@ async function sendMessage(message) {
       }),
     });
 
-    removeTypingIndicator();
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      appendMessage('assistant', `⚠️ **Error**: ${errData.detail || 'Failed to generate response'}`);
-    } else {
-      const data = await res.json();
-      appendMessage('assistant', data.reply);
-      const activeOrUsed = data.last_used_model || data.model;
-      if (activeOrUsed) {
-        elements.modelNameLabel.textContent = formatModelName(activeOrUsed);
-        elements.pillModel?.setAttribute('title', `Active: ${activeOrUsed} (Click to rotate model)`);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let accumulatedText = '';
+    let isFirst = true;
+    let assistantBubble = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data:')) continue;
+        const dataJson = trimmed.slice(5).trim();
+        if (!dataJson) continue;
+
+        try {
+          const ev = JSON.parse(dataJson);
+          if (ev.type === 'token') {
+            if (isFirst) {
+              removeTypingIndicator();
+              assistantBubble = appendMessage('assistant', '');
+              isFirst = false;
+            }
+            accumulatedText += ev.content;
+            if (assistantBubble) {
+              assistantBubble.innerHTML = renderMarkdown(accumulatedText);
+              elements.messagesContainer.scrollTop = elements.messagesContainer.scrollHeight;
+            }
+          } else if (ev.type === 'done') {
+            if (isFirst) {
+              removeTypingIndicator();
+              assistantBubble = appendMessage('assistant', ev.reply || accumulatedText);
+              isFirst = false;
+            } else if (assistantBubble && ev.reply) {
+              assistantBubble.innerHTML = renderMarkdown(ev.reply);
+            }
+            if (ev.model) {
+              elements.modelNameLabel.textContent = formatModelName(ev.model);
+              elements.pillModel?.setAttribute('title', `Active: ${ev.model} (Click to rotate model)`);
+            }
+          } else if (ev.type === 'error') {
+            throw new Error(ev.error);
+          }
+        } catch (e) {
+          // ignore parsing error
+        }
+      }
+    }
+
+    if (isFirst) {
+      // Fallback if no tokens
+      removeTypingIndicator();
+      const fallbackRes = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, session_id: state.currentSession }),
+      });
+      if (fallbackRes.ok) {
+        const data = await fallbackRes.json();
+        appendMessage('assistant', data.reply);
       }
     }
   } catch (err) {

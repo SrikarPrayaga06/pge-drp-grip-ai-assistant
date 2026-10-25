@@ -51,6 +51,9 @@ def to_float(val: Any) -> Optional[float]:
         return None
 
 
+_GEOCODE_CACHE: Dict[str, str] = {}
+
+
 @tool
 def geocode_address_or_city(address: str) -> str:
     """Geocode a California street address, city, intersection, or site into latitude and longitude coordinates.
@@ -65,6 +68,10 @@ def geocode_address_or_city(address: str) -> str:
     if not clean_addr:
         return json.dumps({"matched": False, "error": "Address cannot be empty"})
 
+    cache_k = clean_addr.lower()
+    if cache_k in _GEOCODE_CACHE:
+        return _GEOCODE_CACHE[cache_k]
+
     import httpx
     # 1. Try US Census Bureau
     url = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
@@ -77,13 +84,15 @@ def geocode_address_or_city(address: str) -> str:
                 matches = data.get("result", {}).get("addressMatches", [])
                 if matches:
                     pt = matches[0]["coordinates"]
-                    return json.dumps({
+                    res_str = json.dumps({
                         "matched": True,
                         "address": matches[0]["matchedAddress"],
                         "latitude": float(pt["y"]),
                         "longitude": float(pt["x"]),
                         "source": "US Census Bureau",
                     })
+                    _GEOCODE_CACHE[cache_k] = res_str
+                    return res_str
     except Exception:
         pass
 
@@ -98,13 +107,15 @@ def geocode_address_or_city(address: str) -> str:
             if r2.status_code == 200:
                 nom_data = r2.json()
                 if nom_data:
-                    return json.dumps({
+                    res_str = json.dumps({
                         "matched": True,
                         "address": nom_data[0].get("display_name", clean_addr),
                         "latitude": float(nom_data[0]["lat"]),
                         "longitude": float(nom_data[0]["lon"]),
                         "source": "OpenStreetMap Nominatim",
                     })
+                    _GEOCODE_CACHE[cache_k] = res_str
+                    return res_str
     except Exception as e:
         return json.dumps({"matched": False, "error": f"Geocoding service error: {str(e)}"})
 

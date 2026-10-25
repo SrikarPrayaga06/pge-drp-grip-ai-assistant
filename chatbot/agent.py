@@ -77,11 +77,10 @@ Domain Boundary & Safety Directives (UNCONDITIONAL):
 # Ordered rotation pool: prioritized by lowest response latency & healthy quota pools.
 # If cloud models hit limits, it cascades down smoothly.
 DEFAULT_MODEL_POOL = [
-    "google_genai:gemini-flash-lite-latest",  # Blazing fast (~2.3s end-to-end), healthy quota
-    "google_genai:gemini-3.5-flash",          # High quality fallback
-    "google_genai:gemini-3.1-flash-lite",
-    "google_genai:gemini-3.6-flash",
-    "google_genai:gemini-2.5-flash",
+    "google_genai:gemini-flash-lite-latest",  # Blazing fast (~1.0s TTFT), healthy quota
+    "google_genai:gemini-2.5-flash",          # Ultra-fast (~1.1s TTFT), exceptional reasoning
+    "google_genai:gemini-3.1-flash-lite",     # High-speed fallback (~1.1s TTFT)
+    "google_genai:gemini-3.5-flash",          # Secondary cloud fallback
     "ollama:llama3.2",                        # Local guaranteed fallback
 ]
 
@@ -417,6 +416,111 @@ class ArcGISChatbot:
         if last_error:
             raise RuntimeError(f"All models in rotation pool exhausted: {str(last_error)}")
         return "No response generated."
+
+    def chat_stream(self, message: str, session_id: str = "default", workflow: Optional[str] = None):
+        """Stream real-time status updates and token chunks with multi-model failover."""
+        # 0. Touch session metadata so session is immediately saved
+        self.create_session(session_id)
+
+        # 1. Deterministic Domain Boundary Pre-check (instantaneous < 1ms)
+        if is_off_topic_query(message):
+            yield {"type": "token", "content": OFF_TOPIC_REFUSAL}
+            yield {"type": "done", "reply": OFF_TOPIC_REFUSAL, "model": self.active_model}
+            return
+
+        # 2. Inject specialized workflow skill context if active
+        effective_message = message
+        if workflow and workflow in WORKFLOW_SKILLS:
+            skill = WORKFLOW_SKILLS[workflow]
+            effective_message = f"[{skill['prompt']}]\n\nUser Request: {message}"
+
+        config = {"configurable": {"thread_id": session_id}}
+        input_data = {
+            "messages": [HumanMessage(content=effective_message)]
+        }
+
+        attempts = 0
+        max_attempts = len(self.model_pool)
+
+        while attempts < max_attempts:
+            current_model = self.model_pool[self.active_model_index]
+            self.active_model = current_model
+
+            # Check if this model is in cooldown
+            cooldown_until = self._model_cooldowns.get(current_model, 0)
+            if cooldown_until > time.time() and len(self.model_pool) > 1:
+                self.active_model_index = (self.active_model_index + 1) % len(self.model_pool)
+                attempts += 1
+                continue
+
+            try:
+                agent = self._get_or_create_agent(current_model)
+                accumulated_text = []
+
+                for event in agent.stream(input_data, config=config, stream_mode="messages"):
+                    msg, meta = event
+                    mtype = type(msg).__name__
+
+                    # Tool call notification
+                    if hasattr(msg, "tool_calls") and msg.tool_calls:
+                        tc = msg.tool_calls[0]
+                        tool_name = tc.get("name", "tool")
+                        args = tc.get("args", {})
+                        
+                        # Generate concise human-friendly live action indicator
+                        readable_name = tool_name.replace("_", " ").title()
+                        if "name" in args and args["name"]:
+                            status_msg = f"Searching for '{args['name']}' on PG&E FeatureServer..."
+                        elif "feeder_id" in args and args["feeder_id"]:
+                            status_msg = f"Querying feeder {args['feeder_id']} hosting capacity..."
+                        elif "address" in args and args["address"]:
+                            status_msg = f"Geocoding address '{args['address']}'..."
+                        elif "longitude" in args and "latitude" in args:
+                            status_msg = f"Checking CPUC wildfire hazard zone at coordinates..."
+                        else:
+                            status_msg = f"Analyzing electric grid data via {readable_name}..."
+                            
+                        yield {"type": "status", "message": status_msg}
+
+                    elif mtype == "ToolMessage":
+                        yield {"type": "status", "message": "Synthesizing grid analysis..."}
+
+                    elif mtype == "AIMessageChunk":
+                        content = getattr(msg, "content", "")
+                        if isinstance(content, list):
+                            text = "".join(p.get("text", "") if isinstance(p, dict) else str(p) for p in content)
+                        else:
+                            text = str(content)
+                        if text:
+                            # Avoid streaming raw tool JSON block if model accidentally dumps it
+                            if '{"name":' not in text and '"parameters":' not in text:
+                                accumulated_text.append(text)
+                                yield {"type": "token", "content": text}
+
+                full_reply = "".join(accumulated_text).strip()
+                if not full_reply:
+                    # In case streaming yielded empty, fall back to synchronous chat
+                    full_reply = self.chat(message, session_id=session_id, workflow=workflow)
+                    yield {"type": "token", "content": full_reply}
+
+                self.last_used_model = current_model
+                yield {"type": "done", "reply": full_reply, "model": current_model}
+                return
+
+            except Exception as e:
+                if self._is_rate_limit_or_quota(e):
+                    self._model_cooldowns[current_model] = time.time() + 1800
+                    next_idx = (self.active_model_index + 1) % len(self.model_pool)
+                    next_model = self.model_pool[next_idx]
+                    print(f"\n[Model Rotation] Quota/demand limit hit on '{current_model}' ({e}). Rotating to '{next_model}'...\n")
+                    self.active_model_index = next_idx
+                    self.active_model = next_model
+                    attempts += 1
+                else:
+                    yield {"type": "error", "error": str(e)}
+                    return
+
+        yield {"type": "error", "error": "All models in rotation pool exhausted."}
 
     def create_session(self, session_id: str, title: Optional[str] = None) -> Dict[str, Any]:
         """Register or touch a session in SQLite."""

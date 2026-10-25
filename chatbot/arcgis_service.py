@@ -43,10 +43,11 @@ class ArcGISService:
     def __init__(self, base_url: str = ARCGIS_BASE_URL):
         self.base_url = base_url.rstrip("/")
         # verify=False prevents OpenSSL 3.x strict intermediate CA errors on macOS
-        self.client = httpx.Client(verify=False, timeout=30.0)
+        self.client = httpx.Client(verify=False, timeout=20.0, limits=httpx.Limits(max_keepalive_connections=20, max_connections=50))
         self._service_cache: Optional[Dict[str, Any]] = None
         self._layer_cache: Dict[int, Dict[str, Any]] = {}
         self._query_cache: Dict[str, Dict[str, Any]] = {}
+        self._spatial_cache: Dict[str, Dict[str, Any]] = {}
 
     def resolve_layer_id(self, layer: Union[int, str]) -> int:
         if isinstance(layer, int):
@@ -137,6 +138,10 @@ class ArcGISService:
         limit: int = 20,
     ) -> Dict[str, Any]:
         layer_id = self.resolve_layer_id(layer)
+        cache_key = f"{layer_id}|{round(longitude, 4)}|{round(latitude, 4)}|{distance_meters}|{where}|{out_fields}|{limit}"
+        if cache_key in self._spatial_cache:
+            return self._spatial_cache[cache_key]
+
         url = f"{self.base_url}/{layer_id}/query"
         params: Dict[str, Any] = {
             "geometry": f'{{"x":{longitude},"y":{latitude},"spatialReference":{{"wkid":4326}}}}',
@@ -158,6 +163,10 @@ class ArcGISService:
         if "error" in data:
             err = data["error"]
             raise RuntimeError(f"ArcGIS Spatial API error: {err.get('message')}")
+
+        if len(self._spatial_cache) > 200:
+            self._spatial_cache.pop(next(iter(self._spatial_cache)))
+        self._spatial_cache[cache_key] = data
         return data
 
 arcgis_service = ArcGISService()

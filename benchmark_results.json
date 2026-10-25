@@ -1,20 +1,20 @@
 {
-  "timestamp": 1792866069.5739021,
+  "timestamp": 1792907108.9104798,
   "model": "google_genai:gemini-3.1-flash-lite",
   "metrics": {
     "total_cases": 10,
     "passed_cases": 9,
     "pass_rate_pct": 90.0,
-    "avg_latency_sec": 8.182,
-    "median_latency_sec": 7.069,
-    "p90_latency_sec": 24.032,
+    "avg_latency_sec": 6.478,
+    "median_latency_sec": 3.577,
+    "p90_latency_sec": 20.17,
     "avg_reasoning_score": 4.8
   },
   "cases": [
     {
       "id": "T01_GREETING",
       "name": "Zero-Tool Conversational Greeting",
-      "latency_sec": 7.729,
+      "latency_sec": 1.78,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -25,12 +25,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "Hello! I am your PG&E Distribution & DRP Planning Assistant, specialized in helping you navigate California electric distribution and Grid Resource Integration Portal (GRIP) data. \n\nI can assist you w..."
+      "reply_preview": "Hello! I am your PG&E Electric Distribution & DRP Planning Assistant. I am here to help you explore and analyze PG&E's Grid Resource Integration Portal (GRIP) and Distribution Resources Plan (DRP) com..."
     },
     {
       "id": "T02_SUBSTATION_SEARCH",
       "name": "Single-Tool Direct Substation Query",
-      "latency_sec": 8.154,
+      "latency_sec": 2.092,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -41,12 +41,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "Here are the details for the **MISSION** substation in San Francisco based on PG&E's grid planning data:\n\n| Substation Name | Substation ID | Operating Voltage (kV) | Number of Banks | Existing DG (kW..."
+      "reply_preview": "Here are the details for the **MISSION** substation located in San Francisco:\n\n| Substation Name | Substation ID | Operating Voltage (kV) | Number of Banks | Existing DG (kW) | Queued DG (kW) | Total ..."
     },
     {
       "id": "T03_ADDRESS_GEOCODE_SPATIAL",
       "name": "Physical Address Geocoding & Fire Threat Check",
-      "latency_sec": 24.032,
+      "latency_sec": 7.615,
       "score": 3,
       "max_score": 5,
       "success": true,
@@ -56,12 +56,12 @@
         "No invalid tokens or NULL values",
         "Structured presentation (Markdown table or formatted bullets)"
       ],
-      "reply_preview": "Here are the details for **3306 Jubilee Dr, Hayward, CA**:\n\n### Location & Fire Hazard Threat Analysis\n* **Resolved Coordinates:** Latitude `37.6643234`, Longitude `-122.0944906`\n* **CPUC High Fire Th..."
+      "reply_preview": "The address 3306 Jubilee Dr (Hayward, CA) is **NOT** located within a CPUC Tier 2 or Tier 3 High Fire Threat District.\n\nBased on the nearest substation named \"HAYWARD O\", the serving division is likel..."
     },
     {
       "id": "T04_ICA_HOSTING_CAPACITY",
       "name": "ICA Line Section Headroom & Screen L",
-      "latency_sec": 11.026,
+      "latency_sec": 3.054,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -72,12 +72,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "Based on PG&E's Integration Capacity Analysis (ICA) data (Sep 2024), here is the hosting capacity breakdown and Rule 21 Screen L status for **Feeder 022390402** (Feeder Name: **0402**):\n\n### Feeder Su..."
+      "reply_preview": "Here is the ICA hosting capacity for feeder 022390402:\n\n| Line Section | Load Capacity (kW) | Generation Capacity (kW) | Screen L Status |\n|---|---|---|---|\n| 3052442 | 410 | 0 | Likely to pass |\n| 30..."
     },
     {
       "id": "T05_8760_LOAD_PROFILE",
       "name": "8760 Hourly Profile & Peak Demand Analysis",
-      "latency_sec": 4.624,
+      "latency_sec": 7.601,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -88,12 +88,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "For Feeder **22390402** in San Francisco, here is the summary of the July hourly load profile. \n\n### July Load Profile Summary (Partial)\n*Units: kW*\n\n| Month-Hour | High Load | Low Load |\n| :--- | :--..."
+      "reply_preview": "The July hourly load profile for feeder 22390402 shows a peak consumption of **1006 kW**.\n\nBased on the available hourly data for the early morning, the load generally decreases from **741 kW** at mid..."
     },
     {
       "id": "T06_PHANTOM_HEADROOM",
       "name": "Cross-Layer Synthesis: Phantom Headroom Detection",
-      "latency_sec": 6.362,
+      "latency_sec": 4.101,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -104,12 +104,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "The analysis for feeder **022390402** (18TH STREET 0402) indicates **low risk** regarding phantom headroom. There is no contradiction between the published ICA capacity and the forecasted GNA deficien..."
+      "reply_preview": "The assessment for feeder **022390402** (18TH STREET 0402) indicates **LOW RISK** regarding phantom headroom. There is no contradiction between the published Integration Capacity Analysis (ICA) and th..."
     },
     {
       "id": "T07_QUEUE_OVERSUBSCRIPTION",
       "name": "Interconnection Queue Oversubscription Analysis",
-      "latency_sec": 12.886,
+      "latency_sec": 20.17,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -120,12 +120,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "The analysis for circuit **022390402** confirms that the interconnection queue is currently **oversubscribed**, representing a \"Green Map Illusion.\" \n\nWhile published Integration Capacity Analysis (IC..."
+      "reply_preview": "The interconnection status for circuit **022390402** indicates it is **oversubscribed**.\n\nBelow is the summary of the queue analysis:\n\n| Metric | Value |\n| :--- | :--- |\n| **Circuit ID** | 022390402 |..."
     },
     {
       "id": "T08_STORAGE_ARBITRAGE_LNBA",
       "name": "Energy Storage (BESS) & LNBA Deferral Opportunities",
-      "latency_sec": 6.409,
+      "latency_sec": 17.642,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -136,12 +136,12 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "For feeder **022390402**, a battery storage (BESS) installation presents a strategic opportunity to unlock generation hosting capacity and potentially capture LNBA deferral value.\n\n### BESS & Grid Int..."
+      "reply_preview": "For feeder **022390402**, a BESS integration study indicates there is a viable opportunity to unlock additional generation hosting capacity. By configuring battery storage to charge during periods of ..."
     },
     {
       "id": "T09_GUARDRAIL_OFFTOPIC",
       "name": "Fast Deterministic Guardrail Refusal",
-      "latency_sec": 0.001,
+      "latency_sec": 0.0,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -157,7 +157,7 @@
     {
       "id": "T10_MULTI_TURN_CONTEXT",
       "name": "Multi-Turn Context & Pronoun Resolution",
-      "latency_sec": 0.598,
+      "latency_sec": 0.722,
       "score": 5,
       "max_score": 5,
       "success": true,
@@ -168,7 +168,7 @@
         "Structured presentation (Markdown table or formatted bullets)",
         "Strong technical reasoning and domain alignment"
       ],
-      "reply_preview": "The OAKLAND C substation (ID: 01201) operates at a voltage of **12 kV** and has **4 transformer banks**...."
+      "reply_preview": "As retrieved from the PG&E grid planning data, the OAKLAND C substation (ID: 01201) operates with the following specifications:\n\n*   **Voltage:** 12 kV\n*   **Transformer Banks:** 4 banks\n\nPlease let m..."
     }
   ]
 }
