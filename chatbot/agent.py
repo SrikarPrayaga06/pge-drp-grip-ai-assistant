@@ -477,6 +477,8 @@ class ArcGISChatbot:
                             status_msg = f"Geocoding address '{args['address']}'..."
                         elif "longitude" in args and "latitude" in args:
                             status_msg = f"Checking CPUC wildfire hazard zone at coordinates..."
+                        elif tool_name == "execute_ultrafast_browser_task":
+                            status_msg = f"Navigating browser to '{args.get('url', 'site')}' with local decision model..."
                         else:
                             status_msg = f"Analyzing electric grid data via {readable_name}..."
                             

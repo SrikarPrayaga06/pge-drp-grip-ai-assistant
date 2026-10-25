@@ -116,13 +116,30 @@ graph TD
 4. **`get_load_profile_summary`**: Query 8760 hourly load profiles and calculate peak high, minimum low, and average kW/MW curves.
 5. **`check_fire_hazard_zone`**: Spatial point-in-polygon check to determine if coordinates fall within CPUC Tier 2 or Tier 3 fire zones.
 6. **`check_grid_deficiencies`**: Query GNA grid deficiencies (overload MW/%) and LNBA planned investments.
-7. **`query_layer_direct`**: Direct SQL query for any layer or table in the FeatureServer catalog.
+7. **`check_phantom_headroom`**: Detect hidden grid bottlenecks by cross-referencing ICA hosting capacity with forecasted GNA deficiencies.
+8. **`check_queue_oversubscription`**: Evaluate interconnection queue saturation against true hosting headroom.
+9. **`check_storage_arbitrage_and_deferral`**: Analyze battery storage (BESS) opportunities and LNBA deferral value.
+10. **`execute_ultrafast_browser_task`**: Autonomous high-speed web browsing using the integrated `jev-ultrafast` engine and a locally hosted decision model.
+11. **`query_layer_direct`**: Direct SQL query for any layer or table in the FeatureServer catalog.
 
 ### Model Context Protocol (MCP) Tools (`src/tools.js`)
 Exposes 10 native MCP tools over Stdio transport for IDE integration with Google Antigravity, Claude Desktop, and Cursor:
 - `arcgis_list_layers`, `arcgis_get_layer_details`, `arcgis_query_layer`, `arcgis_spatial_query`
 - `arcgis_search_substations`, `arcgis_search_feeders`, `arcgis_get_ica_capacity`
 - `arcgis_get_load_profile`, `arcgis_get_fire_threat_info`, `arcgis_get_grid_deficiencies`
+
+---
+
+## ⚡ Integrated Ultrafast Browser Agent (`jev-ultrafast`)
+
+Integrated from **[browser-use/jev-ultrafast](https://github.com/browser-use/jev-ultrafast)** and modified to run on a **locally hosted decision model**:
+
+- **Discrete Action Space**: Translates DOM snapshots into indexed interactive elements (`[1]`, `[2]`, `[3]...`) and discrete operations (`CLICK`, `TYPE_TEXT`, `SELECT`, `WAIT`, `DONE`).
+- **Locally Hosted Decision Model**: Evaluates page state and selects next operation + target element index using a local LLM (e.g. Ollama `llama3.2:latest` at `http://localhost:11434/v1`) without requiring external proprietary API keys.
+- **Local Text Model**: Generates field values for `TYPE_TEXT` operations locally in < 0.6 seconds.
+- **Direct Chrome DevTools Protocol (CDP)**: Executes clicks and text input atomically through `browser-harness` with document freshness checking.
+- **API Endpoint**: Run tasks programmatically via `POST /api/browser/task` or via the `execute_ultrafast_browser_task` tool.
+- **Visual Inspector Demo**: Run `python -m jev_ultrafast.demo` to launch the local inspector at `http://127.0.0.1:8766`.
 
 ---
 

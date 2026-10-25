@@ -823,6 +823,62 @@ def check_storage_arbitrage_and_deferral(
     }, indent=2)
 
 
+@tool
+def execute_ultrafast_browser_task(url: str, goal: str, max_steps: int = 10) -> str:
+    """Execute an autonomous high-speed web browsing task using the integrated jev-ultrafast agent and locally hosted decision model.
+    
+    Navigates to the given web URL and executes atomic discrete actions (clicking, filling fields, selecting dropdowns)
+    to achieve the specified goal using local Ollama model decision-making without external credentials.
+    
+    Args:
+        url: Starting web URL (e.g. 'http://127.0.0.1:8000/planner', 'https://en.wikipedia.org/wiki/Main_Page').
+        goal: Clear objective for the browser agent (e.g. 'Find and open the article about Solar power in California').
+        max_steps: Maximum number of action steps allowed (default: 10).
+    """
+    clean_url = to_str(url)
+    clean_goal = to_str(goal)
+    if not clean_url or not clean_goal:
+        return json.dumps({"error": "Both url and goal are required."})
+
+    try:
+        from jev_ultrafast.agent import Agent
+        steps_executed = []
+        with Agent(clean_url, clean_goal) as agent:
+            step_count = 0
+            for snap in agent.run():
+                step_count += 1
+                if snap.get("history"):
+                    last = snap["history"][-1]
+                    steps_executed.append({
+                        "step": last.get("step"),
+                        "action": last.get("action"),
+                        "kind": last.get("kind"),
+                        "text": last.get("text"),
+                        "latency_ms": last.get("latency_ms"),
+                    })
+                if step_count >= max_steps:
+                    break
+
+            final_state = agent.snapshot()
+            return json.dumps({
+                "status": final_state.get("status"),
+                "goal": clean_goal,
+                "url": final_state.get("page", {}).get("url", clean_url),
+                "title": final_state.get("page", {}).get("title"),
+                "total_elapsed_ms": final_state.get("elapsed_ms", 0),
+                "steps_completed": len(steps_executed),
+                "history": steps_executed,
+            }, indent=2)
+    except Exception as e:
+        return json.dumps({
+            "status": "error",
+            "url": clean_url,
+            "goal": clean_goal,
+            "error": str(e),
+            "recommendation": "Ensure Chrome is running with remote debugging or browser-harness daemon is running."
+        }, indent=2)
+
+
 ARCGIS_TOOLS = [
     geocode_address_or_city,
     search_substations,
@@ -834,5 +890,6 @@ ARCGIS_TOOLS = [
     check_phantom_headroom,
     check_queue_oversubscription,
     check_storage_arbitrage_and_deferral,
+    execute_ultrafast_browser_task,
     query_layer_direct,
 ]

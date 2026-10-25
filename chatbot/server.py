@@ -25,6 +25,7 @@ from .tools import (
     get_load_profile_summary,
     check_fire_hazard_zone,
     check_grid_deficiencies,
+    execute_ultrafast_browser_task,
     query_layer_direct,
 )
 
@@ -69,6 +70,12 @@ class ChatResponse(BaseModel):
     session_id: str
     model: str
     last_used_model: Optional[str] = None
+
+
+class BrowserTaskRequest(BaseModel):
+    url: str
+    goal: str
+    max_steps: Optional[int] = 10
 
 
 @app.get("/api/health")
@@ -188,6 +195,23 @@ async def chat_stream_endpoint(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.post("/api/browser/task")
+async def browser_task_endpoint(req: BrowserTaskRequest):
+    """Run an autonomous ultrafast browser task using the locally hosted decision model."""
+    res_str = await asyncio.to_thread(
+        execute_ultrafast_browser_task.invoke,
+        {
+            "url": req.url,
+            "goal": req.goal,
+            "max_steps": req.max_steps or 10,
+        },
+    )
+    try:
+        return json.loads(res_str)
+    except Exception:
+        return {"result": res_str}
 
 
 @app.get("/api/workflows")
